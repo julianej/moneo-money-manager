@@ -20,7 +20,7 @@ const AccountCard = styled.button`
     `
       background: #000;
       color: #fff;
-      border: 2px solid #fff;
+      border: 2px solid #4f4f4f;;
     `}
 
   &:disabled {

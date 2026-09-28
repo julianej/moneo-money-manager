@@ -85,15 +85,15 @@ const Fieldset = styled.fieldset`
   flex-direction: column;
   gap: 0.50rem;
   border: none;
-  width: 100%;
+  width: 35%;
   margin: 0;
   padding: 0;
 `;
 
-
 const RadioGroup = styled.div`
   display: flex;
   gap: 0.5rem;
+  width: 100%;
 `;
 
 const RadioLabel = styled.label`
@@ -102,9 +102,16 @@ const RadioLabel = styled.label`
   gap: 0.5rem;    
   width: 50%;
   cursor: pointer;
-    padding: 0.8rem;
-    border: 1px solid lightgrey;
-    border-radius: 0.5rem;
+  padding: 0.8rem;
+  border: 1px solid lightgrey;
+  border-radius: 0.5rem;
+
+  input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #000;
+  }
 `;
 
 const DeleteButton = styled.button`

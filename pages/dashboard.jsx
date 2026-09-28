@@ -2,7 +2,7 @@ import useSWR from "swr";
 import { useState } from "react";
 import { useRouter } from "next/router"; // MENU LINK
 
-import { X, Plus, User, LogOut } from "lucide-react";
+import { X, Plus,LogOut } from "lucide-react";
 import styled from "styled-components";
 import { Spinner } from "@/styles/LoadingStyles";
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
@@ -15,6 +15,7 @@ import AccountBalance from "@/components/AccountBalance/AccountBalance";
 import TransactionForm from "@/components/TransactionForm/TransactionForm";
 import TransactionList from "@/components/TransactionList/TransactionList";
 
+import TransactionSearch from "@/components/TransactionSearch/TransactionSearch";
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
 
 
@@ -141,10 +142,12 @@ const BankAccountFormWrapper = styled.div`
     width: 100%;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.8);
-    left: 25%;
+    left: 0%;
     top: 0%;
-    z-index: 77;
+    z-index: 77777;
     height: 100vh;
+    @media (min-width: 740px) {
+     left: 25%;}
 `;
 
 // ====================
@@ -184,6 +187,8 @@ export default function Dashboard() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [selectedYear, setSelectedYear] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
@@ -284,14 +289,16 @@ function handleAccountsClick() {
   // FILTER
   // ====================
 
+
   const matchesFilter = (transaction) => {
-    const transactionYear = new Date(transaction.date)
-      .getFullYear()
-      .toString();
+    const matchesSearch =
+    transaction.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
     const matchesYear =
-      selectedYear === "all" ||
-      transactionYear === selectedYear;
+    selectedYear === "all" ||
+    new Date(transaction.date).getFullYear().toString() === selectedYear;
 
     const matchesType =
       selectedType === "all" ||
@@ -302,6 +309,7 @@ function handleAccountsClick() {
       selectedCategories.includes(transaction.category);
 
     return (
+      matchesSearch &&
       matchesYear &&
       matchesType &&
       matchesCategory
@@ -398,6 +406,12 @@ function handleAccountsClick() {
         {selectedAccountData?.bank} <br />
         {selectedAccountData?.name}
       </Title>
+
+      <TransactionSearch
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        hasSearch={searchTerm !== ""} // SET RESET BUTTON
+      />
 
       <TransactionFilter
         transactions={data ?? []}

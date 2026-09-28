@@ -133,6 +133,8 @@ const SyncButton = styled.button`
   padding: 0.75rem 1rem;
 
   border: none;
+  background-color: transparent;
+  color: #ddd;
 
   font: inherit;
   font-weight: 500;
@@ -145,6 +147,10 @@ const SyncButton = styled.button`
 
   &:active {
     transform: translateY(1px);
+  }
+
+  @media (min-width: 740px) {
+      color: #0b0b0b;
   }
 `;
 
