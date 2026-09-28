@@ -92,8 +92,8 @@ export default function MenuProfile({
 
 const MenuProfileWrapper = styled.div`
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 2rem;
+  right: 2rem;
 
   z-index: 1000;
 

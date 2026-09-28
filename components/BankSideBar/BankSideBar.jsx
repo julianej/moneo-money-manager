@@ -51,7 +51,7 @@ const CollapseButton = styled.button`
   border-radius: 50%;
 
   background: transparent;
-  color: inherit;
+  color: #6e6d6d;;
 
   cursor: pointer;
 
