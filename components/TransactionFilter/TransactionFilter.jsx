@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import DownloadReport from "../DownloadReport/DownloadReport";
+
 import { useEffect, useState } from "react";
 
 const FilterWrapper = styled.div`
@@ -132,7 +134,7 @@ useEffect(() => {
   return (
     <FilterWrapper>
        <FilterRow>
-{/* ==================== YEAR ==================== */}
+      {/* ==================== YEAR ==================== */}
       <FilterGroup>
         <FilterLabel>Year</FilterLabel>
       
@@ -248,6 +250,10 @@ useEffect(() => {
 
         </FilterGroup>
       </FilterRow>
+      <DownloadButton type="button" onClick={handleDownload}>
+        <Download size={16} />
+        Download PDF
+      </DownloadButton>
     </FilterWrapper>
   );
 }
