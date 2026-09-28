@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import DownloadReport from "../DownloadReport/DownloadReport";
+import DownloadButton from "../DownloadReport/DownloadButton";
+import { Download } from "lucide-react";
 
 import { useEffect, useState } from "react";
 
@@ -250,10 +251,10 @@ useEffect(() => {
 
         </FilterGroup>
       </FilterRow>
-      <DownloadButton type="button" onClick={handleDownload}>
-        <Download size={16} />
-        Download PDF
-      </DownloadButton>
+      {/* ... / PDF DOWNLAOD */}
+      <DownloadButton
+        transactions={filteredTransactions}
+      />
     </FilterWrapper>
   );
 }
