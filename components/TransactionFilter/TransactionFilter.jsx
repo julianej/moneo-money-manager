@@ -54,6 +54,7 @@ const FilterButton = styled.button`
 
 export default function TransactionFilter({
   transactions = [],
+  filteredTransactions,
   selectedYear,
   setSelectedYear,
   selectedType,

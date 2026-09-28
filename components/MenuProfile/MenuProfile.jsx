@@ -104,6 +104,7 @@ const MenuProfileWrapper = styled.div`
   @media (min-width: 740px) {
     top: 3rem;
     right: 5rem;
+    margin-top: 2.5rem;
   }
 `;
 

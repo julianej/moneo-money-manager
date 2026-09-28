@@ -58,6 +58,7 @@ const MenuProfileWrapper = styled.div`
     @media (min-width: 740px) {
     width: 100%;
     height: 63px;
+    margin-top: 5rem;
   }
 `;
 
