@@ -92,13 +92,17 @@ const Time = styled.p`
 
 const Amount = styled.p`
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin: 0;
   padding: 0;
-  flex: 1 0 0;
+  flex: 2 0 0;
   text-align: right;
   color: ${({ $isIncome }) =>
-    $isIncome ? "black" : "red"};
+  $isIncome ? "black" : "red"};
+  @media (min-width: 739px) {
+      font-size: 2rem;
+      padding-right: 2rem;
+  }
 `;
 
 // ====================

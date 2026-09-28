@@ -14,12 +14,15 @@ const Title = styled.h1`
   font-family: "Silkscreen", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 4rem;
+  font-size: 3.5rem;
   text-transform: uppercase;
 
   margin: 0 0 2rem;
-
   line-height: 3rem;
+
+  @media (min-width: 740px) {
+      font-size: 3.5rem;
+  }
 `;
 
 const SidebarHeader = styled.div`
@@ -54,8 +57,7 @@ const CollapseButton = styled.button`
 
   @media (min-width: 740px) {
     display: none;
-  }
-`;
+  }`;
 
 const AccountList = styled.div`
   display: flex;

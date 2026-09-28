@@ -1,50 +1,228 @@
-import {Document, Page, Text, StyleSheet,} from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Font,
+} from "@react-pdf/renderer";
+
+
+Font.register({
+  family: "Silkscreen",
+  src: "/lib/fonts/Silkscreen-Regular.ttf",
+});
 
 const styles = StyleSheet.create({
   page: {
     padding: 48,
+    fontFamily: "Helvetica",
     fontSize: 11,
-    lineHeight: 1.6,
-    color: "#3f3f46",
-  },
-
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e4e4e7",
-    paddingBottom: 12,
   },
 
   title: {
-    fontSize: 26,
-    color: "#18181b",
-    marginTop: 40,
-    paddingBottom: 16,
-    borderBottomWidth: 3,
-    borderBottomColor: "#e0301e",
+    fontFamily: "Silkscreen",
+    fontSize: 50,
+    marginBottom: 40,
   },
 
-  paragraph: {
-    marginTop: 20,
-  },
+  transaction: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  paddingVertical: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: "#eeeeee",
+},
+
+transactionInfo: {
+  flex: 1,
+},
+
+transactionTitle: {
+  fontSize: 11,
+  marginBottom: 3,
+},
+
+transactionDate: {
+  fontSize: 9,
+  color: "#666666",
+},
+
+amount: {
+  fontSize: 11,
+  marginLeft: 20,
+},
+
+summary: {
+  marginBottom: 24,
+  paddingVertical: 20,
+  borderBottomWidth: 1,
+  borderBottomColor: "#eeeeee",
+},
+
+balance: {
+  alignItems: "center",
+  marginBottom: 24,
+},
+
+balanceAmount: {
+  fontSize: 28,
+  fontWeight: "bold",
+  marginTop: 4,
+},
+
+incomeExpenses: {
+  flexDirection: "row",
+  justifyContent: "center",
+},
+
+summaryItem: {
+  width: 140,
+  alignItems: "center",
+},
+
+summaryLabel: {
+  fontSize: 9,
+  color: "#666666",
+  marginBottom: 4,
+},
+
+expensesAmount: {
+  color: "#cf0404",
+},
 });
 
-export default function MoneyManagerReport() {
+export default function MoneyManagerReport({
+  transactions = [],
+}) {
+
+  // =========================
+  // CALCULATE TOTALS
+  // =========================
+
+  const totalIncome = transactions
+    .filter(
+      (transaction) => transaction.type === "income"
+    )
+    .reduce(
+      (sum, transaction) =>
+        sum + Number(transaction.amount || 0),
+      0
+    );
+
+  const totalExpenses = transactions
+    .filter(
+      (transaction) => transaction.type === "expense"
+    )
+    .reduce(
+      (sum, transaction) =>
+        sum + Math.abs(Number(transaction.amount || 0)),
+      0
+    );
+
+  const balance = totalIncome - totalExpenses;
+
+
+  // =========================
+  // PDF
+  // =========================
+
   return (
-    <Document
-      title="Money Manager Report"
-      author="Juli's Money Manager"
-    >
-      <Page size="A4" style={styles.page}>
+    <Document>
+      <Page
+        size="A4"
+        style={styles.page}
+      >
 
         <Text style={styles.title}>
-          Juli's Money Manager
+          Money Manager
         </Text>
 
-        <Text style={styles.paragraph}>
-          Transaction Report
-        </Text>
+
+       <View style={styles.summary}>
+
+        {/* BALANCE */}
+        <View style={styles.balance}>
+          <Text style={styles.summaryLabel}>
+            Balance
+          </Text>
+
+          <Text style={styles.balanceAmount}>
+            {balance.toFixed(2)} €
+          </Text>
+        </View>
+
+        {/* INCOME + EXPENSES */}
+        <View style={styles.incomeExpenses}>
+
+          <View style={styles.summaryItem}>
+            <Text style={styles.summaryLabel}>
+              Income
+            </Text>
+
+            <Text style={styles.incomeAmount}>
+              {totalIncome.toFixed(2)} €
+            </Text>
+          </View>
+
+          <View style={styles.summaryItem}>
+            <Text style={styles.summaryLabel}>
+              Expenses
+            </Text>
+
+            <Text style={styles.expensesAmount}>
+              {totalExpenses.toFixed(2)} €
+            </Text>
+          </View>
+
+        </View>
+
+      </View>
+
+
+        {/* TRANSACTIONS */}
+
+        {transactions.map((transaction) => (
+          <View
+            key={transaction._id}
+            style={styles.transaction}
+          >
+
+            {/* LEFT */}
+
+            <View style={styles.transactionInfo}>
+
+              <Text style={styles.transactionTitle}>
+                {transaction.title}
+              </Text>
+
+              <Text style={styles.transactionDate}>
+                {transaction.category || "No category"}
+                {" · "}
+                {transaction.date
+                  ? new Date(
+                      transaction.date
+                    ).toLocaleDateString("de-DE")
+                  : "No date"}
+              </Text>
+
+            </View>
+
+
+            {/* RIGHT */}
+
+            <Text
+              style={
+                transaction.type === "income"
+                  ? styles.incomeAmount
+                  : styles.expensesAmount
+              }
+            >
+              {Number(transaction.amount || 0).toFixed(2)} €
+            </Text>
+
+          </View>
+        ))}
 
       </Page>
     </Document>

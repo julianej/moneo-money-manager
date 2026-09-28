@@ -35,7 +35,7 @@ const Main = styled.main`
 
 const MainContent = styled.div`
   width: 100%;
-  padding: 40px 20px;
+  padding: 0 20px;
   margin: 0 auto;
    @media (min-width: 740px) {
    width: 70%;
@@ -95,6 +95,7 @@ const Title = styled.h1`
     background-color: white;
     padding: 3rem;
     text-align: center; 
+    border-radius: 1rem;
 `;
 
 
@@ -415,6 +416,7 @@ function handleAccountsClick() {
 
       <TransactionFilter
         transactions={data ?? []}
+        filteredTransactions={filteredTransactions}
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
         selectedType={selectedType}

@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import DownloadButton from "../DownloadReport/DownloadButton";
-import { Download } from "lucide-react";
 
 import { useEffect, useState } from "react";
 
 const FilterWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1rem;
   padding: 2rem 0;
+  overflow: scroll;
 
-    @media (min-width: 739px) {
+  @media (min-width: 739px) {
         flex-direction: row;
   }
 `;
@@ -19,7 +19,7 @@ const FilterRow = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 `;
 
 const FilterGroup = styled.div`
@@ -134,6 +134,10 @@ useEffect(() => {
 
   return (
     <FilterWrapper>
+        {/* ... / PDF DOWNLAOD */}
+      <DownloadButton
+        transactions={filteredTransactions}
+      />
        <FilterRow>
       {/* ==================== YEAR ==================== */}
       <FilterGroup>
@@ -251,10 +255,6 @@ useEffect(() => {
 
         </FilterGroup>
       </FilterRow>
-      {/* ... / PDF DOWNLAOD */}
-      <DownloadButton
-        transactions={filteredTransactions}
-      />
     </FilterWrapper>
   );
 }
