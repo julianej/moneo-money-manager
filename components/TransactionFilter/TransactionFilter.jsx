@@ -142,6 +142,7 @@ useEffect(() => {
           transactions={filteredTransactions}
           account={selectedAccount}
           setPdfLoading={setPdfLoading}
+          selectedType={selectedType}
         />
        <FilterRow>
 {/* ==================== YEAR ==================== */}

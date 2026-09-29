@@ -48,7 +48,6 @@ transactionDate: {
   color: "#666666",
 },
 
-
 accountSection: {
   marginBottom: 24,
   paddingVertical: 16,
@@ -85,9 +84,21 @@ balance: {
 },
 
 balanceAmount: {
-  fontSize: 28,
+  fontSize: 23,
   fontWeight: "bold",
   marginTop: 4,
+},
+
+balancePositive: {
+  color: "#000",
+},
+
+balanceNeutral: {
+  color: "#000000",
+},
+
+balanceNegative: {
+  color: "#d00000",
 },
 
 incomeExpenses: {
@@ -162,7 +173,16 @@ export default function MoneyManagerReport({
             Balance
           </Text>
 
-          <Text style={styles.balanceAmount}>
+          <Text
+            style={[
+              styles.balanceAmount,
+                balance > 0
+                  ? styles.balancePositive
+                  : balance < 0
+                  ? styles.balanceNegative
+                  : styles.balanceNeutral
+                   ]}
+               >
             {balance.toFixed(2)} €
           </Text>
         </View>

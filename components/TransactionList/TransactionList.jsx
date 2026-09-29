@@ -117,10 +117,6 @@ const Spinner = styled(LoaderCircle)`
 
 const DownloadText = styled.span`
   display: inline;
-
-  @media (min-width: 740px) {
-    display: none;
-  }
 `;
 
 
@@ -244,7 +240,7 @@ return (
           <Spinner size={32} />
 
           <DownloadText>
-            Preparing...
+            Preparing PDF download...
           </DownloadText>
         </LoadingOverlay>
       ) : (

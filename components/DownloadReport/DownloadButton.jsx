@@ -30,10 +30,17 @@ export default function DownloadButton({
   transactions = [],
   account,
   setPdfLoading,
+  selectedType = "all",
 }) {
-  // const [pdfLoading, setLoading] = useState(false);
 
   async function handleDownload() {
+
+    const filterName =
+      selectedType === "all"
+        ? "all"
+        : selectedType.toLowerCase();
+
+    const fileName = `money-manager-${filterName}.pdf`;
 
     setPdfLoading(true);
 
@@ -55,7 +62,7 @@ export default function DownloadButton({
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = "money-manager-report.pdf";
+      link.download = fileName;
 
       document.body.appendChild(link);
       link.click();
