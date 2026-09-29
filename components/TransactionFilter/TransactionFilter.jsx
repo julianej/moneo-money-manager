@@ -55,6 +55,7 @@ const FilterButton = styled.button`
 export default function TransactionFilter({
   transactions = [],
   filteredTransactions,
+  setPdfLoading,
   selectedAccount,
   selectedYear,
   setSelectedYear,
@@ -140,9 +141,10 @@ useEffect(() => {
       <DownloadButton
           transactions={filteredTransactions}
           account={selectedAccount}
+          setPdfLoading={setPdfLoading}
         />
        <FilterRow>
-      {/* ==================== YEAR ==================== */}
+{/* ==================== YEAR ==================== */}
       <FilterGroup>
         <FilterLabel>Year</FilterLabel>
       
@@ -192,7 +194,7 @@ useEffect(() => {
           ))}
        </FilterGroup>
 
-    {/* ==================== TYPE ==================== */}
+{/* ==================== TYPE ==================== */}
         <FilterGroup>
             <FilterLabel>Type</FilterLabel>
 
@@ -219,7 +221,7 @@ useEffect(() => {
         </FilterGroup>
     </FilterRow>
 
-       {/* ==================== ROW 2: CATEGORY ==================== */}
+{/* ==================== ROW 2: CATEGORY ==================== */}
 <FilterRow>
   <FilterGroup>
 

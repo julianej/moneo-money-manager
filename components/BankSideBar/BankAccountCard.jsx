@@ -102,8 +102,6 @@ export default function BankAccountCard({
       $selected={selected}
       disabled={disabled}
       onClick={onClick}
-      // onClick={() => setSelectedAccount(account)}
-      
     >
       <CardHeader>
         <div className="accountInfo">

@@ -202,6 +202,8 @@ export default function Dashboard() {
   const [isAddingAccount, setIsAddingAccount] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
+  const [pdfLoading, setPdfLoading] = useState(false);
+
 
   // ====================
   // DATA
@@ -354,26 +356,6 @@ function handleAccountsClick() {
   (account) => String(account._id) === String(selectedAccount)
 );
 
-console.log("ACCOUNTS:", accounts);
-console.log("SELECTED ACCOUNT:", selectedAccount);
-console.log(
-  "SELECTED ACCOUNT TYPE:",
-  typeof selectedAccount
-);
-console.log(
-  "FIRST ACCOUNT ID:",
-  accounts[0]?._id
-);
-console.log(
-  "FIRST ACCOUNT ID TYPE:",
-  typeof accounts[0]?._id
-);
-console.log(
-  "SELECTED ACCOUNT DATA:",
-  selectedAccountData
-);
-
-
   return (
     <Main>
 
@@ -407,7 +389,7 @@ console.log(
             isLoggedIn={true}
             listItems={profileItems}
             />
-    </MenuProfileWrapper>
+      </MenuProfileWrapper>
 
     {/* BANK ACCOUNT SPINNER */}
     {isAddingAccount || isDeletingAccount ? (
@@ -445,6 +427,8 @@ console.log(
           setSelectedType={setSelectedType}
           selectedCategories={selectedCategories}
           setSelectedCategories={setSelectedCategories}
+          setPdfLoading={setPdfLoading}
+
         />
 
       <AccountBalance
@@ -482,6 +466,7 @@ console.log(
         onDeleteAccount={handleDeleteAccount}
         mutate={mutate}
         showToast={showToast}
+        pdfLoading={pdfLoading}
       />
     </>
   ) : (

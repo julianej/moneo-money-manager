@@ -4,7 +4,7 @@ import {
   Text,
   View,
   StyleSheet,
-  Font,
+  Font
 } from "@react-pdf/renderer";
 
 

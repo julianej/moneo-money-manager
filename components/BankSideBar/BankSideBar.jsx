@@ -204,7 +204,6 @@ export default function BankSideBar({
             selected={selectedAccount === account._id}
             disabled={isBankFormOpen}
              onClick={() => setSelectedAccount(account._id)}
-            // onClick={() => setSelectedAccount(account._id)}
           />
         ))}
       </AccountList>

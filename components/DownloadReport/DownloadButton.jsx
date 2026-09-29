@@ -1,7 +1,7 @@
 import { pdf } from "@react-pdf/renderer";
 import styled from "styled-components";
-import { Download } from "lucide-react";
-import { useState } from "react";
+import { Download} from "lucide-react";
+// import { useState } from "react";
 
 import MoneyManagerReport from "./MoneyManagerReport";
 
@@ -26,48 +26,30 @@ const DownloadIcon = styled.span`
   padding: 0.25rem;
 `;
 
-const DownloadText = styled.span`
-  display: inline;
-
-  @media (min-width: 740px) {
-    display: none;
-  }
-`;
-
-
 export default function DownloadButton({
   transactions = [],
   account,
+  setPdfLoading,
 }) {
-  const [loading, setLoading] = useState(false);
+  // const [pdfLoading, setLoading] = useState(false);
 
   async function handleDownload() {
-    console.log("1. CLICK");
-    console.log("ACCOUNT IN TRANSACTION FILTER:", account);
 
-    setLoading(true);
+    setPdfLoading(true);
+
+    // set TimeOut
+    const startTime = Date.now();
+
+    // Give React one frame to render the loading overlay
+    await new Promise((resolve) => requestAnimationFrame(resolve));
 
     try {
-      console.log("2. BEFORE PDF");
-
-      console.log("PDF ACCOUNT:", account);
-      console.log(
-        "PDF ACCOUNT KEYS:",
-        account ? Object.keys(account) : "NO ACCOUNT"
-      );
-      console.log("PDF BANK:", account?.bank);
-      console.log("PDF NAME:", account?.name);
-      console.log("PDF IBAN:", account?.iban);
-      console.log("PDF BIC:", account?.bic);
-
       const blob = await pdf(
         <MoneyManagerReport
           transactions={transactions}
           account={account}
         />
       ).toBlob();
-
-      console.log("3. AFTER PDF", blob);
 
       const url = URL.createObjectURL(blob);
 
@@ -81,24 +63,25 @@ export default function DownloadButton({
 
       URL.revokeObjectURL(url);
 
-      console.log("4. DOWNLOAD DONE");
     } catch (error) {
-      console.error("PDF ERROR:", error);
     } finally {
-      console.log("5. FINALLY");
-      setLoading(false);
-    }
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, 800 - elapsed);
+
+    setTimeout(() => {
+      setPdfLoading(false);
+    }, remaining);
   }
+}
 
   return (
     <PDFDownloadButton
       type="button"
       onClick={handleDownload}
-      disabled={loading}
-    > <DownloadIcon><Download size={18} /></DownloadIcon>
-       <DownloadText>
-        {loading ? "Preparing..." : " "}
-      </DownloadText>
+    > 
+      <DownloadIcon>
+        <Download size={18} />
+      </DownloadIcon>
     </PDFDownloadButton>
   );
 }
