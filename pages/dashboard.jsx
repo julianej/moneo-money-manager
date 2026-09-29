@@ -351,7 +351,26 @@ function handleAccountsClick() {
 
 
   const selectedAccountData = accounts.find(
-  (account) => account._id === selectedAccount
+  (account) => String(account._id) === String(selectedAccount)
+);
+
+console.log("ACCOUNTS:", accounts);
+console.log("SELECTED ACCOUNT:", selectedAccount);
+console.log(
+  "SELECTED ACCOUNT TYPE:",
+  typeof selectedAccount
+);
+console.log(
+  "FIRST ACCOUNT ID:",
+  accounts[0]?._id
+);
+console.log(
+  "FIRST ACCOUNT ID TYPE:",
+  typeof accounts[0]?._id
+);
+console.log(
+  "SELECTED ACCOUNT DATA:",
+  selectedAccountData
 );
 
 
@@ -361,14 +380,14 @@ function handleAccountsClick() {
       {message && <Toast>{message}</Toast>}
 
       <SidebarWrapper>
-        <BankSideBar
-            accounts={accounts}
-            selectedAccount={selectedAccount}
-            setSelectedAccount={handleAccountSelect}
-            onAddAccount={handleAddAccount}
-            isBankFormOpen={isBankFormOpen}
-            isMenuOpen={isMenuOpen}
-            />
+      <BankSideBar
+          accounts={accounts}
+          selectedAccount={selectedAccount}
+          setSelectedAccount={handleAccountSelect}
+          onAddAccount={handleAddAccount}
+          isBankFormOpen={isBankFormOpen}
+          isMenuOpen={isMenuOpen}
+        />
       </SidebarWrapper>
 
 
@@ -416,15 +435,17 @@ function handleAccountsClick() {
       />
 
       <TransactionFilter
-        transactions={data ?? []}
-        filteredTransactions={filteredTransactions}
-        selectedYear={selectedYear}
-        setSelectedYear={setSelectedYear}
-        selectedType={selectedType}
-        setSelectedType={setSelectedType}
-        selectedCategories={selectedCategories}
-        setSelectedCategories={setSelectedCategories}
-      />
+          transactions={data ?? []}
+          accounts={accounts}
+          selectedAccount={selectedAccountData}
+          filteredTransactions={filteredTransactions}
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+        />
 
       <AccountBalance
         transactions={filteredTransactions}

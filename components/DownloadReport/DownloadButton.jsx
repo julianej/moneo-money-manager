@@ -37,19 +37,34 @@ const DownloadText = styled.span`
 
 export default function DownloadButton({
   transactions = [],
+  account,
 }) {
   const [loading, setLoading] = useState(false);
 
   async function handleDownload() {
     console.log("1. CLICK");
+    console.log("ACCOUNT IN TRANSACTION FILTER:", account);
 
     setLoading(true);
 
     try {
       console.log("2. BEFORE PDF");
 
+      console.log("PDF ACCOUNT:", account);
+      console.log(
+        "PDF ACCOUNT KEYS:",
+        account ? Object.keys(account) : "NO ACCOUNT"
+      );
+      console.log("PDF BANK:", account?.bank);
+      console.log("PDF NAME:", account?.name);
+      console.log("PDF IBAN:", account?.iban);
+      console.log("PDF BIC:", account?.bic);
+
       const blob = await pdf(
-        <MoneyManagerReport transactions={transactions} />
+        <MoneyManagerReport
+          transactions={transactions}
+          account={account}
+        />
       ).toBlob();
 
       console.log("3. AFTER PDF", blob);

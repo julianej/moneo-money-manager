@@ -155,7 +155,6 @@ export default function TransactionList({
     <List>
       <h2>Your Transaction List</h2>
 
-
       {/* Empty State */}
       {transactions.length === 0 ? (
         <EmptyState>

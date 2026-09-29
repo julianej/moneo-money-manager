@@ -55,6 +55,7 @@ const FilterButton = styled.button`
 export default function TransactionFilter({
   transactions = [],
   filteredTransactions,
+  selectedAccount,
   selectedYear,
   setSelectedYear,
   selectedType,
@@ -137,8 +138,9 @@ useEffect(() => {
     <FilterWrapper>
         {/* ... / PDF DOWNLAOD */}
       <DownloadButton
-        transactions={filteredTransactions}
-      />
+          transactions={filteredTransactions}
+          account={selectedAccount}
+        />
        <FilterRow>
       {/* ==================== YEAR ==================== */}
       <FilterGroup>

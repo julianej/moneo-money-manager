@@ -48,6 +48,25 @@ transactionDate: {
   color: "#666666",
 },
 
+
+accountSection: {
+  marginBottom: 24,
+  paddingVertical: 16,
+  borderBottomWidth: 1,
+  borderBottomColor: "#eeeeee",
+},
+
+accountBank: {
+  fontSize: 12,
+  fontWeight: "bold",
+  marginBottom: 4,
+},
+
+accountName: {
+  fontSize: 10,
+  marginBottom: 8,
+},
+
 amount: {
   fontSize: 11,
   marginLeft: 20,
@@ -93,7 +112,8 @@ expensesAmount: {
 });
 
 export default function MoneyManagerReport({
-  transactions = [],
+  transactions = [], 
+  account,
 }) {
 
   // =========================
@@ -101,13 +121,11 @@ export default function MoneyManagerReport({
   // =========================
 
   const totalIncome = transactions
-    .filter(
-      (transaction) => transaction.type === "income"
+    .filter((transaction) => transaction.type === "income"
     )
-    .reduce(
-      (sum, transaction) =>
-        sum + Number(transaction.amount || 0),
-      0
+    .reduce((sum, transaction) =>
+        sum + Number(transaction.amount || 0), 
+    0 // initialValue
     );
 
   const totalExpenses = transactions
@@ -115,9 +133,10 @@ export default function MoneyManagerReport({
       (transaction) => transaction.type === "expense"
     )
     .reduce(
+      // (accumulator, currentValue)
       (sum, transaction) =>
         sum + Math.abs(Number(transaction.amount || 0)),
-      0
+      0 // initialValue
     );
 
   const balance = totalIncome - totalExpenses;
@@ -134,13 +153,9 @@ export default function MoneyManagerReport({
         style={styles.page}
       >
 
-        <Text style={styles.title}>
-          Money Manager
-        </Text>
+        <Text style={styles.title}>Money Manager</Text>
 
-
-       <View style={styles.summary}>
-
+     <View style={styles.summary}>
         {/* BALANCE */}
         <View style={styles.balance}>
           <Text style={styles.summaryLabel}>
@@ -152,9 +167,8 @@ export default function MoneyManagerReport({
           </Text>
         </View>
 
-        {/* INCOME + EXPENSES */}
+         {/* INCOME + EXPENSES */}
         <View style={styles.incomeExpenses}>
-
           <View style={styles.summaryItem}>
             <Text style={styles.summaryLabel}>
               Income
@@ -174,24 +188,28 @@ export default function MoneyManagerReport({
               {totalExpenses.toFixed(2)} €
             </Text>
           </View>
-
         </View>
-
       </View>
 
+        {/* ACCOUNT */}
+        {account ? (
+          <View style={styles.accountSection}>
+            <Text>Bankname: {account.bank}</Text>
+            <Text>Accountname: {account.name}</Text>
+            <Text>IBAN: {account.iban}</Text>
+            <Text>BIC: {account.bic}</Text>
+          </View>
+        ) : (
+          null
+        )}
 
         {/* TRANSACTIONS */}
-
         {transactions.map((transaction) => (
           <View
             key={transaction._id}
             style={styles.transaction}
           >
-
-            {/* LEFT */}
-
             <View style={styles.transactionInfo}>
-
               <Text style={styles.transactionTitle}>
                 {transaction.title}
               </Text>
@@ -200,16 +218,10 @@ export default function MoneyManagerReport({
                 {transaction.category || "No category"}
                 {" · "}
                 {transaction.date
-                  ? new Date(
-                      transaction.date
-                    ).toLocaleDateString("de-DE")
+                  ? new Date(transaction.date).toLocaleDateString("de-DE")
                   : "No date"}
               </Text>
-
             </View>
-
-
-            {/* RIGHT */}
 
             <Text
               style={
@@ -220,7 +232,6 @@ export default function MoneyManagerReport({
             >
               {Number(transaction.amount || 0).toFixed(2)} €
             </Text>
-
           </View>
         ))}
 
