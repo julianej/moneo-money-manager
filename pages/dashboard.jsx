@@ -193,6 +193,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -295,6 +296,8 @@ function handleAccountsClick() {
 
 
   const matchesFilter = (transaction) => {
+     const transactionDate = new Date(transaction.date);
+
     const matchesSearch =
     transaction.title
       .toLowerCase()
@@ -303,6 +306,10 @@ function handleAccountsClick() {
     const matchesYear =
     selectedYear === "all" ||
     new Date(transaction.date).getFullYear().toString() === selectedYear;
+
+    const matchesMonth =
+    selectedMonth === "all" ||
+    transactionDate.getMonth() === Number(selectedMonth);
 
     const matchesType =
       selectedType === "all" ||
@@ -315,6 +322,7 @@ function handleAccountsClick() {
     return (
       matchesSearch &&
       matchesYear &&
+      matchesMonth &&
       matchesType &&
       matchesCategory
     );
@@ -423,6 +431,8 @@ function handleAccountsClick() {
           filteredTransactions={filteredTransactions}
           selectedYear={selectedYear}
           setSelectedYear={setSelectedYear}
+          selectedMonth={selectedMonth}
+          setSelectedMonth={setSelectedMonth}
           selectedType={selectedType}
           setSelectedType={setSelectedType}
           selectedCategories={selectedCategories}
