@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { LoaderCircle } from "lucide-react";
 import styled from "styled-components";
-import CsvUpload from "../CsvUpload/CsvUpload";
 import TransactionCard from "../TransactionCard/TransactionCard";
 import TransactionForm from "../TransactionForm/TransactionForm";
+
+// new IMPORTS
+import CsvUpload from "../CsvUpload/CsvUpload";
+import CsvPreview from "../CsvUpload/CsvPreview";
 
 import DialogPopup from "../DialogPopup/DialogPopup";
 
@@ -142,6 +145,9 @@ export default function TransactionList({
   const [deletingId, setDeletingId] = useState(null);
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
 
+  // new USESTATE
+  const [importedTransactions, setImportedTransactions] = useState([]);
+
 
   function handleEdit(transaction) {
     setEditingTransaction(transaction);
@@ -200,19 +206,37 @@ return (
         <h2>Your Transaction List</h2>
 
       {/* Empty State */}
-          {transactions.length === 0 ? (
-            <>
-              <EmptyState>
-                No transactions yet.
-              </EmptyState>
+       {transactions.length === 0 ? (
+          <>
+            <EmptyState>
+              No transactions yet.
+            </EmptyState>
+       {/* CSV UPLOAD */}
+            <CsvUpload
+              onFileSelect={(csvData) => {
+                setImportedTransactions(csvData);
+              }}
+            />
 
-              <CsvUpload
-                onFileSelect={(file) => {
-                  console.log("Selected CSV:", file);
-                }}
-              />
-            </>
-          ) : (
+            <CsvPreview
+              transactions={importedTransactions}
+              onCategoryChange={(index, category) => {
+                setImportedTransactions((currentTransactions) =>
+                  currentTransactions.map((transaction, transactionIndex) =>
+                    transactionIndex === index
+                      ? {
+                          ...transaction,
+                          category,
+                        }
+                      : transaction
+                  )
+                );
+              }}
+              // onImport={handleImport}
+              // onCancel={handleCancelImport}
+            />
+          </>
+        ) : (
           transactions.map((transaction) => (
             <CardWrapper
               key={transaction._id}

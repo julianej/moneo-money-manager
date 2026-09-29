@@ -46,33 +46,47 @@ const requiredHeaders = [
   "amount",
 ];
 
-export default function CsvUpload({ onFileSelect }) {
+export default function CsvUpload({ onFileSelect }) { //   <CsvUpload onFileSelect={(transactions) => {} >
   const fileInputRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function handleFileSelection(event) {
+    setLoading(true);
+    // INPUT event from type
     const file = event.target.files[0];
+    console.log("event:", event);
+    console.log("files:", event.target.files);
+    console.log("file:", event.target.files[0]);
 
-    if (!file) return;
-
-    setErrorMessage("");
-
-    const isCsv = file.name.toLowerCase().endsWith(".csv");
-
-    if (!isCsv) {
-      setErrorMessage("Please select a CSV file.");
-      return;
-    }
+// read FILE
+//   const reader = new FileReader();
+//   reader.onload = (evt) => {
+//     console.log(evt.target.result);
+//   };
 
     const reader = new FileReader();
-
     reader.onload = (event) => {
-      const csvText = event.target.result;
+         console.log(event.target.result);
+        const csvText = event.target.result;
+
+    // TRANSFORM COLUMNS
+    //     CSV text
+    //    ↓ split("\n")
+    //     row 1
+    //     row 2
+    //     row 3
 
       const rows = csvText
-        .trim()
+    //  "Hello World ".trim()
+        .trim() //whitespace
+
+    //  const text = "Hello World";
+    //  const result = text.split(" ");
+    //  ["Hello", "World"]
         .split("\n")
         .map((row) => row.split(";"));
+    // ["date", "title", "amount"]
 
       const [headers, ...dataRows] = rows;
 
@@ -80,8 +94,8 @@ export default function CsvUpload({ onFileSelect }) {
         header.trim().toLowerCase()
       );
 
-        console.log("CSV headers:", headers);
-        console.log("Clean headers:", cleanHeaders);
+    console.log("CSV headers:", headers);
+    console.log("Clean headers:", cleanHeaders);
 
       const hasRequiredHeaders = requiredHeaders.every((header) =>
         cleanHeaders.includes(header)
@@ -89,9 +103,9 @@ export default function CsvUpload({ onFileSelect }) {
 
       if (!hasRequiredHeaders) {
         setErrorMessage(
-          "CSV must contain date, title and amount."
-        );
-        return;
+          "CSV must contain date, title and amount.");
+            setLoading(false);
+             return;
       }
 
       const transactions = dataRows.map((row) => {
@@ -113,10 +127,10 @@ export default function CsvUpload({ onFileSelect }) {
       });
 
       onFileSelect(transactions);
+      setLoading(false);
     };
 
     reader.readAsText(file);
-
     event.target.value = "";
   }
 
@@ -125,17 +139,22 @@ export default function CsvUpload({ onFileSelect }) {
       <UploadButton
         type="button"
         onClick={() => fileInputRef.current?.click()}
-      >
-        <Upload size={16} />
-        Upload CSV
-      </UploadButton>
+        >
+        {loading ? (
+            <span>Reading CSV...</span>
+        ) : (
+            <span>Upload CSV</span>
+        )}
+        </UploadButton>
 
-      <HiddenFileInput
-        ref={fileInputRef}
-        type="file"
-        accept=".csv,text/csv"
-        onChange={handleFileSelection}
-      />
+        {/*INPUT */}
+        <HiddenFileInput
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            // When the input detects a change I trigger a handleFileUpload function.
+            onChange={handleFileSelection}
+        />
 
       {errorMessage ? (
         <ErrorMessage>{errorMessage}</ErrorMessage>
@@ -144,3 +163,6 @@ export default function CsvUpload({ onFileSelect }) {
   );
 }
 
+// https://dev.to/patriciosalazar/how-i-added-csv-importing-in-my-react-nodejs-project-2mij
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file
+// https://levelup.gitconnected.com/csv-parsing-in-react-8d2a05f844f3
