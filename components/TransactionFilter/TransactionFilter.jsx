@@ -244,7 +244,7 @@ useEffect(() => {
 </FilterGroup>
 
 {/* ==================== TYPE ==================== */}
-       <FilterGroup>
+<FilterGroup>
   <FilterLabel htmlFor="type-filter">
     Type
   </FilterLabel>

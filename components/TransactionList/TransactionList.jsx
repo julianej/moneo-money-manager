@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { LoaderCircle } from "lucide-react";
 import styled from "styled-components";
+import CsvUpload from "../CsvUpload/CsvUpload";
 import TransactionCard from "../TransactionCard/TransactionCard";
 import TransactionForm from "../TransactionForm/TransactionForm";
 
@@ -198,12 +199,20 @@ return (
       <List>
         <h2>Your Transaction List</h2>
 
-        {/* Empty State */}
-        {transactions.length === 0 ? (
-          <EmptyState>
-            No transactions yet.
-          </EmptyState>
-        ) : (
+      {/* Empty State */}
+          {transactions.length === 0 ? (
+            <>
+              <EmptyState>
+                No transactions yet.
+              </EmptyState>
+
+              <CsvUpload
+                onFileSelect={(file) => {
+                  console.log("Selected CSV:", file);
+                }}
+              />
+            </>
+          ) : (
           transactions.map((transaction) => (
             <CardWrapper
               key={transaction._id}
