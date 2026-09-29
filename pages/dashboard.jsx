@@ -35,7 +35,7 @@ const Main = styled.main`
 
 const MainContent = styled.div`
   width: 100%;
-  padding: 40px 20px;
+  padding: 0 20px;
   margin: 0 auto;
    @media (min-width: 740px) {
    width: 70%;
@@ -58,6 +58,7 @@ const MenuProfileWrapper = styled.div`
     @media (min-width: 740px) {
     width: 100%;
     height: 63px;
+    margin-top: 5rem;
   }
 `;
 
@@ -95,6 +96,7 @@ const Title = styled.h1`
     background-color: white;
     padding: 3rem;
     text-align: center; 
+    border-radius: 1rem;
 `;
 
 
@@ -199,6 +201,8 @@ export default function Dashboard() {
 
   const [isAddingAccount, setIsAddingAccount] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
+  const [pdfLoading, setPdfLoading] = useState(false);
 
 
   // ====================
@@ -349,9 +353,8 @@ function handleAccountsClick() {
 
 
   const selectedAccountData = accounts.find(
-  (account) => account._id === selectedAccount
+  (account) => String(account._id) === String(selectedAccount)
 );
-
 
   return (
     <Main>
@@ -359,14 +362,14 @@ function handleAccountsClick() {
       {message && <Toast>{message}</Toast>}
 
       <SidebarWrapper>
-        <BankSideBar
-            accounts={accounts}
-            selectedAccount={selectedAccount}
-            setSelectedAccount={handleAccountSelect}
-            onAddAccount={handleAddAccount}
-            isBankFormOpen={isBankFormOpen}
-            isMenuOpen={isMenuOpen}
-            />
+      <BankSideBar
+          accounts={accounts}
+          selectedAccount={selectedAccount}
+          setSelectedAccount={handleAccountSelect}
+          onAddAccount={handleAddAccount}
+          isBankFormOpen={isBankFormOpen}
+          isMenuOpen={isMenuOpen}
+        />
       </SidebarWrapper>
 
 
@@ -386,7 +389,7 @@ function handleAccountsClick() {
             isLoggedIn={true}
             listItems={profileItems}
             />
-    </MenuProfileWrapper>
+      </MenuProfileWrapper>
 
     {/* BANK ACCOUNT SPINNER */}
     {isAddingAccount || isDeletingAccount ? (
@@ -414,14 +417,19 @@ function handleAccountsClick() {
       />
 
       <TransactionFilter
-        transactions={data ?? []}
-        selectedYear={selectedYear}
-        setSelectedYear={setSelectedYear}
-        selectedType={selectedType}
-        setSelectedType={setSelectedType}
-        selectedCategories={selectedCategories}
-        setSelectedCategories={setSelectedCategories}
-      />
+          transactions={data ?? []}
+          accounts={accounts}
+          selectedAccount={selectedAccountData}
+          filteredTransactions={filteredTransactions}
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+          setPdfLoading={setPdfLoading}
+
+        />
 
       <AccountBalance
         transactions={filteredTransactions}
@@ -458,6 +466,7 @@ function handleAccountsClick() {
         onDeleteAccount={handleDeleteAccount}
         mutate={mutate}
         showToast={showToast}
+        pdfLoading={pdfLoading}
       />
     </>
   ) : (

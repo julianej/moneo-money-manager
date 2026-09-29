@@ -13,7 +13,7 @@ const FloatingNavigationWrapper = styled.nav`
     width: auto;
     /* text-align: center; */
     margin: 0 auto 2rem;
-    bottom: 1rem;
+    bottom: -1rem;
     display: flex;
     flex-direction: row;
     align-items: center;

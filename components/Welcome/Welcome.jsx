@@ -18,14 +18,11 @@ const WelcomeWrapper = styled.section`
   border: 2px solid black;
   border-radius: 1rem;
   width: 100%;
-  font-size: 2rem;
 
-  @media (min-width: 740px) {
-   width: 100%;
-   padding-right: 40%;
-   font-size: 3rem;
+  p {
+    font-size: 2rem;
+    line-height: 1.5;
   }
-
 
   h1 {
     font-size: 2rem;
@@ -37,15 +34,18 @@ const WelcomeWrapper = styled.section`
       font-size: 2rem;
     }
 
-  @media (min-width: 740px) {
+
+   @media (min-width: 740px) {
+   width: 100%;
+   padding-right: 40%;
+   font-size: 3rem; }
+
+    @media (min-width:1024px) {
+
     h2 {
-      font-size: 3rem;
+      font-size: 4rem;
     }}
 
-  p {
-    font-size: 18px;
-    line-height: 1.5;
-  }
 
   /* DASHBOARD */
   ${({ $variant }) =>
@@ -59,17 +59,9 @@ const WelcomeWrapper = styled.section`
 
     @media (min-width: 740px) {
       h1 {
-        font-size: 1rem;}
-      h2 {
-       font-size: 4rem;
-       }
-
-        font-size: 3rem;
-        width: 100%;
+        font-size: 1rem;
         padding-right: 0;
         }
-      width: 100%;
-      padding: 2.5rem;
 
     `}
 

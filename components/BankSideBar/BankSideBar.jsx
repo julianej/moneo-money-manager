@@ -14,12 +14,15 @@ const Title = styled.h1`
   font-family: "Silkscreen", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 4rem;
+  font-size: 3.5rem;
   text-transform: uppercase;
 
   margin: 0 0 2rem;
-
   line-height: 3rem;
+
+  @media (min-width: 740px) {
+      font-size: 3.5rem;
+  }
 `;
 
 const SidebarHeader = styled.div`
@@ -48,14 +51,13 @@ const CollapseButton = styled.button`
   border-radius: 50%;
 
   background: transparent;
-  color: inherit;
+  color: #6e6d6d;;
 
   cursor: pointer;
 
   @media (min-width: 740px) {
     display: none;
-  }
-`;
+  }`;
 
 const AccountList = styled.div`
   display: flex;
@@ -201,7 +203,7 @@ export default function BankSideBar({
             account={account}
             selected={selectedAccount === account._id}
             disabled={isBankFormOpen}
-            onClick={() => setSelectedAccount(account._id)}
+             onClick={() => setSelectedAccount(account._id)}
           />
         ))}
       </AccountList>

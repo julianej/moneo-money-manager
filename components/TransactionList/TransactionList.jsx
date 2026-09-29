@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import styled from "styled-components";
 import TransactionCard from "../TransactionCard/TransactionCard";
 import TransactionForm from "../TransactionForm/TransactionForm";
@@ -25,8 +26,14 @@ const CardWrapper = styled.div`
     `}
 `;
 
+const ListWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
 const List = styled.section`
   max-height: 500px;
+  position: relative;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -79,6 +86,41 @@ const DeleteAccountButton = styled.button`
 `;
 
 
+const LoadingOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(2px);
+`;
+
+const Spinner = styled(LoaderCircle)`
+  animation: spin 0.8s linear infinite;
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const DownloadText = styled.span`
+  display: inline;
+`;
+
+
+
 // ====================
 // COMPONENT
 // ====================
@@ -90,6 +132,7 @@ export default function TransactionList({
   showToast,
   selectedAccount,
   onDeleteAccount,
+  pdfLoading,
 }) {
 
   const [editingTransaction, setEditingTransaction] = useState(null);
@@ -149,78 +192,96 @@ export default function TransactionList({
   }
 }
 
-  return (
-
+return (
   <>
-    <List>
-      <h2>Your Transaction List</h2>
+    <ListWrapper>
+      <List>
+        <h2>Your Transaction List</h2>
 
-
-      {/* Empty State */}
-      {transactions.length === 0 ? (
-        <EmptyState>
-          No transactions yet.
-        </EmptyState>
-      ) : (
-        transactions.map((transaction) => (
-          <CardWrapper
-            key={transaction._id}
-            $isEditing={editingTransaction?._id === transaction._id}
-          >
-            <TransactionCard
-              transaction={transaction}
-              onEdit={() => handleEdit(transaction)}
-              isSelected={editingTransaction?._id === transaction._id}
-              isHighlighted={highlightedId === transaction._id}
-              onDelete={() => handleDeleteClick(transaction)}
-              isDeleting={deletingId === transaction._id}
-            />
-
-            {editingTransaction?._id === transaction._id && (
-             <TransactionForm
-                transaction={editingTransaction}
-                selectedAccount={selectedAccount}
+        {/* Empty State */}
+        {transactions.length === 0 ? (
+          <EmptyState>
+            No transactions yet.
+          </EmptyState>
+        ) : (
+          transactions.map((transaction) => (
+            <CardWrapper
+              key={transaction._id}
+              $isEditing={editingTransaction?._id === transaction._id}
+            >
+              <TransactionCard
+                transaction={transaction}
+                onEdit={() => handleEdit(transaction)}
+                isSelected={editingTransaction?._id === transaction._id}
+                isHighlighted={highlightedId === transaction._id}
                 onDelete={() => handleDeleteClick(transaction)}
-                onCancel={handleCancel}
-                onSave={handleSave}
-                mutate={mutate}
-                showToast={showToast}
+                isDeleting={deletingId === transaction._id}
               />
-            )}
-          </CardWrapper>
-        ))
-      )}
-    </List>
-     <DeleteAccountButton
-          type="button"
-          onClick={() => setShowDeleteAccountPopup(true)}
-          aria-label="Delete bank account"
-          title="Delete bank account"
-        >
-          <Trash2 size={18} />
 
-          <span>
-            Delete the Bank Account 
-          </span>
-        </DeleteAccountButton>
-
-        {showDeleteAccountPopup && (
-          <DialogPopup
-            title="Delete bank account?"
-            message="This will permanently delete the bank account and all of its transactions."
-            onCancel={() => setShowDeleteAccountPopup(false)}
-            onDelete={async () => {
-              await onDeleteAccount();
-              setShowDeleteAccountPopup(false);
-            }}
-          />
+              {editingTransaction?._id === transaction._id && (
+                <TransactionForm
+                  transaction={editingTransaction}
+                  selectedAccount={selectedAccount}
+                  onDelete={() => handleDeleteClick(transaction)}
+                  onCancel={handleCancel}
+                  onSave={handleSave}
+                  mutate={mutate}
+                  showToast={showToast}
+                />
+              )}
+            </CardWrapper>
+          ))
         )}
-      {deletingTransactionPopup && (
-        <DialogPopup
-          transaction={deletingTransactionPopup}
-          onCancel={handleCancelDelete}
-          onDelete={() => handleConfirmDelete(deletingTransactionPopup._id)}
-        />
+      </List>
+
+      {/* PDF loading overlay */}
+      {pdfLoading ? (
+        <LoadingOverlay>
+          <Spinner size={32} />
+
+          <DownloadText>
+            Preparing PDF download...
+          </DownloadText>
+        </LoadingOverlay>
+      ) : (
+        null
       )}
+    </ListWrapper>
+
+    {/* Delete account stays outside the overlay */}
+    <DeleteAccountButton
+      type="button"
+      onClick={() => setShowDeleteAccountPopup(true)}
+      aria-label="Delete bank account"
+      title="Delete bank account"
+    >
+      <Trash2 size={18} />
+
+      <span>
+        Delete the Bank Account
+      </span>
+    </DeleteAccountButton>
+
+    {showDeleteAccountPopup && (
+      <DialogPopup
+        title="Delete bank account?"
+        message="This will permanently delete the bank account and all of its transactions."
+        onCancel={() => setShowDeleteAccountPopup(false)}
+        onDelete={async () => {
+          await onDeleteAccount();
+          setShowDeleteAccountPopup(false);
+        }}
+      />
+    )}
+
+    {deletingTransactionPopup && (
+      <DialogPopup
+        transaction={deletingTransactionPopup}
+        onCancel={handleCancelDelete}
+        onDelete={() =>
+          handleConfirmDelete(deletingTransactionPopup._id)
+        }
+      />
+    )}
   </>
 )};

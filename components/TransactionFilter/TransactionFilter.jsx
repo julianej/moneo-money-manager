@@ -1,13 +1,16 @@
 import styled from "styled-components";
+import DownloadButton from "../DownloadReport/DownloadButton";
+
 import { useEffect, useState } from "react";
 
 const FilterWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1rem;
   padding: 2rem 0;
+  overflow: scroll;
 
-    @media (min-width: 739px) {
+  @media (min-width: 739px) {
         flex-direction: row;
   }
 `;
@@ -16,7 +19,7 @@ const FilterRow = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 `;
 
 const FilterGroup = styled.div`
@@ -51,6 +54,9 @@ const FilterButton = styled.button`
 
 export default function TransactionFilter({
   transactions = [],
+  filteredTransactions,
+  setPdfLoading,
+  selectedAccount,
   selectedYear,
   setSelectedYear,
   selectedType,
@@ -131,6 +137,13 @@ useEffect(() => {
 
   return (
     <FilterWrapper>
+        {/* ... / PDF DOWNLAOD */}
+      <DownloadButton
+          transactions={filteredTransactions}
+          account={selectedAccount}
+          setPdfLoading={setPdfLoading}
+          selectedType={selectedType}
+        />
        <FilterRow>
 {/* ==================== YEAR ==================== */}
       <FilterGroup>
@@ -182,7 +195,7 @@ useEffect(() => {
           ))}
        </FilterGroup>
 
-    {/* ==================== TYPE ==================== */}
+{/* ==================== TYPE ==================== */}
         <FilterGroup>
             <FilterLabel>Type</FilterLabel>
 
@@ -209,7 +222,7 @@ useEffect(() => {
         </FilterGroup>
     </FilterRow>
 
-       {/* ==================== ROW 2: CATEGORY ==================== */}
+{/* ==================== ROW 2: CATEGORY ==================== */}
 <FilterRow>
   <FilterGroup>
 

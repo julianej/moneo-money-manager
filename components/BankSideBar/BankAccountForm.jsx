@@ -19,12 +19,12 @@ const Form = styled.form`
 
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
   z-index: 7777;
 
   @media (min-width: 740px) {
     width: 50%;
-    left: 0%;
+    left: 25%;
   }
 `;
 

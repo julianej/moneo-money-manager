@@ -92,8 +92,8 @@ export default function MenuProfile({
 
 const MenuProfileWrapper = styled.div`
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 2rem;
+  right: 2rem;
 
   z-index: 1000;
 
@@ -104,6 +104,7 @@ const MenuProfileWrapper = styled.div`
   @media (min-width: 740px) {
     top: 3rem;
     right: 5rem;
+    margin-top: 2.5rem;
   }
 `;
 
