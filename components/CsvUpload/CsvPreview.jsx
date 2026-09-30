@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
 import { Trash2 } from "lucide-react";
+import { cleanTitle, isValidTitle } from "../../utils/cleanTitle";
 
 const TransactionCsvHeader = styled.div`
   display: flex;
@@ -76,15 +77,81 @@ const EmptyMessage = styled.p`
   margin: 0;
 `;
 
+
+
 export default function CsvPreview({
   transactions,
   //SELECETD ACCOUNT
   selectedAccount,
   onCategoryChange,
   onTitleChange,
-  onImport,
   onCancel,
+  mutate,
+  showToast
 }) {
+
+async function handleSubmitImport() {
+  try {
+    const hasMissingCategory = transactions.some(
+      (transaction) => transaction.category === "set-category"
+    );
+
+    if (hasMissingCategory) {
+      showToast("Please select a category for every transaction.");
+      return;
+    }
+
+    const hasInvalidTitle = transactions.some(
+      (transaction) => !isValidTitle(transaction.title)
+    );
+
+    if (hasInvalidTitle) {
+      showToast(
+        "Please check your transaction titles. Titles must contain at least 3 characters."
+      );
+      return;
+    }
+
+    for (const transaction of transactions) {
+      const cleanedTransaction = {
+        ...transaction,
+        title: cleanTitle(transaction.title),
+      };
+
+      console.log("SENDING IMPORT:", cleanedTransaction);
+
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cleanedTransaction),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+
+        console.error(
+          "IMPORT API ERROR:",
+          response.status,
+          errorText
+        );
+
+        throw new Error(errorText);
+      }
+    }
+
+    await mutate();
+
+    showToast("Transactions imported successfully");
+
+    onCancel();
+  } catch (error) {
+    console.error("IMPORT ERROR:", error);
+    showToast(`Import failed: ${error.message}`);
+  }
+}
+
   if (!transactions.length) {
     return (
       <EmptyMessage>
@@ -108,7 +175,7 @@ export default function CsvPreview({
 
         <ImportButton
           type="button"
-          onClick={onImport}
+           onClick={handleSubmitImport}
         >
           Import All
         </ImportButton>

@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"; 
 import Papa from "papaparse";
 import styled from "styled-components";
+import { cleanTitle } from "../../utils/cleanTitle";
 
 const UploadWrapper = styled.div`
   display: flex;
@@ -46,6 +47,7 @@ const requiredHeaders = [
   "amount",
 ];
 
+
 export default function CsvUpload({ onFileSelect }) {
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -87,14 +89,14 @@ export default function CsvUpload({ onFileSelect }) {
         }
 
         const transactions = results.data.map((row) => {
-          const amount = Number(row.amount);
+          const amount = parseAmount(row.amount);
 
           return {
-            date: row.date,
-            title: row.title,
+            date: parseDate(row.date),
+            title: cleanTitle(row.title),
             amount,
             type: amount < 0 ? "expense" : "income",
-             category: "set-category",
+            category: "set-category",
           };
         });
 

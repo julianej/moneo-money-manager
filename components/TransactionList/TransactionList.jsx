@@ -124,7 +124,6 @@ const DownloadText = styled.span`
 `;
 
 
-
 // ====================
 // COMPONENT
 // ====================
@@ -202,8 +201,8 @@ export default function TransactionList({
   }
 
   // CREATE NEW UPLOAD TRANSACTION LIST
-  async function handleSubmitImport() {
-    try {
+ async function handleSubmitImport() {
+  try {
     const hasMissingCategory = importedTransactions.some(
       (transaction) => transaction.category === "set-category"
     );
@@ -224,6 +223,20 @@ export default function TransactionList({
       return;
     }
 
+    for (const transaction of importedTransactions) {
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transaction),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to import transaction: ${transaction.title}`);
+      }
+    }
+
     await mutate();
 
     setImportedTransactions([]);
@@ -231,7 +244,7 @@ export default function TransactionList({
     showToast("Transactions imported successfully");
   } catch (error) {
     console.error("IMPORT ERROR:", error);
-    showToast("Could not import transactions");
+    showToast(`Import failed: ${error.message}`);
   }
 }
 
@@ -273,8 +286,10 @@ return (
                         )
                       );
                     }}
-                    onImport={handleSubmitImport}
+                    // onImport={handleSubmitImport}
                     onCancel={() => setImportedTransactions([])}
+                    mutate={mutate}
+                    showToast={showToast}
                   />
               ) : (
                 <CsvUpload
