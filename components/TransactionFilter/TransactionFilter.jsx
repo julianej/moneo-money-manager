@@ -141,12 +141,6 @@ const [showAllCategories, setShowAllCategories] = useState(false);
 // CATEGORIES
 // ====================
 
-// const { data: categories = [] } = useSWR(
-//   selectedAccount
-//     ? `/api/categories?account=${selectedAccount}`
-//     : null
-// );
-
   const availableCategories = [
     ...new Set(
       transactions
@@ -179,10 +173,6 @@ function toggleCategory(category) {
   });
 }
 
-// First 4 categories
-  const visibleCategories = showAllCategories
-    ? availableCategories
-    : availableCategories.slice(0, 4);
 
 // ====================
 // RESET CATEGORY

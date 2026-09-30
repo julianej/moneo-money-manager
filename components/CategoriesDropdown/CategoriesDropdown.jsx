@@ -14,9 +14,7 @@ export default function CategoryDropdown({
         selectedAccount ? `/api/categories?account=${selectedAccount}`
               : null
         );
-    console.log("selectedAccount:", selectedAccount);
-  console.log("categories:", categories);
-
+        
   if (error) {
     return <p>Could not load categories.</p>;
   }

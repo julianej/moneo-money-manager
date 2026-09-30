@@ -14,7 +14,7 @@ export default async function handler(request, response) {
 
       //That returns all categories from all bank accounts.
       //const categories = await Categories.find();
-      
+
       const categories = await Categories.find(filter);
 
       return response.status(200).json(categories);
@@ -22,11 +22,6 @@ export default async function handler(request, response) {
 
     if (request.method === "POST") {
     const { name, account } = request.body;
-
-      console.log("CATEGORY REQUEST:", {
-    name,
-    account,
-  });
 
     const newCategory = await Categories.create({
       name,
