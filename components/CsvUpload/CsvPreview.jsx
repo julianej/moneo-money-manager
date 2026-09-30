@@ -1,6 +1,15 @@
 
 import styled from "styled-components";
 import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
+import { Trash2 } from "lucide-react";
+
+const TransactionCsvHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+`;
+
 
 const PreviewWrapper = styled.div`
   width: 100%;
@@ -23,8 +32,44 @@ const TransactionRow = styled.div`
   border-bottom: 1px solid #e5e5e5;
 `;
 
-const Select = styled.select`
-  padding: 0.5rem;
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+`;
+
+const CancelButton = styled.button`
+  padding: 0.7rem 1.2rem;
+
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+
+  background: grey;
+  color: #000;
+
+  cursor: pointer;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+`;
+
+const ImportButton = styled.button`
+  padding: 0.7rem 1.2rem;
+
+  border: 1px solid #000;
+  border-radius: 0.5rem;
+  min-width: 40%;
+
+  background: #000;
+  color: white;
+
+  cursor: pointer;
+
+  &:hover {
+    background: #333;
+  }
 `;
 
 const EmptyMessage = styled.p`
@@ -34,6 +79,9 @@ const EmptyMessage = styled.p`
 export default function CsvPreview({
   transactions,
   onCategoryChange,
+  onTitleChange,
+  onImport,
+  onCancel,
 }) {
   if (!transactions.length) {
     return (
@@ -46,9 +94,25 @@ export default function CsvPreview({
   return (
     <PreviewWrapper>
       <PreviewHeader>
+        <TransactionCsvHeader>
         {transactions.length} transactions ready to Import
-        </PreviewHeader>
+         <ButtonWrapper>
+        <CancelButton
+          type="button"
+          onClick={onCancel}
+        >
+           <Trash2 size={18} />
+        </CancelButton>
 
+        <ImportButton
+          type="button"
+          onClick={onImport}
+        >
+          Import All
+        </ImportButton>
+      </ButtonWrapper>
+      </TransactionCsvHeader>
+      </PreviewHeader>
       <TransactionRow>
         <strong>Date</strong>
         <strong>Title</strong>
@@ -60,12 +124,18 @@ export default function CsvPreview({
       {transactions.map((transaction, index) => (
         <TransactionRow key={index}>
           <span>{transaction.date}</span>
-          <span>{transaction.title}</span>
+          <input
+            type="text"
+              value={transaction.title || ""}
+            onChange={(event) =>
+              onTitleChange(index, event.target.value)
+            }
+          />
           <span>{transaction.amount.toFixed(2)} </span>
           <span>{transaction.type}</span>
          
           <CategoryDropdown
-            value={transaction.category || ""}
+            value={transaction.category || " " }
             onChange={(event) =>
                 onCategoryChange(index, event.target.value)
             }

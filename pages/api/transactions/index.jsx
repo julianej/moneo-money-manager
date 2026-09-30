@@ -37,7 +37,7 @@ export default async function handler(request, response) {
     console.error(error);
 
     return response.status(500).json({
-      error: "Internal server error",
+        error: error.message,
     });
   }
 }

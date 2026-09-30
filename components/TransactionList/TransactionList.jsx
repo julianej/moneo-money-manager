@@ -179,23 +179,59 @@ export default function TransactionList({
     setDeletingTransactionPopup(null);
     setDeletingId(id);
 
-  try {
-    const response = await fetch(`/api/transactions/${id}`, {
-      method: "DELETE",
-    });
+    //DELETE TRANSACTION
+    try {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: "DELETE",
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to delete transaction");
+      if (!response.ok) {
+        throw new Error("Failed to delete transaction");
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
+      setDeletingId(null);
+
+      await mutate();
+
+    } catch (error) {
+      console.error(error);
+      setDeletingId(null);
+    }
+  }
+
+  // CREATE NEW UPLOAD TRANSACTION LIST
+  async function handleSubmitImport() {
+    try {
+    const hasMissingCategory = importedTransactions.some(
+      (transaction) => transaction.category === "set-category"
+    );
+
+    if (hasMissingCategory) {
+      showToast("Please select a category for every transaction.");
+      return;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    const hasInvalidTitle = importedTransactions.some(
+      (transaction) => !isValidTitle(transaction.title)
+    );
 
-    setDeletingId(null);
+    if (hasInvalidTitle) {
+      showToast(
+        "Please check your transaction titles. Some contain invalid characters."
+      );
+      return;
+    }
 
     await mutate();
+
+    setImportedTransactions([]);
+
+    showToast("Transactions imported successfully");
   } catch (error) {
-    console.error(error);
-    setDeletingId(null);
+    console.error("IMPORT ERROR:", error);
+    showToast("Could not import transactions");
   }
 }
 
@@ -212,30 +248,44 @@ return (
               No transactions yet.
             </EmptyState>
        {/* CSV UPLOAD */}
-            <CsvUpload
-              onFileSelect={(csvData) => {
-                setImportedTransactions(csvData);
-              }}
-            />
 
-            <CsvPreview
-              transactions={importedTransactions}
-              //. CATEGORY SELECT
-              onCategoryChange={(index, category) => {
-                setImportedTransactions((currentTransactions) =>
-                  currentTransactions.map((transaction, transactionIndex) =>
-                    transactionIndex === index
-                      ? {
-                          ...transaction,
-                          category,
-                        }
-                      : transaction
-                  )
-                );
-              }}
-              // onImport={handleImport}
-              // onCancel={handleCancelImport}
-            />
+           {importedTransactions.length > 0 ? (
+                <CsvPreview
+                  transactions={importedTransactions}
+                 onTitleChange={(index, title) => {
+                    setImportedTransactions((currentTransactions) =>
+                      currentTransactions.map((transaction, transactionIndex) =>
+                        transactionIndex === index
+                          ? {
+                              ...transaction,
+                              title: title,
+                            }
+                          : transaction
+                      )
+                    );
+                  }}
+                  onCategoryChange={(index, category) => {
+                    setImportedTransactions((currentTransactions) =>
+                      currentTransactions.map((transaction, transactionIndex) =>
+                        transactionIndex === index
+                          ? {
+                              ...transaction,
+                              category,
+                            }
+                          : transaction
+                      )
+                    );
+                  }}
+              onImport={handleSubmitImport}
+              onCancel={() => setImportedTransactions([])}
+                />
+              ) : (
+                <CsvUpload
+                  onFileSelect={(csvData) => {
+                    setImportedTransactions(csvData);
+                  }}
+                />
+              )}
           </>
         ) : (
           transactions.map((transaction) => (

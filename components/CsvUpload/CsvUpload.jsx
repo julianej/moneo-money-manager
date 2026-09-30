@@ -52,6 +52,7 @@ export default function CsvUpload({ onFileSelect }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   function handleFileSelection(event) {
+
     const file = event.target.files[0];
 
     if (!file) {
@@ -93,7 +94,7 @@ export default function CsvUpload({ onFileSelect }) {
             title: row.title,
             amount,
             type: amount < 0 ? "expense" : "income",
-            category: null,
+             category: "set-category",
           };
         });
 
@@ -109,6 +110,7 @@ export default function CsvUpload({ onFileSelect }) {
 
     event.target.value = "";
   }
+
 
   return (
     <UploadWrapper>
