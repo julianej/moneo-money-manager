@@ -78,6 +78,8 @@ const EmptyMessage = styled.p`
 
 export default function CsvPreview({
   transactions,
+  //SELECETD ACCOUNT
+  selectedAccount,
   onCategoryChange,
   onTitleChange,
   onImport,
@@ -135,7 +137,8 @@ export default function CsvPreview({
           <span>{transaction.type}</span>
          
           <CategoryDropdown
-            value={transaction.category || " " }
+            value={transaction.category}
+            selectedAccount={selectedAccount}
             onChange={(event) =>
                 onCategoryChange(index, event.target.value)
             }

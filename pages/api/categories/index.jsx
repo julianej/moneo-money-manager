@@ -6,9 +6,15 @@ export default async function handler(request, response) {
     await dbConnect();
 
     if (request.method === "GET") {
+      //take the account value from the URL query string
+      ///api/categories?account=6abd055ad28881b6bcbb58b9
+      //account === "6abd055ad28881b6bcbb58b9"
       const { account } = request.query;
       const filter = account ? { account } : {};
 
+      //That returns all categories from all bank accounts.
+      //const categories = await Categories.find();
+      
       const categories = await Categories.find(filter);
 
       return response.status(200).json(categories);

@@ -145,7 +145,7 @@ export default function TransactionList({
   const [deletingId, setDeletingId] = useState(null);
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
 
-  // new USESTATE
+  // new USESTATE 
   const [importedTransactions, setImportedTransactions] = useState([]);
 
 
@@ -251,34 +251,31 @@ return (
 
            {importedTransactions.length > 0 ? (
                 <CsvPreview
-                  transactions={importedTransactions}
-                 onTitleChange={(index, title) => {
-                    setImportedTransactions((currentTransactions) =>
-                      currentTransactions.map((transaction, transactionIndex) =>
-                        transactionIndex === index
-                          ? {
-                              ...transaction,
-                              title: title,
-                            }
-                          : transaction
-                      )
-                    );
-                  }}
-                  onCategoryChange={(index, category) => {
-                    setImportedTransactions((currentTransactions) =>
-                      currentTransactions.map((transaction, transactionIndex) =>
-                        transactionIndex === index
-                          ? {
-                              ...transaction,
-                              category,
-                            }
-                          : transaction
-                      )
-                    );
-                  }}
-              onImport={handleSubmitImport}
-              onCancel={() => setImportedTransactions([])}
-                />
+                    transactions={importedTransactions}
+                    selectedAccount={selectedAccount}
+                    onTitleChange={(index, title) => {
+                      setImportedTransactions((currentTransactions) =>
+                        currentTransactions.map(
+                          (transaction, transactionIndex) =>
+                            transactionIndex === index
+                              ? { ...transaction, title }
+                              : transaction
+                        )
+                      );
+                    }}
+                    onCategoryChange={(index, category) => {
+                      setImportedTransactions((currentTransactions) =>
+                        currentTransactions.map(
+                          (transaction, transactionIndex) =>
+                            transactionIndex === index
+                              ? { ...transaction, category }
+                              : transaction
+                        )
+                      );
+                    }}
+                    onImport={handleSubmitImport}
+                    onCancel={() => setImportedTransactions([])}
+                  />
               ) : (
                 <CsvUpload
                   onFileSelect={(csvData) => {

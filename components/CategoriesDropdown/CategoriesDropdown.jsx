@@ -5,8 +5,16 @@ const Select = styled.select`
   padding: 0.5rem;
 `;
 
-export default function CategoryDropdown({ value, onChange }) {
-  const { data: categories, error } = useSWR("/api/categories");
+export default function CategoryDropdown({ 
+  value, 
+  onChange,
+  selectedAccount,
+}) {
+  const { data: categories, error } = useSWR(
+        selectedAccount ? `/api/categories?account=${selectedAccount}`
+              : null
+        );
+    console.log("selectedAccount:", selectedAccount);
   console.log("categories:", categories);
 
   if (error) {
@@ -23,7 +31,7 @@ export default function CategoryDropdown({ value, onChange }) {
 
       {categories.map((category) => (
         <option key={category._id} value={category._id}>
-          {category.category}
+          {category.name}
         </option>
       ))}
     </Select>

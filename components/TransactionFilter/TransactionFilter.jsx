@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import DownloadButton from "../DownloadReport/DownloadButton";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState,} from "react";
 
 const FilterWrapper = styled.div`
   display: flex;
@@ -103,6 +103,7 @@ export default function TransactionFilter({
   transactions = [],
   filteredTransactions,
   setPdfLoading,
+  //SELECTED ACCOUNT
   selectedAccount,
   selectedYear,
   setSelectedYear,
@@ -139,6 +140,12 @@ const [showAllCategories, setShowAllCategories] = useState(false);
 // ====================
 // CATEGORIES
 // ====================
+
+// const { data: categories = [] } = useSWR(
+//   selectedAccount
+//     ? `/api/categories?account=${selectedAccount}`
+//     : null
+// );
 
   const availableCategories = [
     ...new Set(
