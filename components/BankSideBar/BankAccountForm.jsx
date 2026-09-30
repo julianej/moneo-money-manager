@@ -128,7 +128,7 @@ export default function BankAccountForm({
   const [bank, setBank] = useState("");
   const [iban, setIban] = useState("");
   const [bic, setBic] = useState("");
-  const [balance, setBalance] = useState("");
+  // const [balance, setBalance] = useState("");
   const [errors, setErrors] = useState({});
 
   const [categories, setCategories] = useState([]);
@@ -232,10 +232,12 @@ export default function BankAccountForm({
   async function handleSubmit(event) {
   event.preventDefault();
 
+  // 01.Validate Form
   if (!validateForm()) {
     return;
   }
 
+  // 02. add Account
   setIsAddingAccount(true);
 
   try {
@@ -250,7 +252,6 @@ export default function BankAccountForm({
         bank: bank.trim(),
         iban: iban.replace(/\s/g, "").toUpperCase(),
         bic: bic.replace(/\s/g, "").toUpperCase(),
-        balance: Number(balance),
       }),
     });
 
@@ -265,6 +266,10 @@ export default function BankAccountForm({
 
     // 2. Create categories for the new account
     for (const category of categories) {
+        console.log("SENDING CATEGORY:", {
+          name: category,
+          account: data._id,
+        });
       const categoryResponse = await fetch("/api/categories", {
         method: "POST",
         headers: {
@@ -292,7 +297,7 @@ export default function BankAccountForm({
     }
 
     // 3. Refresh bank accounts
-    await mutateAccounts();
+    await mutate();
 
     // 4. Close form
     onCancel();

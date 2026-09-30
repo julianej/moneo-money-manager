@@ -6,16 +6,24 @@ export default async function handler(request, response) {
     await dbConnect();
 
     if (request.method === "GET") {
-      const categories = await Categories.find();
+      const { account } = request.query;
+      const filter = account ? { account } : {};
+
+      const categories = await Categories.find(filter);
 
       return response.status(200).json(categories);
     }
 
     if (request.method === "POST") {
-    const { category, account } = request.body;
+    const { name, account } = request.body;
+
+      console.log("CATEGORY REQUEST:", {
+    name,
+    account,
+  });
 
     const newCategory = await Categories.create({
-      category,
+      name,
       account,
     });  
     return response.status(201).json(newCategory);
