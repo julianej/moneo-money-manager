@@ -1,7 +1,6 @@
 import { pdf } from "@react-pdf/renderer";
 import styled from "styled-components";
 import { Download} from "lucide-react";
-// import { useState } from "react";
 
 import MoneyManagerReport from "./MoneyManagerReport";
 
