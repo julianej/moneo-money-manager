@@ -5,7 +5,13 @@ const categorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  account: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "BankAccounts",
+    required: true,
+  },
 });
+
 
 const Categories =
   mongoose.models.Categories ||

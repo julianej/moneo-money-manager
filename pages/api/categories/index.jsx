@@ -11,13 +11,23 @@ export default async function handler(request, response) {
       return response.status(200).json(categories);
     }
 
+    if (request.method === "POST") {
+    const { category, account } = request.body;
+
+    const newCategory = await Categories.create({
+      category,
+      account,
+    });  
+    return response.status(201).json(newCategory);
+    }
+
     return response.status(405).json({
       error: "Method not allowed",
     });
   } catch (error) {
      console.error(error);
     return response.status(500).json({
-      error: "Internal server error",
+          error: error.message,
     });
   }
 }
