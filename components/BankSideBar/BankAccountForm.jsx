@@ -271,7 +271,7 @@ export default function BankAccountForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          category: name,
+          name: category,
           account: data._id,
         }),
       });
