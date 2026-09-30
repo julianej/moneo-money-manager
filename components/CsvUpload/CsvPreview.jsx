@@ -91,6 +91,7 @@ export default function CsvPreview({
 }) {
 
 async function handleSubmitImport() {
+  console.log("SELECTED ACCOUNT:", selectedAccount);
   try {
     const hasMissingCategory = transactions.some(
       (transaction) => transaction.category === "set-category"
@@ -113,13 +114,15 @@ async function handleSubmitImport() {
     }
 
     for (const transaction of transactions) {
-      const cleanedTransaction = {
-        ...transaction,
-        title: cleanTitle(transaction.title),
-      };
+        const cleanedTransaction = {
+          ...transaction,
+          title: cleanTitle(transaction.title),
+          account: selectedAccount,
+        };
 
       console.log("SENDING IMPORT:", cleanedTransaction);
 
+      // SENDING NEW TRANSACTIONS
       const response = await fetch("/api/transactions", {
         method: "POST",
         headers: {
@@ -164,21 +167,21 @@ async function handleSubmitImport() {
     <PreviewWrapper>
       <PreviewHeader>
         <TransactionCsvHeader>
-        {transactions.length} transactions ready to Import
+            {transactions.length} transactions ready to Import
          <ButtonWrapper>
-        <CancelButton
-          type="button"
-          onClick={onCancel}
-        >
-           <Trash2 size={18} />
-        </CancelButton>
+              <CancelButton
+                type="button"
+                onClick={onCancel}
+              >
+                <Trash2 size={18} />
+              </CancelButton>
 
-        <ImportButton
-          type="button"
-           onClick={handleSubmitImport}
-        >
-          Import All
-        </ImportButton>
+              <ImportButton
+                type="button"
+                onClick={handleSubmitImport}
+              >
+                Import All
+              </ImportButton>
       </ButtonWrapper>
       </TransactionCsvHeader>
       </PreviewHeader>

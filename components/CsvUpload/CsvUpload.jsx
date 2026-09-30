@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"; 
+import { useRef, useState } from "react";
 import Papa from "papaparse";
 import styled from "styled-components";
 import { cleanTitle } from "../../utils/cleanTitle";
@@ -47,11 +47,35 @@ const requiredHeaders = [
   "amount",
 ];
 
-
 export default function CsvUpload({ onFileSelect }) {
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+// trim DATE VALUE
+  function parseDate(value) {
+      if (!value) {
+        return null;
+      }
+
+      const trimmedValue = value.trim();
+
+      if (trimmedValue.includes("-")) {
+        return trimmedValue;
+      }
+
+      const [day, month, year] = trimmedValue.split(".");
+
+      return `${year}-${month}-${day}`;
+    }
+
+function parseAmount(value) {
+  if (!value) {
+    return 0;
+  }
+
+  return Number(value.trim().replace(",", "."));
+}
 
   function handleFileSelection(event) {
 
@@ -88,8 +112,9 @@ export default function CsvUpload({ onFileSelect }) {
           return;
         }
 
+        // PAPA PARSE RESULT DATA
         const transactions = results.data.map((row) => {
-          const amount = parseAmount(row.amount);
+            const amount = parseAmount(row.amount);
 
           return {
             date: parseDate(row.date),

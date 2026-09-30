@@ -1,11 +1,4 @@
-function isValidTitle(title) {
-  return (
-    typeof title === "string" &&
-    title.trim().length >= 3
-  );
-}
-
-function cleanTitle(title) {
+export function cleanTitle(title) {
   if (!title || typeof title !== "string") {
     return "";
   }
@@ -16,31 +9,9 @@ function cleanTitle(title) {
     .trim();
 }
 
-const requiredHeaders = [
-  "date",
-  "title",
-  "amount",
-];
-
-function parseAmount(value) {
-  if (!value) {
-    return 0;
-  }
-
-  return Number(
-    value
-      .trim()
-      .replace(/\./g, "")
-      .replace(",", ".")
+export function isValidTitle(title) {
+  return (
+    typeof title === "string" &&
+    title.trim().length >= 3
   );
-}
-
-function parseDate(value) {
-  if (!value) {
-    return null;
-  }
-
-  const [day, month, year] = value.trim().split(".");
-
-  return `${year}-${month}-${day}`;
 }
