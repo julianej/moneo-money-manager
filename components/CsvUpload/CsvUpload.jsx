@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"; 
-import { Upload } from "lucide-react"; 
+import Papa from "papaparse";
 import styled from "styled-components";
 
 const UploadWrapper = styled.div`
@@ -46,91 +46,67 @@ const requiredHeaders = [
   "amount",
 ];
 
-export default function CsvUpload({ onFileSelect }) { 
+export default function CsvUpload({ onFileSelect }) {
   const fileInputRef = useRef(null);
-  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleFileSelection(event) {
-    setLoading(true);
-    // INPUT event from type
     const file = event.target.files[0];
-    console.log("event:", event);
-    console.log("files:", event.target.files);
-    console.log("file:", event.target.files[0]);
 
-// read FILE
-//   const reader = new FileReader();
-//   reader.onload = (evt) => {
-//     console.log(evt.target.result);
-//   };
+    if (!file) {
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-         console.log(event.target.result);
-        const csvText = event.target.result;
+    setLoading(true);
+    setErrorMessage("");
 
-    // TRANSFORM COLUMNS
-    //     CSV text
-    //    ↓ split("\n")
-    //     row 1
-    //     row 2
-    //     row 3
+    Papa.parse(file, {
+      header: true,
+      delimiter: ";",
+      skipEmptyLines: true,
 
-      const rows = csvText
-    //  "Hello World ".trim()
-        .trim() //whitespace
+      complete: function (results, file) {
+        const headers = results.meta.fields || [];
 
-    //  const text = "Hello World";
-    //  const result = text.split(" ");
-    //  ["Hello", "World"]
-        .split("\n")
-        .map((row) => row.split(";"));
-    // ["date", "title", "amount"]
+        const cleanHeaders = headers.map((header) =>
+          header.trim().toLowerCase()
+        );
 
-      const [headers, ...dataRows] = rows;
+        const hasRequiredHeaders = requiredHeaders.every((header) =>
+          cleanHeaders.includes(header)
+        );
 
-      const cleanHeaders = headers.map((header) =>
-        header.trim().toLowerCase()
-      );
+        if (!hasRequiredHeaders) {
+          setErrorMessage(
+            "CSV must contain date, title and amount."
+          );
+          setLoading(false);
+          return;
+        }
 
-    console.log("CSV headers:", headers);
-    console.log("Clean headers:", cleanHeaders);
+        const transactions = results.data.map((row) => {
+          const amount = Number(row.amount);
 
-      const hasRequiredHeaders = requiredHeaders.every((header) =>
-        cleanHeaders.includes(header)
-      );
-
-      if (!hasRequiredHeaders) {
-        setErrorMessage(
-          "CSV must contain date, title and amount.");
-            setLoading(false);
-             return;
-      }
-
-      const transactions = dataRows.map((row) => {
-        const transaction = {};
-
-        cleanHeaders.forEach((header, index) => {
-          transaction[header] = row[index]?.trim();
+          return {
+            date: row.date,
+            title: row.title,
+            amount,
+            type: amount < 0 ? "expense" : "income",
+            category: null,
+          };
         });
 
-        const amount = Number(transaction.amount);
+        onFileSelect(transactions);
+        setLoading(false);
+      },
 
-        return {
-          title: transaction.title,
-          amount,
-          date: transaction.date,
-          type: amount < 0 ? "expense" : "income",
-          category: null,
-        };
-      });
+      error: () => {
+        setErrorMessage("Could not read the CSV file.");
+        setLoading(false);
+      },
+    });
 
-      onFileSelect(transactions);
-      setLoading(false);
-    };
-
-    reader.readAsText(file);
     event.target.value = "";
   }
 
