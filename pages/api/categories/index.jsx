@@ -14,7 +14,7 @@ export default async function handler(request, response) {
 
       //That returns all categories from all bank accounts.
       //const categories = await Categories.find();
-
+      //filters categories for specific {account}
       const categories = await Categories.find(filter);
 
       return response.status(200).json(categories);

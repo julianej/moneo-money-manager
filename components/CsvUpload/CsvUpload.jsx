@@ -52,33 +52,34 @@ export default function CsvUpload({ onFileSelect }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-// trim DATE VALUE
+// clean DATE 
   function parseDate(value) {
       if (!value) {
         return null;
       }
 
-      const trimmedValue = value.trim();
+      const trimmedDate = value.trim();
 
-      if (trimmedValue.includes("-")) {
-        return trimmedValue;
+      if (trimmedDate.includes("-")) {
+        return trimmedDate;
       }
 
-      const [day, month, year] = trimmedValue.split(".");
+      const [day, month, year] = trimmedDate.split(".");
 
       return `${year}-${month}-${day}`;
     }
 
-function parseAmount(value) {
-  if (!value) {
-    return 0;
+  // clean AMOUNT
+  function parseAmount(value) {
+    if (!value) {
+      return 0;
+    }
+
+    return Number(value.trim().replace(",", "."));
   }
 
-  return Number(value.trim().replace(",", "."));
-}
-
+  // BUTTON CSV SELECT
   function handleFileSelection(event) {
-
     const file = event.target.files[0];
 
     if (!file) {
@@ -88,6 +89,7 @@ function parseAmount(value) {
     setLoading(true);
     setErrorMessage("");
 
+  // PAPA PARSING
     Papa.parse(file, {
       header: true,
       delimiter: ";",
@@ -152,7 +154,7 @@ function parseAmount(value) {
         )}
         </UploadButton>
 
-        {/*INPUT */}
+        {/*UPLOAD INPUT BUTTON */}
         <HiddenFileInput
             ref={fileInputRef}
             type="file"

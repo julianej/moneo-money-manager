@@ -5,7 +5,7 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 3,
-    match: /^[A-Za-zÄÖÜäöüß ]+$/,
+    match: /^[A-Za-zÄÖÜäöüß0-9 ]+$/,
   },
 
   amount: {

@@ -132,10 +132,10 @@ const Toast = styled.div`
 
   z-index: 9999;
 
-  padding: 0.75rem 1.5rem;
+  padding: 2rem 2rem;
   border-radius: 8px;
 
-  background: black;
+  background:rgba(0,0,0);
   color: white;
 `;
 

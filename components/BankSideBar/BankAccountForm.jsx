@@ -266,17 +266,18 @@ export default function BankAccountForm({
 
     // 2. Create categories for the new account
     for (const category of categories) {
-        console.log("SENDING CATEGORY:", {
-          name: category,
-          account: data._id,
-        });
+      console.log("SENDING CATEGORY:", {
+        category: category,
+        account: data._id,
+      });
+
       const categoryResponse = await fetch("/api/categories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: category,
+          category: category,
           account: data._id,
         }),
       });
@@ -290,12 +291,10 @@ export default function BankAccountForm({
       );
 
       if (!categoryResponse.ok) {
-      console.error("CATEGORY ERROR:", categoryData);
-      throw new Error("Category creation failed");
-
+        console.error("CATEGORY ERROR:", categoryData);
+        throw new Error("Category creation failed");
       }
     }
-
     // 3. Refresh bank accounts
     await mutate();
 

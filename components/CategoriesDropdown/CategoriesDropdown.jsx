@@ -10,10 +10,16 @@ export default function CategoryDropdown({
   onChange,
   selectedAccount,
 }) {
+
+  // Selected ACCOUNT maped to CATEGORIES
   const { data: categories, error } = useSWR(
         selectedAccount ? `/api/categories?account=${selectedAccount}`
               : null
         );
+
+  console.log("SELECTED ACCOUNT:", selectedAccount);
+  console.log("CATEGORIES:", categories);
+  console.log("CATEGORY ERROR:", error);
         
   if (error) {
     return <p>Could not load categories.</p>;

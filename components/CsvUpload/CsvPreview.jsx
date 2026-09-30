@@ -92,6 +92,8 @@ export default function CsvPreview({
 
 async function handleSubmitImport() {
   console.log("SELECTED ACCOUNT:", selectedAccount);
+
+  
   try {
     const hasMissingCategory = transactions.some(
       (transaction) => transaction.category === "set-category"
@@ -168,48 +170,51 @@ async function handleSubmitImport() {
       <PreviewHeader>
         <TransactionCsvHeader>
             {transactions.length} transactions ready to Import
-         <ButtonWrapper>
-              <CancelButton
-                type="button"
-                onClick={onCancel}
-              >
-                <Trash2 size={18} />
-              </CancelButton>
+            <ButtonWrapper>
+                  <CancelButton
+                    type="button"
+                    onClick={onCancel}
+                  >
+                    <Trash2 size={18} />
+                  </CancelButton>
 
-              <ImportButton
-                type="button"
-                onClick={handleSubmitImport}
-              >
-                Import All
-              </ImportButton>
-      </ButtonWrapper>
-      </TransactionCsvHeader>
-      </PreviewHeader>
-      <TransactionRow>
-        <strong>Date</strong>
-        <strong>Title</strong>
-        <strong>Amount</strong>
-        <strong>Type</strong>
-        <strong>Category</strong>
-      </TransactionRow>
+                  <ImportButton
+                    type="button"
+                    onClick={handleSubmitImport}
+                  >
+                    Import All
+                  </ImportButton>
+              </ButtonWrapper>
+          </TransactionCsvHeader>
+         </PreviewHeader>
+             
+           {/* Transaction Headers*/}
+              <TransactionRow>
+                <strong>Date</strong>
+                <strong>Title</strong>
+                <strong>Amount</strong>
+                <strong>Type</strong>
+                <strong>Category</strong>
+              </TransactionRow>
 
-      {transactions.map((transaction, index) => (
-        <TransactionRow key={index}>
-          <span>{transaction.date}</span>
-          <input
-            type="text"
-              value={transaction.title || ""}
-            onChange={(event) =>
-              onTitleChange(index, event.target.value)
-            }
-          />
-          <span>{transaction.amount.toFixed(2)} </span>
-          <span>{transaction.type}</span>
+            {/* Transaction Infos*/}
+              {transactions.map((transaction, index) => (
+                <TransactionRow key={index}>
+                  <span>{transaction.date}</span>
+                  <input
+                    type="text"
+                      value={transaction.title || ""}
+                        onChange={(event) =>
+                           onTitleChange(index, event.target.value)
+                    }
+                  />
+                  <span>{transaction.amount.toFixed(2)} </span>
+                  <span>{transaction.type}</span>
          
-          <CategoryDropdown
-            value={transaction.category}
-            selectedAccount={selectedAccount}
-            onChange={(event) =>
+              <CategoryDropdown
+                value={transaction.category}
+                selectedAccount={selectedAccount}
+                onChange={(event) =>
                 onCategoryChange(index, event.target.value)
             }
             />

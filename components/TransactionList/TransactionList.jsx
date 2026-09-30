@@ -200,54 +200,6 @@ export default function TransactionList({
     }
   }
 
-  // CREATE NEW UPLOAD TRANSACTION LIST
- async function handleSubmitImport() {
-  try {
-    const hasMissingCategory = importedTransactions.some(
-      (transaction) => transaction.category === "set-category"
-    );
-
-    if (hasMissingCategory) {
-      showToast("Please select a category for every transaction.");
-      return;
-    }
-
-    const hasInvalidTitle = importedTransactions.some(
-      (transaction) => !isValidTitle(transaction.title)
-    );
-
-    if (hasInvalidTitle) {
-      showToast(
-        "Please check your transaction titles. Some contain invalid characters."
-      );
-      return;
-    }
-
-    for (const transaction of importedTransactions) {
-      const response = await fetch("/api/transactions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(transaction),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to import transaction: ${transaction.title}`);
-      }
-    }
-
-    await mutate();
-
-    setImportedTransactions([]);
-
-    showToast("Transactions imported successfully");
-  } catch (error) {
-    console.error("IMPORT ERROR:", error);
-    showToast(`Import failed: ${error.message}`);
-  }
-}
-
 return (
   <>
     <ListWrapper>
