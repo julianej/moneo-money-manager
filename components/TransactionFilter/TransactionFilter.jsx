@@ -243,26 +243,26 @@ useEffect(() => {
   </MonthSelect>
 </FilterGroup>
 
-{/* ==================== TYPE ==================== */}
-<FilterGroup>
-  <FilterLabel htmlFor="type-filter">
-    Type
-  </FilterLabel>
+  {/* ==================== TYPE ==================== */}
+  <FilterGroup>
+    <FilterLabel htmlFor="type-filter">
+      Type
+    </FilterLabel>
 
-  <FilterSelect
-    id="type-filter"
-    value={selectedType}
-    onChange={(event) => setSelectedType(event.target.value)}
-  >
-    <option value="all">All Types</option>
-    <option value="income">Income</option>
-    <option value="expense">Expense</option>
-  </FilterSelect>
-</FilterGroup>
-</FilterRow>
-{/* ==================== ROW 2: CATEGORY ==================== */}
-<FilterRow>
- <FilterGroup>
+    <FilterSelect
+      id="type-filter"
+      value={selectedType}
+      onChange={(event) => setSelectedType(event.target.value)}
+    >
+      <option value="all">All Types</option>
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </FilterSelect>
+  </FilterGroup>
+  </FilterRow>
+  {/* ==================== ROW 2: CATEGORY ==================== */}
+  <FilterRow>
+  <FilterGroup>
           <FilterLabel htmlFor="category-filter">
             Category
           </FilterLabel>

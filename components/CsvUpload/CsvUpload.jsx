@@ -46,7 +46,7 @@ const requiredHeaders = [
   "amount",
 ];
 
-export default function CsvUpload({ onFileSelect }) { //   <CsvUpload onFileSelect={(transactions) => {} >
+export default function CsvUpload({ onFileSelect }) { 
   const fileInputRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -162,7 +162,3 @@ export default function CsvUpload({ onFileSelect }) { //   <CsvUpload onFileSele
     </UploadWrapper>
   );
 }
-
-// https://dev.to/patriciosalazar/how-i-added-csv-importing-in-my-react-nodejs-project-2mij
-// https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file
-// https://levelup.gitconnected.com/csv-parsing-in-react-8d2a05f844f3

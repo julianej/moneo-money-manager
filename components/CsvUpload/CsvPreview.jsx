@@ -1,5 +1,6 @@
 
 import styled from "styled-components";
+import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
 
 const PreviewWrapper = styled.div`
   width: 100%;
@@ -45,8 +46,8 @@ export default function CsvPreview({
   return (
     <PreviewWrapper>
       <PreviewHeader>
-        CSV Import Overview
-      </PreviewHeader>
+        {transactions.length} transactions ready to Import
+        </PreviewHeader>
 
       <TransactionRow>
         <strong>Date</strong>
@@ -59,50 +60,16 @@ export default function CsvPreview({
       {transactions.map((transaction, index) => (
         <TransactionRow key={index}>
           <span>{transaction.date}</span>
-
           <span>{transaction.title}</span>
-
-          <span>
-            {transaction.amount.toFixed(2)}
-          </span>
-
-          <span>
-            {transaction.type}
-          </span>
-
-          <Select
+          <span>{transaction.amount.toFixed(2)} </span>
+          <span>{transaction.type}</span>
+         
+          <CategoryDropdown
             value={transaction.category || ""}
             onChange={(event) =>
-              onCategoryChange(
-                index,
-                event.target.value
-              )
+                onCategoryChange(index, event.target.value)
             }
-          >
-            <option value="">
-              Select category
-            </option>
-
-            <option value="Food">
-              Food
-            </option>
-
-            <option value="Salary">
-              Salary
-            </option>
-
-            <option value="Shopping">
-              Shopping
-            </option>
-
-            <option value="Transport">
-              Transport
-            </option>
-
-            <option value="Other">
-              Other
-            </option>
-          </Select>
+            />
         </TransactionRow>
       ))}
     </PreviewWrapper>

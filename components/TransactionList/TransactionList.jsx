@@ -220,6 +220,7 @@ return (
 
             <CsvPreview
               transactions={importedTransactions}
+              //. CATEGORY SELECT
               onCategoryChange={(index, category) => {
                 setImportedTransactions((currentTransactions) =>
                   currentTransactions.map((transaction, transactionIndex) =>
