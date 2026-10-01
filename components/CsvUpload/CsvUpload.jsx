@@ -52,7 +52,22 @@ export default function CsvUpload({ onFileSelect }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-// clean DATE 
+
+  function cleanHeader(header) {
+    return header.trim().toLowerCase();
+    }
+
+  function cleanRow(row) {
+    const cleanRow = {};
+
+    Object.entries(row).forEach(([key, value]) => {
+      cleanRow[cleanHeader(key)] = value;
+    });
+
+    return cleanRow;
+  }
+
+  // clean DATE 
   function parseDate(value) {
       if (!value) {
         return null;
@@ -72,14 +87,17 @@ export default function CsvUpload({ onFileSelect }) {
   // clean AMOUNT
   function parseAmount(value) {
     if (!value) {
-      return 0;
+      return null;
     }
 
-    return Number(value.trim().replace(",", "."));
+    const amount = Number(value.trim().replace(",", "."));
+    return Number.isFinite(amount) ? amount : null;
+
   }
 
-  // BUTTON CSV SELECT
+  // handle BUTTON  <CsvUpload> in TransactionList
   function handleFileSelection(event) {
+    //is the browser's API collection of single-file upload: files[0]
     const file = event.target.files[0];
 
     if (!file) {
@@ -89,20 +107,19 @@ export default function CsvUpload({ onFileSelect }) {
     setLoading(true);
     setErrorMessage("");
 
-  // PAPA PARSING
+  // PARSING
     Papa.parse(file, {
       header: true,
       delimiter: ";",
       skipEmptyLines: true,
 
-      complete: function (results, file) {
-        const headers = results.meta.fields || [];
+      complete: function (results) {
+       const headers = results.meta.fields || [];
+       // ["date", "title", "amount"]
 
-        const cleanHeaders = headers.map((header) =>
-          header.trim().toLowerCase()
-        );
-
-        const hasRequiredHeaders = requiredHeaders.every((header) =>
+       // HEADERS
+       const cleanHeaders = headers.map(cleanHeader);
+       const hasRequiredHeaders = requiredHeaders.every((header) =>
           cleanHeaders.includes(header)
         );
 
@@ -114,19 +131,22 @@ export default function CsvUpload({ onFileSelect }) {
           return;
         }
 
-        // PAPA PARSE RESULT DATA
+        // Normalize ROW values
         const transactions = results.data.map((row) => {
-            const amount = parseAmount(row.amount);
+            const clean = cleanRow(row);
+            const amount = parseAmount(clean.amount);
 
+         // Validate individual FIELDS   
           return {
-            date: parseDate(row.date),
-            title: cleanTitle(row.title),
+            date: parseDate(clean.date),
+            title: cleanTitle(clean.title),
             amount,
             type: amount < 0 ? "expense" : "income",
             category: "set-category",
           };
         });
 
+        // Transform into your Transaction shape
         onFileSelect(transactions);
         setLoading(false);
       },
