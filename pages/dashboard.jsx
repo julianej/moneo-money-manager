@@ -123,19 +123,37 @@ const PrimaryButton = styled.button`
 
 const Toast = styled.div`
   position: fixed;
-  bottom: 2rem;
-  left: 0;
-  right: 0;
-
-  width: fit-content;
-
+  font-size: 2rem;
+  top: 0rem;
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
+  width: 100%;
+  height: 15rem;
   z-index: 9999;
 
-  padding: 2rem 2rem;
-  border-radius: 8px;
+  padding: 2rem 1.25rem;
 
-  background: #a80505;
+  background: #090909;
   color: white;
+
+  animation: slideDown 0.4s ease-out;
+
+  @keyframes slideDown {
+    from {
+      top: -100px;
+    }
+
+    to {
+      top: 1rem;
+    }}
+
+  @media (min-width: 740px) {
+     font-size: 5rem;
+     text-transform: uppercase;
+     padding: 5rem 1.25rem;
+     height: 20rem;
+
+  }
 `;
 
 const BankAccountFormWrapper = styled.div`
@@ -266,7 +284,11 @@ function handleAccountsClick() {
   }
 
   async function handleDeleteAccount() {
+   console.log("DELETE ACCOUNT CLICKED");
+
   if (!selectedAccount) return;
+      console.log("NO SELECTED ACCOUNT");
+
 
   setIsDeletingAccount(true);
 
@@ -287,10 +309,12 @@ function handleAccountsClick() {
 
     await mutateAccounts();
 
+    showToast("Bank account deleted successfully.");
+
+    // CLEARING 
     setSelectedAccount(null);
     setIsFormOpen(false);
 
-    showToast("Bank account deleted successfully.");
   } catch (error) {
     console.error(error);
   } finally {
@@ -360,12 +384,14 @@ function handleAccountsClick() {
   }
 
   function showToast(message) {
-    setSuccessMessage(message);
+  console.log("SHOW TOAST:", message);
 
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 2000);
-  }
+  setSuccessMessage(message);
+
+  setTimeout(() => {
+    setSuccessMessage("");
+  }, 2000);
+}
 
 // ACCOUNT DATA OBJECT
   const selectedAccountData = accounts.find(
@@ -375,7 +401,8 @@ function handleAccountsClick() {
   return (
     <Main>
 
-      {message && <Toast>{message}</Toast>}
+      {message && 
+      <Toast>{message}</Toast>}
 
       <SidebarWrapper>
       <BankSideBar
