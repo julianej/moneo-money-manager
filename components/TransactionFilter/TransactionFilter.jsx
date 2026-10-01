@@ -21,17 +21,40 @@ const FilterRow = styled.div`
   gap: 1rem;
   flex-wrap: nowrap;
 `;
-
 const FilterGroup = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.4rem;
 `;
 
-const FilterLabel = styled.span`
-  font-weight: 600;
-    margin-right: 4px;
+const FilterLabel = styled.label`
   font-size: 14px;
+  font-weight: 600;
+  color: #0d0d0d;
+`;
+
+const FilterSelect = styled.select`
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+
+  background: white;
+  color: #0d0d0d;
+
+  font-size: 16px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: black;
+  }
+
+  @media (min-width: 740px) {
+    width: auto;
+    min-width: 160px;
+  }
 `;
 
 const FilterButton = styled.button`
@@ -52,6 +75,29 @@ const FilterButton = styled.button`
   }
 `;
 
+const MonthSelect = styled.select`
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+
+  border: 1px solid lightgray;
+
+  background: white;
+  color: #0d0d0d;
+
+  font-size: 16px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: black;
+  }
+
+  @media (min-width: 740px) {
+    width: auto;
+    min-width: 160px;
+  }
+`;
+
 export default function TransactionFilter({
   transactions = [],
   filteredTransactions,
@@ -59,14 +105,14 @@ export default function TransactionFilter({
   selectedAccount,
   selectedYear,
   setSelectedYear,
+  selectedMonth,
+  setSelectedMonth,
   selectedType,
   setSelectedType,
   selectedCategories,
   setSelectedCategories,
 }) {
 
-const [showAllYears, setShowAllYears] = useState(false);
-const [showAllCategories, setShowAllCategories] = useState(false);
 
 // ====================
 // YEARS
@@ -112,153 +158,115 @@ const [showAllCategories, setShowAllCategories] = useState(false);
 ].sort();
 
 
-function toggleCategory(category) {
-  setSelectedCategories((current) => {
-    if (current.includes(category)) {
-      return current.filter((item) => item !== category);
-    }
-
-    return [...current, category];
-  });
-}
-
-// First 4 categories
-  const visibleCategories = showAllCategories
-    ? availableCategories
-    : availableCategories.slice(0, 4);
-
 // ====================
 // RESET CATEGORY
 // ====================
 
-useEffect(() => {
-  setSelectedCategories([]);
-}, [selectedYear, selectedType, setSelectedCategories]);
+    useEffect(() => {
+      setSelectedCategories([]);
+    }, [selectedYear, selectedMonth, selectedType, setSelectedCategories]);
 
-  return (
-    <FilterWrapper>
-        {/* ... / PDF DOWNLAOD */}
-      <DownloadButton
-          transactions={filteredTransactions}
-          account={selectedAccount}
-          setPdfLoading={setPdfLoading}
-          selectedType={selectedType}
-        />
-       <FilterRow>
-{/* ==================== YEAR ==================== */}
-      <FilterGroup>
-        <FilterLabel>Year</FilterLabel>
-      
-      {/* ALL */}
-      <FilterButton
-        $active={selectedYear === "all"}
-        onClick={() => setSelectedYear("all")}
-      >
-        All
-      </FilterButton>
+      return (
+        <FilterWrapper>
+            {/* ... / PDF DOWNLAOD */}
+          <DownloadButton
+              transactions={filteredTransactions}
+              account={selectedAccount}
+              setPdfLoading={setPdfLoading}
+              selectedType={selectedType}
+            />
+    <FilterRow>
+      {/* ==================== YEAR ==================== */}
+            <FilterGroup>
+        <FilterLabel htmlFor="year-filter">
+          Year
+        </FilterLabel>
 
-       {/* FIRST 2x YEARS */}
-      {years
-        .slice(0, 2)
-        .map((year) => (
-          <FilterButton
-            key={year}
-            $active={selectedYear === year}
-            onClick={() => setSelectedYear(year)}
-          >
-            {year}
-          </FilterButton>
-        ))}
+        <FilterSelect
+          id="year-filter"
+          value={selectedYear}
+          onChange={(event) => setSelectedYear(event.target.value)}
+        >
+          <option value="all">All Years</option>
 
-       {/* REMAINING YEARS */}
-        {showAllYears &&
-          years.slice(2).map((year) => (
-            <FilterButton
-              key={year}
-              $active={selectedYear === year}
-              onClick={() => setSelectedYear(year)}
-            >
+          {years.map((year) => (
+            <option key={year} value={year}>
               {year}
-            </FilterButton>
+            </option>
           ))}
+        </FilterSelect>
+      </FilterGroup>
+        {/* ==================== MONTH ==================== */}
 
-      {/* ... EXTENDED YEARS */}
-        {years.length > 2 &&
-          (!showAllYears ? (
-            <FilterButton onClick={() => setShowAllYears(true)}>
-              ...
-            </FilterButton>
-          ) : (
-            <FilterButton onClick={() => setShowAllYears(false)}>
-              −
-            </FilterButton>
-          ))}
-       </FilterGroup>
-
-{/* ==================== TYPE ==================== */}
         <FilterGroup>
-            <FilterLabel>Type</FilterLabel>
+          <FilterLabel htmlFor="month-filter">
+            Month
+          </FilterLabel>
 
-            <FilterButton
-            $active={selectedType === "all"}
-            onClick={() => setSelectedType("all")}
-            >
-            All
-            </FilterButton>
-
-            <FilterButton
-            $active={selectedType === "income"}
-            onClick={() => setSelectedType("income")}
-            >
-            Income
-            </FilterButton>
-
-            <FilterButton
-            $active={selectedType === "expense"}
-            onClick={() => setSelectedType("expense")}
-            >
-            Expense
-            </FilterButton>
+          <MonthSelect
+            id="month-filter"
+            value={selectedMonth}
+            onChange={(event) => setSelectedMonth(event.target.value)}
+          >
+            <option value="all">All Months</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </MonthSelect>
         </FilterGroup>
-    </FilterRow>
 
-{/* ==================== ROW 2: CATEGORY ==================== */}
-<FilterRow>
-  <FilterGroup>
+        {/* ==================== TYPE ==================== */}
+              <FilterGroup>
+          <FilterLabel htmlFor="type-filter">
+            Type
+          </FilterLabel>
 
-    <FilterLabel>Category</FilterLabel>
+          <FilterSelect
+            id="type-filter"
+            value={selectedType}
+            onChange={(event) => setSelectedType(event.target.value)}
+          >
+            <option value="all">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </FilterSelect>
+        </FilterGroup>
+        </FilterRow>
+        {/* ==================== ROW 2: CATEGORY ==================== */}
+        <FilterRow>
+        <FilterGroup>
+          <FilterLabel htmlFor="category-filter">
+            Category
+          </FilterLabel>
 
-    {/* ALL */}
-      <FilterButton
-        $active={selectedCategories.length === 0}
-        onClick={() => setSelectedCategories([])}
-      >
-        All
-          </FilterButton>
+          <FilterSelect
+            id="category-filter"
+            value={selectedCategories[0] || "all"}
+            onChange={(event) => {
+              const value = event.target.value;
 
-          {/* FIRST 4 CATEGORIES */}
-          {visibleCategories.map((category) => (
-            <FilterButton
-              key={category}
-              $active={selectedCategories.includes(category)}
-              onClick={() => toggleCategory(category)}
-            >
-              {category}
-            </FilterButton>
-          ))}
+              setSelectedCategories(
+                value === "all" ? [] : [value]
+              );
+            }}
+          >
+            <option value="all">All Categories</option>
 
-          {/* ... / COLLAPSE */}
-          {availableCategories.length > 4 &&
-            (!showAllCategories ? (
-              <FilterButton onClick={() => setShowAllCategories(true)}>
-                ...
-              </FilterButton>
-            ) : (
-              <FilterButton onClick={() => setShowAllCategories(false)}>
-                −
-              </FilterButton>
+            {availableCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
             ))}
-
+          </FilterSelect>
         </FilterGroup>
       </FilterRow>
     </FilterWrapper>

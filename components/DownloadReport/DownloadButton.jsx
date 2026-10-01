@@ -1,7 +1,6 @@
 import { pdf } from "@react-pdf/renderer";
 import styled from "styled-components";
 import { Download} from "lucide-react";
-// import { useState } from "react";
 
 import MoneyManagerReport from "./MoneyManagerReport";
 
@@ -88,6 +87,7 @@ export default function DownloadButton({
     > 
       <DownloadIcon>
         <Download size={18} />
+        
       </DownloadIcon>
     </PDFDownloadButton>
   );
