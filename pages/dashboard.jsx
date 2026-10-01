@@ -5,6 +5,15 @@ import { useRouter } from "next/router"; // MENU LINK
 import { X, Plus,LogOut } from "lucide-react";
 import styled from "styled-components";
 import { Spinner } from "@/styles/LoadingStyles";
+import {
+  Toast,
+  ToastContent,
+  ToastTitle,
+  ToastMessage,
+  ToastClose,
+} from "@/styles/ToastMessage";
+
+
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
@@ -120,41 +129,6 @@ const PrimaryButton = styled.button`
   }
 `;
 
-
-const Toast = styled.div`
-  position: fixed;
-  font-size: 2rem;
-  top: 0rem;
-  /* left: 50%; */
-  /* transform: translateX(-50%); */
-  width: 100%;
-  height: 15rem;
-  z-index: 9999;
-
-  padding: 2rem 1.25rem;
-
-  background: #090909;
-  color: white;
-
-  animation: slideDown 0.4s ease-out;
-
-  @keyframes slideDown {
-    from {
-      top: -100px;
-    }
-
-    to {
-      top: 1rem;
-    }}
-
-  @media (min-width: 740px) {
-     font-size: 5rem;
-     text-transform: uppercase;
-     padding: 5rem 1.25rem;
-     height: 20rem;
-
-  }
-`;
 
 const BankAccountFormWrapper = styled.div`
     position: absolute;
@@ -309,7 +283,7 @@ function handleAccountsClick() {
 
     await mutateAccounts();
 
-    showToast("Bank account deleted successfully.");
+    showToast("Bank Account deleted.", "success");
 
     // CLEARING 
     setSelectedAccount(null);
@@ -401,8 +375,22 @@ function handleAccountsClick() {
   return (
     <Main>
 
-      {message && 
-      <Toast>{message}</Toast>}
+      {message && (
+        <Toast>
+          <ToastContent>
+            <ToastTitle>Success</ToastTitle>
+            <ToastMessage>{message}</ToastMessage>
+          </ToastContent>
+
+          <ToastClose
+            type="button"
+            onClick={() => setSuccessMessage("")}
+            aria-label="Close notification"
+          >
+            ×
+          </ToastClose>
+        </Toast>
+      )}
 
       <SidebarWrapper>
       <BankSideBar
