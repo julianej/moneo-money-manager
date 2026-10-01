@@ -81,6 +81,7 @@ const EmptyMessage = styled.p`
 
 export default function CsvPreview({
   transactions,
+  categories = [],
   //SELECETD ACCOUNT
   selectedAccount,
   onCategoryChange,
@@ -93,10 +94,11 @@ export default function CsvPreview({
 async function handleSubmitImport() {
   console.log("SELECTED ACCOUNT:", selectedAccount);
 
-  
   try {
+    // it there SOME transaction invalid ?
     const hasMissingCategory = transactions.some(
-      (transaction) => transaction.category === "set-category"
+      // The transaction has no category at all || checks your CSV placeholder.
+        (transaction) => !transaction.category || transaction.category === "set-category"
     );
 
     if (hasMissingCategory) {
@@ -213,6 +215,7 @@ async function handleSubmitImport() {
          
               <CategoryDropdown
                 value={transaction.category}
+                categories = {categories}
                 selectedAccount={selectedAccount}
                 onChange={(event) =>
                 onCategoryChange(index, event.target.value)

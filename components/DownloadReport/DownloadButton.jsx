@@ -1,7 +1,6 @@
 import { pdf } from "@react-pdf/renderer";
 import styled from "styled-components";
 import { Download} from "lucide-react";
-// import { useState } from "react";
 
 import MoneyManagerReport from "./MoneyManagerReport";
 
@@ -28,9 +27,10 @@ const DownloadIcon = styled.span`
 
 export default function DownloadButton({
   transactions = [],
+  categories = [],
   account,
   setPdfLoading,
-  selectedType = "all",
+  selectedType = "all"
 }) {
 
   async function handleDownload() {
@@ -42,6 +42,17 @@ export default function DownloadButton({
 
     const fileName = `money-manager-${filterName}.pdf`;
 
+    const transactionsWithCategoryNames = transactions.map((transaction) => {
+      const category = categories?.find(
+        (item) => item._id === transaction.category
+      );
+
+      return {
+        ...transaction,
+        category: category?.name || transaction.category,
+      };
+    });
+
     setPdfLoading(true);
 
     // set TimeOut
@@ -50,10 +61,11 @@ export default function DownloadButton({
     // Give React one frame to render the loading overlay
     await new Promise((resolve) => requestAnimationFrame(resolve));
 
+
     try {
       const blob = await pdf(
         <MoneyManagerReport
-          transactions={transactions}
+          transactions={transactionsWithCategoryNames}
           account={account}
         />
       ).toBlob();

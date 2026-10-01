@@ -133,6 +133,7 @@ export default function TransactionList({
   transactions,
   mutate,
   showToast,
+  categories=[],
   selectedAccount,
   onDeleteAccount,
   pdfLoading,
@@ -212,11 +213,12 @@ return (
             <EmptyState>
               No transactions yet.
             </EmptyState>
-       {/* CSV UPLOAD */}
 
+       {/* CSV UPLOAD */}
            {importedTransactions.length > 0 ? (
                 <CsvPreview
                     transactions={importedTransactions}
+                    categories={categories}
                     selectedAccount={selectedAccount}
                     onTitleChange={(index, title) => {
                       setImportedTransactions((currentTransactions) =>

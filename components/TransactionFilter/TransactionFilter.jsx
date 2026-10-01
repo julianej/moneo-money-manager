@@ -57,23 +57,6 @@ const FilterSelect = styled.select`
   }
 `;
 
-const FilterButton = styled.button`
-  padding: 8px 14px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  background: ${({ $active }) =>
-    $active ? "black" : "transparent"};
-  color: ${({ $active }) =>
-    $active ? "white" : "black"};
-
-  cursor: pointer;
-  transition: 0.2s ease;
-
-  &:hover {
-    background: #000;
-    color: #fff;
-  }
-`;
 
 const MonthSelect = styled.select`
   width: 100%;
@@ -101,6 +84,7 @@ const MonthSelect = styled.select`
 
 export default function TransactionFilter({
   transactions = [],
+   categories = [],
   filteredTransactions,
   setPdfLoading,
   //SELECTED ACCOUNT
@@ -115,9 +99,7 @@ export default function TransactionFilter({
   setSelectedCategories,
 }) {
 
-const [showAllYears, setShowAllYears] = useState(false);
-const [showAllMonth, setShowAllMonth] = useState(false);
-const [showAllCategories, setShowAllCategories] = useState(false);
+  console.log("categories:", categories);
 
 // ====================
 // YEARS
@@ -158,20 +140,16 @@ const [showAllCategories, setShowAllCategories] = useState(false);
           return matchesYear && matchesType;
         })
           .map((transaction) => transaction.category)
+          // .map((transaction) => {
+          //   const category = categories.find((
+          //     category) => category._id === transaction.category
+          // );
+          // return category?.category;
+        // })
+
       .filter(Boolean)
   ),
 ].sort();
-
-
-function toggleCategory(category) {
-  setSelectedCategories((current) => {
-    if (current.includes(category)) {
-      return current.filter((item) => item !== category);
-    }
-
-    return [...current, category];
-  });
-}
 
 
 // ====================
@@ -276,12 +254,25 @@ useEffect(() => {
             }}
           >
             <option value="all">All Categories</option>
+            {/* CATEGORIES 
+            For each item inside availableCategories, call that item categoryId while I'm working with it.*/}
+            {availableCategories.map((categoryId) => {
+              const category = categories.find(
+                (item) => item._id === categoryId
+              );
 
-            {availableCategories.map((category) => (
+              return (
+                <option key={categoryId} value={categoryId}>
+                  {category?.category || categoryId}
+                </option>
+              );
+            })}
+
+            {/* {availableCategories.map((category) => (
               <option key={category} value={category}>
-                {category}
+                {category.category}
               </option>
-            ))}
+            ))} */}
           </FilterSelect>
         </FilterGroup>
       </FilterRow>

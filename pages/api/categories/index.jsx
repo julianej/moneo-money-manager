@@ -21,10 +21,10 @@ export default async function handler(request, response) {
     }
 
     if (request.method === "POST") {
-    const { name, account } = request.body;
+    const { category, account } = request.body;
 
     const newCategory = await Categories.create({
-      name,
+      category,
       account,
     });  
     return response.status(201).json(newCategory);

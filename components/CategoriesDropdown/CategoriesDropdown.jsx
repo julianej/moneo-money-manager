@@ -1,4 +1,4 @@
-import useSWR from "swr";
+
 import styled from "styled-components";
 
 const Select = styled.select`
@@ -8,22 +8,10 @@ const Select = styled.select`
 export default function CategoryDropdown({ 
   value, 
   onChange,
-  selectedAccount,
+  categories = [],
 }) {
 
-  // Selected ACCOUNT maped to CATEGORIES
-  const { data: categories, error } = useSWR(
-        selectedAccount ? `/api/categories?account=${selectedAccount}`
-              : null
-        );
-
-  console.log("SELECTED ACCOUNT:", selectedAccount);
   console.log("CATEGORIES:", categories);
-  console.log("CATEGORY ERROR:", error);
-        
-  if (error) {
-    return <p>Could not load categories.</p>;
-  }
 
   if (!categories) {
     return <p>Loading categories...</p>;
@@ -35,7 +23,12 @@ export default function CategoryDropdown({
 
       {categories.map((category) => (
         <option key={category._id} value={category._id}>
-          {category.name}
+          {/*current category object. and display its value 
+            _id: "6abe25347f71929a582176d7",
+            category: "Insurance",
+            account: "6abe25347f71929a582176d6"
+          */}
+           {category.category}
         </option>
       ))}
     </Select>

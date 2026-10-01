@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Loading, Spinner } from "@/styles/LoadingStyles";
-import useSWR from "swr";
 
 // ====================
 // STYLES
@@ -111,17 +110,12 @@ const Amount = styled.p`
 
 export default function TransactionCard({
   transaction,
+  categories = [],
   onEdit,
   isSelected,
   isHighlighted,
   isDeleting,
 }) {
-
-  const { data: categories } = useSWR(
-    transaction.account
-      ? `/api/categories?account=${transaction.account}`
-      : null
-  );
   
   // "2025-08-20"
   const date = new Date(transaction.date);

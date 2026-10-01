@@ -123,19 +123,18 @@ const PrimaryButton = styled.button`
 
 const Toast = styled.div`
   position: fixed;
-  top: 2rem;
+  bottom: 2rem;
   left: 0;
   right: 0;
 
   width: fit-content;
-  margin: 0 auto;
 
   z-index: 9999;
 
   padding: 2rem 2rem;
   border-radius: 8px;
 
-  background:rgba(0,0,0);
+  background: #a80505;
   color: white;
 `;
 
@@ -218,6 +217,12 @@ export default function Dashboard() {
   const { data, error, isLoading, mutate } = useSWR(
     selectedAccount
       ? `/api/transactions?account=${selectedAccount}`
+      : null
+  );
+
+  const { data: categories, error: categoriesError } = useSWR(
+    selectedAccount
+      ? `/api/categories?account=${selectedAccount}`
       : null
   );
 
@@ -426,8 +431,9 @@ function handleAccountsClick() {
 
       <TransactionFilter
           transactions={data ?? []}
+          categories={categories}
           accounts={accounts}
-          selectedAccount={selectedAccountData}
+          selectedAccount={selectedAccount}
           filteredTransactions={filteredTransactions}
           selectedYear={selectedYear}
           setSelectedYear={setSelectedYear}
@@ -472,6 +478,7 @@ function handleAccountsClick() {
 
       <TransactionList
         transactions={filteredTransactions}
+        categories={categories}
         selectedAccount={selectedAccount}
         onDeleteAccount={handleDeleteAccount}
         mutate={mutate}
