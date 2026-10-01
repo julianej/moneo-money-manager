@@ -42,17 +42,6 @@ export default function DownloadButton({
 
     const fileName = `money-manager-${filterName}.pdf`;
 
-    const transactionsWithCategoryNames = transactions.map((transaction) => {
-      const category = categories?.find(
-        (item) => item._id === transaction.category
-      );
-
-      return {
-        ...transaction,
-        category: category?.name || transaction.category,
-      };
-    });
-
     setPdfLoading(true);
 
     // set TimeOut
@@ -65,7 +54,8 @@ export default function DownloadButton({
     try {
       const blob = await pdf(
         <MoneyManagerReport
-          transactions={transactionsWithCategoryNames}
+          transactions={transactions}
+          categories={categories}
           account={account}
         />
       ).toBlob();

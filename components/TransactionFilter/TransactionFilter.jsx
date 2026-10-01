@@ -166,6 +166,7 @@ useEffect(() => {
         {/* ... / PDF DOWNLAOD */}
       <DownloadButton
           transactions={filteredTransactions}
+          categories={categories}
           account={selectedAccount}
           setPdfLoading={setPdfLoading}
           selectedType={selectedType}
