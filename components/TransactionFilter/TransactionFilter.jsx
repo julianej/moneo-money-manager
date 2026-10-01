@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import DownloadButton from "../DownloadReport/DownloadButton";
+import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
 
 import { useEffect, useState,} from "react";
 
@@ -242,38 +243,16 @@ useEffect(() => {
             Category
           </FilterLabel>
 
-          <FilterSelect
-            id="category-filter"
-            value={selectedCategories[0] || "all"}
-            onChange={(event) => {
-              const value = event.target.value;
+           <CategoryDropdown
+                value={selectedCategories[0] || ""}
+                categories={categories}
+                placeholder="All Categories"
+                onChange={(event) => {
+                  const value = event.target.value;
 
-              setSelectedCategories(
-                value === "all" ? [] : [value]
-              );
-            }}
-          >
-            <option value="all">All Categories</option>
-            {/* CATEGORIES 
-            For each item inside availableCategories, call that item categoryId while I'm working with it.*/}
-            {availableCategories.map((categoryId) => {
-              const category = categories.find(
-                (item) => item._id === categoryId
-              );
-
-              return (
-                <option key={categoryId} value={categoryId}>
-                  {category?.category || categoryId}
-                </option>
-              );
-            })}
-
-            {/* {availableCategories.map((category) => (
-              <option key={category} value={category}>
-                {category.category}
-              </option>
-            ))} */}
-          </FilterSelect>
+                  setSelectedCategories(value ? [value] : []);
+                }}
+              />
         </FilterGroup>
       </FilterRow>
     </FilterWrapper>

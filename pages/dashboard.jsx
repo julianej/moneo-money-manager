@@ -220,12 +220,15 @@ export default function Dashboard() {
       : null
   );
 
-  const { data: categories, error: categoriesError } = useSWR(
+  const { data: categories, error: categoriesError, } = useSWR(
     selectedAccount
       ? `/api/categories?account=${selectedAccount}`
       : null
   );
 
+console.log("DASHBOARD selectedAccount:", selectedAccount);
+console.log("DASHBOARD categories:", categories);
+console.log("DASHBOARD categoriesError:", categoriesError);
 
   const router = useRouter();
 
@@ -469,6 +472,7 @@ function handleAccountsClick() {
 
       {isFormOpen && (
         <TransactionForm
+          categories={categories}
           selectedAccount={selectedAccount}
           onCancel={() => setIsFormOpen(false)}
           showToast={showToast}

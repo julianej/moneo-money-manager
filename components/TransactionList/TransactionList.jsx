@@ -261,6 +261,7 @@ return (
             >
               <TransactionCard
                 transaction={transaction}
+                categories={categories}
                 onEdit={() => handleEdit(transaction)}
                 isSelected={editingTransaction?._id === transaction._id}
                 isHighlighted={highlightedId === transaction._id}
@@ -271,6 +272,7 @@ return (
               {editingTransaction?._id === transaction._id && (
                 <TransactionForm
                   transaction={editingTransaction}
+                  categories={categories}
                   selectedAccount={selectedAccount}
                   onDelete={() => handleDeleteClick(transaction)}
                   onCancel={handleCancel}

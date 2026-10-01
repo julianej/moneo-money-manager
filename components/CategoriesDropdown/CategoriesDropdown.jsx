@@ -9,17 +9,14 @@ export default function CategoryDropdown({
   value, 
   onChange,
   categories = [],
+  placeholder = "Select category",
 }) {
 
-  console.log("CATEGORIES:", categories);
-
-  if (!categories) {
-    return <p>Loading categories...</p>;
-  }
+ console.log("TRANSACTION FORM categories:", categories);
 
    return (
     <Select value={value || ""} onChange={onChange}>
-      <option value="">Select category</option>
+      <option value="">{placeholder}</option>
 
       {categories.map((category) => (
         <option key={category._id} value={category._id}>
