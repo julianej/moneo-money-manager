@@ -69,20 +69,44 @@ export default function CsvUpload({ onFileSelect }) {
 
   // clean DATE 
   function parseDate(value) {
-      if (!value) {
+  if (!value) {
+    return null;
+  }
+
+  const trimmedDate = value.trim();
+
+  // Already in YYYY-MM-DD format
+  if (trimmedDate.includes("-")) {
+    const parts = trimmedDate.split("-");
+
+      if (parts.length !== 3) {
         return null;
       }
 
-      const trimmedDate = value.trim();
+      const [year, month, day] = parts;
 
-      if (trimmedDate.includes("-")) {
-        return trimmedDate;
+      if (!year || !month || !day) {
+        return null;
       }
 
-      const [day, month, year] = trimmedDate.split(".");
-
-      return `${year}-${month}-${day}`;
+      return trimmedDate;
     }
+
+    // Convert DD.MM.YYYY → YYYY-MM-DD
+    const parts = trimmedDate.split(".");
+
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const [day, month, year] = parts;
+
+    if (!day || !month || !year) {
+      return null;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
 
   // clean AMOUNT
   function parseAmount(value) {
@@ -117,7 +141,7 @@ export default function CsvUpload({ onFileSelect }) {
        const headers = results.meta.fields || [];
        // ["date", "title", "amount"]
 
-       // HEADERS
+       // HEADER VALIDATION
        const cleanHeaders = headers.map(cleanHeader);
        const hasRequiredHeaders = requiredHeaders.every((header) =>
           cleanHeaders.includes(header)
@@ -131,42 +155,57 @@ export default function CsvUpload({ onFileSelect }) {
           return;
         }
 
-        // Normalize ROW values
-        const transactions = results.data.map((row) => {
-            const clean = cleanRow(row);
-            const amount = parseAmount(clean.amount);
+      try {
+  // Normalize TRANSACTION ROW values
+  const transactions = results.data.map((row, index) => {
+    const clean = cleanRow(row);
 
-         // Validate individual FIELDS   
-          return {
-            date: parseDate(clean.date),
-            title: cleanTitle(clean.title),
-            amount,
-            type: amount < 0 ? "expense" : "income",
-            category: "set-category",
-          };
-        });
+    const date = parseDate(clean.date);
+    const title = cleanTitle(clean.title);
+    const amount = parseAmount(clean.amount);
 
-        // Transform into your Transaction shape
-        onFileSelect(transactions);
+    if (!date) {
+      throw new Error(`Row ${index + 2}: Invalid date.`);
+    }
+
+    if (!title) {
+      throw new Error(`Row ${index + 2}: Title is missing.`);
+    }
+
+    if (amount === null) {
+      throw new Error(`Row ${index + 2}: Invalid amount.`);
+    }
+
+    return {
+      date,
+      title,
+      amount,
+      type: amount < 0 ? "expense" : "income",
+      category: "set-category",
+    };
+  });
+
+  // Transform into your Transaction shape
+  onFileSelect(transactions);
+
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
         setLoading(false);
-      },
-
-      error: () => {
-        setErrorMessage("Could not read the CSV file.");
-        setLoading(false);
-      },
-    });
-
-    event.target.value = "";
-  }
-
+ },
+ error: () => {
+      setErrorMessage("Could not read the CSV file.");
+      setLoading(false);
+    },
+  });
+}
 
   return (
     <UploadWrapper>
-      <UploadButton
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        >
+      <UploadButton 
+      type="button" 
+      onClick={() => fileInputRef.current?.click()}>
+
         {loading ? (
             <span>Reading CSV...</span>
         ) : (
