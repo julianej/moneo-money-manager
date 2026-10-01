@@ -125,7 +125,7 @@ expensesAmount: {
 export default function MoneyManagerReport({
   transactions = [], 
   categories = [],
-  selectedAccount,
+  account,
 }) {
 
   // =========================
@@ -214,7 +214,7 @@ export default function MoneyManagerReport({
       </View>
 
         {/* ACCOUNT */}
-        {selectedAccount ? (
+        {account ? (
           <View style={styles.accountSection}>
             <Text>Bankname: {account.bank}</Text>
             <Text>Accountname: {account.name}</Text>

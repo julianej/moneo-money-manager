@@ -230,6 +230,7 @@ console.log("DASHBOARD selectedAccount:", selectedAccount);
 console.log("DASHBOARD categories:", categories);
 console.log("DASHBOARD categoriesError:", categoriesError);
 
+
   const router = useRouter();
 
 // ====================
@@ -248,7 +249,6 @@ function handleAccountsClick() {
     setSelectedAccount(accounts[0]._id);
   }
 }
-
 
   // ====================
   // ACCOUNT
@@ -367,7 +367,7 @@ function handleAccountsClick() {
     }, 2000);
   }
 
-
+// ACCOUNT DATA OBJECT
   const selectedAccountData = accounts.find(
   (account) => String(account._id) === String(selectedAccount)
 );
@@ -436,7 +436,9 @@ function handleAccountsClick() {
           transactions={data ?? []}
           categories={categories}
           accounts={accounts}
-          selectedAccount={selectedAccount}
+          // selectedAccount={selectedAccount}
+            selectedAccountData={selectedAccountData}
+
           filteredTransactions={filteredTransactions}
           selectedYear={selectedYear}
           setSelectedYear={setSelectedYear}

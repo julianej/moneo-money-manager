@@ -88,8 +88,8 @@ export default function TransactionFilter({
    categories = [],
   filteredTransactions,
   setPdfLoading,
-  //SELECTED ACCOUNT
-  selectedAccount,
+  //SELECTED ACCOUNT OBJECT
+  selectedAccountData,
   selectedYear,
   setSelectedYear,
   selectedMonth,
@@ -167,7 +167,7 @@ useEffect(() => {
       <DownloadButton
           transactions={filteredTransactions}
           categories={categories}
-          account={selectedAccount}
+          account={selectedAccountData}
           setPdfLoading={setPdfLoading}
           selectedType={selectedType}
         />
