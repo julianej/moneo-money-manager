@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Loading, Spinner } from "@/styles/LoadingStyles";
-// import { X, Plus } from "lucide-react";
+import useSWR from "swr";
 
 // ====================
 // STYLES
@@ -116,6 +116,12 @@ export default function TransactionCard({
   isHighlighted,
   isDeleting,
 }) {
+
+  const { data: categories } = useSWR(
+    transaction.account
+      ? `/api/categories?account=${transaction.account}`
+      : null
+  );
   
   // "2025-08-20"
   const date = new Date(transaction.date);
@@ -138,8 +144,10 @@ export default function TransactionCard({
                 : transaction.title}
             </TransactionTitle>
 
-          <Category>
-            {transaction.category}
+         <Category>
+            {categories?.find(
+              (category) => category._id === transaction.category
+            )?.name || transaction.category}
           </Category>
         </div>
 
