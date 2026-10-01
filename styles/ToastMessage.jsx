@@ -34,7 +34,7 @@ export const Toast = styled.div`
     @media (min-width: 740px) {
         width: 100%;
         font-size: 5rem;
-        padding: 2rem 1.5rem 3rem;
+        padding: 7rem 1.5rem 7rem;
     }
 
 `;
