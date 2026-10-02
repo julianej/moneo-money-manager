@@ -9,7 +9,6 @@ const FilterWrapper = styled.div`
   flex-direction: row;
   gap: 1rem;
   padding: 2rem 0;
-  overflow: scroll;
 
   @media (min-width: 739px) {
         flex-direction: row;
@@ -64,7 +63,6 @@ const MonthSelect = styled.select`
   padding: 0.7rem 0.8rem;
 
   border: 1px solid lightgray;
-  border-radius: 2rem;
 
   background: white;
   color: #0d0d0d;

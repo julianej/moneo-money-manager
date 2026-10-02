@@ -26,6 +26,7 @@ import TransactionList from "@/components/TransactionList/TransactionList";
 
 import TransactionSearch from "@/components/TransactionSearch/TransactionSearch";
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
+import TransactionPeriod from "@/components/TransactionPeriod/TransactionPeriod";
 
 
 // ====================
@@ -105,7 +106,22 @@ const Title = styled.h1`
     background-color: white;
     padding: 3rem;
     text-align: center; 
+    justify-content: center;
     border-radius: 1rem;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    gap: 1rem;
+
+  span {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  @media (min-width: 740px) {
+    span {
+    font-size: 4rem;}}
+
 `;
 
 
@@ -174,6 +190,7 @@ export default function Dashboard() {
   // ====================
   // STATE
   // ====================
+  const [transactionView, setTransactionView] = useState("list");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [activeSection, setActiveSection] = useState("home"); // DASHBOARD DEFAULT
@@ -260,7 +277,7 @@ function handleAccountsClick() {
   }
 
   async function handleDeleteAccount() {
-   console.log("DELETE ACCOUNT CLICKED");
+      console.log("DELETE ACCOUNT CLICKED");
 
   if (!selectedAccount) return;
       console.log("NO SELECTED ACCOUNT");
@@ -303,8 +320,8 @@ function handleAccountsClick() {
   // ====================
 
 
-  const matchesFilter = (transaction) => {
-     const transactionDate = new Date(transaction.date);
+    const matchesFilter = (transaction) => {
+    const transactionDate = new Date(transaction.date);
 
     const matchesSearch =
     transaction.title
@@ -412,10 +429,12 @@ function handleAccountsClick() {
         onHome={handleHomeClick}
         selectedAccount={selectedAccount}
         onAccounts={handleAccountsClick}
+        transactionView={transactionView}
+        onTransactionViewChange={setTransactionView}
         onCharts={() => setActiveSection("charts")}
         onAddTransaction={() => setIsFormOpen(true)}
         // PROP STATE for +ADD
-        isFormOpen={isFormOpen}
+        // isFormOpen={isFormOpen}
         />
 
       <MenuProfileWrapper>
@@ -444,13 +463,21 @@ function handleAccountsClick() {
     selectedAccount ? (
     <>
       <Title>
-        {selectedAccountData?.bank} <br />
-        {selectedAccountData?.name}
+          <span> {selectedAccountData?.bank} </span>
+         <span> {selectedAccountData?.name}</span>
       </Title>
+
+
+      {transactionView === "chart" && (
+          <TransactionPeriod
+          selectedDate={selectedDate}
+          transactions={data ?? []}
+        />
+       )} 
+
       <AccountBalance
         transactions={filteredTransactions}
       />
-
       <TransactionSearch
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}

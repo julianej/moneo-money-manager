@@ -117,14 +117,16 @@ const RadioLabel = styled.label`
 
 const DeleteButton = styled.button`
   background: lightgrey;
-  padding: 0.5rem 0.5rem 0.4rem;
+  padding: 0.7rem 0.5rem 0.5rem;
   border-radius: 0.5rem;
   border: 1px solid lightgray;
   color: #0d0d0d ;
+  @media (min-width: 740px) {
+    padding: 0.7rem 1rem 0.6rem;}
 `;
 
 const Button = styled.button`
-  padding: 0.8rem 1.2rem;
+  padding: 0.8rem 0.8rem;
   border: none;
   border-radius: 8px;
 
@@ -139,6 +141,9 @@ const Button = styled.button`
   &:hover {
     opacity: 0.8;
   }
+
+  @media (min-width: 740px) {
+    padding: 0.8rem 1.2rem;}
 `;
 
 const SubmitButton = styled.button`
@@ -159,6 +164,10 @@ const ButtonWrapper = styled.div`
   gap: 12px;
   justify-content: flex-end;
   align-items: center;
+  font-size: 0.8rem;
+
+  @media (min-width: 740px) {
+      font-size: 1rem;}
 `;
 
 const SaveButton = styled(Button)`

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { House, Wallet, ChartColumnBig, Plus } from "lucide-react";
+import { House, Wallet, ChartColumnBig, Plus, List } from "lucide-react";
 
 const FloatingNavigationWrapper = styled.nav`
   position: fixed;
@@ -27,8 +27,8 @@ const FloatingNavigationWrapper = styled.nav`
   gap: 0rem;
 
   @media (min-width: 740px) {
-    gap: 3rem;
-    left: 58%;
+    gap: 0rem;
+    left: 13%;
     bottom: 1rem;
   }
 `;
@@ -75,8 +75,10 @@ export default function FloatingNavigation({
   selectedAccount,
   onHome,
   onAccounts,
+  transactionView,
+  onTransactionViewChange,
   // CHARTS PAGE
-  onCharts,
+  // onCharts,
   // +ADD
   isFormOpen,
   onAddTransaction,
@@ -107,7 +109,7 @@ export default function FloatingNavigation({
       {selectedAccount && (
         // SELECTED ACCOUNT >
         <>
-          <MenuItem
+          {/* <MenuItem
             type="button"
             // +ADD isFormOpen
             $active={isFormOpen}
@@ -115,16 +117,23 @@ export default function FloatingNavigation({
           >
             <Plus size={22} />
             <span>Add</span>
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem
             type="button"
-            $active={activeSection === "charts"}
-            onClick={onCharts}
-            // CHARTS VIEW
+            $active={transactionView === "list"}
+            onClick={() => onTransactionViewChange("list")}
           >
-            <ChartColumnBig size={22} />
-            <span>Charts</span>
+            <List size={22} />
+            <span>List</span>
           </MenuItem>
+          <MenuItem
+              type="button"
+              $active={transactionView === "chart"}
+              onClick={() => onTransactionViewChange("chart")}
+            >
+              <ChartColumnBig size={22} />
+              <span>Charts</span>
+            </MenuItem>
         </>
         
       )}
