@@ -246,23 +246,13 @@ function handleAccountsClick() {
   }
 }
 
-
-const selectedDateTransactions =
-  data?.filter((transaction) => {
-    const transactionDate = new Date(transaction.date);
-
-    return (
-      transactionDate.toDateString() ===
-      selectedDate.toDateString()
-    );
-  }) ?? [];
-
   // ====================
   // ACCOUNT
   // ====================
 
   function handleAccountSelect(accountId) {
     setActiveSection("accounts");
+    setActiveSection("charts");
     setSelectedAccount(accountId);
     setIsBankFormOpen(false);
     setIsFormOpen(false);
@@ -423,8 +413,12 @@ const selectedDateTransactions =
      <FloatingNavigation
         activeSection={activeSection}
         onHome={handleHomeClick}
+        selectedAccount={selectedAccount}
         onAccounts={handleAccountsClick}
+        onCharts={() => setActiveSection("charts")}
         onAddTransaction={() => setIsFormOpen(true)}
+        // PROP STATE for +ADD
+        isFormOpen={isFormOpen}
         />
 
       <MenuProfileWrapper>
@@ -484,15 +478,6 @@ const selectedDateTransactions =
           setSelectedCategories={setSelectedCategories}
           setPdfLoading={setPdfLoading}
 
-        />
-        <WeekPicker
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          transactions={data ?? []}
-        />
-        <DayTransactions
-          selectedDate={selectedDate}
-          transactions={selectedDateTransactions}
         />
 
       <AddButton
