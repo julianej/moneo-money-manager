@@ -2,6 +2,9 @@ import { useRef, useState } from "react";
 import Papa from "papaparse";
 import styled from "styled-components";
 import { cleanTitle } from "../../utils/cleanTitle";
+import { cleanDate } from "../../utils/cleanDate";
+import { cleanAmount } from "../../utils/cleanAmount";
+
 
 const UploadWrapper = styled.div`
   display: flex;
@@ -67,58 +70,6 @@ export default function CsvUpload({ onFileSelect }) {
     return cleanRow;
   }
 
-  // clean DATE 
-  function parseDate(value) {
-  if (!value) {
-    return null;
-  }
-
-  const trimmedDate = value.trim();
-
-  // Already in YYYY-MM-DD format
-  if (trimmedDate.includes("-")) {
-    const parts = trimmedDate.split("-");
-
-      if (parts.length !== 3) {
-        return null;
-      }
-
-      const [year, month, day] = parts;
-
-      if (!year || !month || !day) {
-        return null;
-      }
-
-      return trimmedDate;
-    }
-
-    // Convert DD.MM.YYYY → YYYY-MM-DD
-    const parts = trimmedDate.split(".");
-
-    if (parts.length !== 3) {
-      return null;
-    }
-
-    const [day, month, year] = parts;
-
-    if (!day || !month || !year) {
-      return null;
-    }
-
-    return `${year}-${month}-${day}`;
-  }
-
-  // clean AMOUNT
-  function parseAmount(value) {
-    if (!value) {
-      return null;
-    }
-
-    const amount = Number(value.trim().replace(",", "."));
-    return Number.isFinite(amount) ? amount : null;
-
-  }
-
   // handle BUTTON  <CsvUpload> in TransactionList
   function handleFileSelection(event) {
     //is the browser's API collection of single-file upload: files[0]
@@ -160,9 +111,9 @@ export default function CsvUpload({ onFileSelect }) {
   const transactions = results.data.map((row, index) => {
     const clean = cleanRow(row);
 
-    const date = parseDate(clean.date);
+    const date = cleanDate(clean.date);
     const title = cleanTitle(clean.title);
-    const amount = parseAmount(clean.amount);
+    const amount = cleanAmount(clean.amount);
 
     if (!date) {
       throw new Error(`Row ${index + 2}: Invalid date.`);
