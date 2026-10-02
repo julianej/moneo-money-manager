@@ -17,8 +17,6 @@ import {
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
-import WeekPicker from "../components/WeekPicker/WeekPicker";
-import DayTransactions from "../components/WeekPicker/DayTransactions";
 
 import Welcome from "@/components/Welcome/Welcome";
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
@@ -29,6 +27,7 @@ import TransactionList from "@/components/TransactionList/TransactionList";
 
 import TransactionSearch from "@/components/TransactionSearch/TransactionSearch";
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
+import TransactionPeriod from "@/components/TransactionPeriod.jsx/TransactionPeriod";
 
 
 // ====================
@@ -246,17 +245,6 @@ function handleAccountsClick() {
     setSelectedAccount(accounts[0]._id);
   }
 }
-
-
-const selectedDateTransactions =
-  data?.filter((transaction) => {
-    const transactionDate = new Date(transaction.date);
-
-    return (
-      transactionDate.toDateString() ===
-      selectedDate.toDateString()
-    );
-  }) ?? [];
 
   // ====================
   // ACCOUNT
@@ -526,16 +514,16 @@ const selectedDateTransactions =
     </>
   ) : ( <>
         <Welcome variant="dashboard" />
-          <WeekPicker
+          {/* <WeekPicker
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
           transactions={data ?? []}
-        />
-        <DayTransactions
-          selectedDate={selectedDate}
-          // all Transcation data
-          transactions={data ?? []}        />
-      </>
+        /> */}
+        <TransactionPeriod
+            selectedDate={selectedDate}
+            transactions={data ?? []}
+          />
+        </>
     )}
   </MainContent>
       {/* BANK ACCOUNT FORM */}
