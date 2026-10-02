@@ -358,9 +358,8 @@ console.log("TRANSACTION FORM category:", category);
 
     // If editing, call onSave updates the TransactionCard
     if (isEditing) {
-      onSave(transaction._id);
-      showToast("Transaction updated successfully.");
-      return;
+        onSave(transaction._id);
+        return;
     }
 
 
