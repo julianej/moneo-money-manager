@@ -17,9 +17,6 @@ import {
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
-import WeekPicker from "../components/WeekPicker/WeekPicker";
-import DayTransactions from "../components/WeekPicker/DayTransactions";
-
 import Welcome from "@/components/Welcome/Welcome";
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
 import BankAccountForm from "@/components/BankSideBar/BankAccountForm";
