@@ -18,6 +18,7 @@ import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
 import WeekPicker from "../components/WeekPicker/WeekPicker";
+import DayTransactions from "../components/WeekPicker/DayTransactions";
 
 import Welcome from "@/components/Welcome/Welcome";
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
@@ -180,6 +181,7 @@ export default function Dashboard() {
 
   const [activeSection, setActiveSection] = useState("home"); // DASHBOARD DEFAULT
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
 
@@ -243,6 +245,17 @@ function handleAccountsClick() {
     setSelectedAccount(accounts[0]._id);
   }
 }
+
+
+const selectedDateTransactions =
+  data?.filter((transaction) => {
+    const transactionDate = new Date(transaction.date);
+
+    return (
+      transactionDate.toDateString() ===
+      selectedDate.toDateString()
+    );
+  }) ?? [];
 
   // ====================
   // ACCOUNT
@@ -443,6 +456,9 @@ function handleAccountsClick() {
         {selectedAccountData?.bank} <br />
         {selectedAccountData?.name}
       </Title>
+      <AccountBalance
+        transactions={filteredTransactions}
+      />
 
       <TransactionSearch
         searchTerm={searchTerm}
@@ -469,10 +485,15 @@ function handleAccountsClick() {
           setPdfLoading={setPdfLoading}
 
         />
-
-      <AccountBalance
-        transactions={filteredTransactions}
-      />
+        <WeekPicker
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          transactions={data ?? []}
+        />
+        <DayTransactions
+          selectedDate={selectedDate}
+          transactions={selectedDateTransactions}
+        />
 
       <AddButton
         onClick={() => setIsFormOpen((isOpen) => !isOpen)}
@@ -512,7 +533,6 @@ function handleAccountsClick() {
     </>
   ) : ( <>
         <Welcome variant="dashboard" />
-        <WeekPicker />
       </>
     )}
   </MainContent>

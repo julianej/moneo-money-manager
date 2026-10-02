@@ -24,9 +24,8 @@ const DayButton = styled.button`
     `}
 `;
 
-export default function WeekPicker() {
+export default function WeekPicker({}) {
       const today = new Date();
-      const [selectedDate, setSelectedDate] = useState(today);
 
       const monday = new Date(today);
       const day = today.getDay();
