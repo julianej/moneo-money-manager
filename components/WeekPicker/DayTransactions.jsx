@@ -8,8 +8,16 @@ const Card = styled.div`
   border-radius: 20px;
 `;
 
-const Title = styled.h2`
-  margin: 0 0 16px;
+const Day = styled.div`
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const DayTitle = styled.h2`
+  margin: 0 0 12px;
 `;
 
 const Transaction = styled.div`
@@ -27,25 +35,65 @@ export default function DayTransactions({
   selectedDate,
   transactions,
 }) {
+  const yesterday = new Date(selectedDate);
+  yesterday.setDate(selectedDate.getDate() - 1);
+
+  const tomorrow = new Date(selectedDate);
+  tomorrow.setDate(selectedDate.getDate() + 1);
+
+  const days = [
+    {
+      label: "Yesterday",
+      date: yesterday,
+    },
+    {
+      label: "Today",
+      date: selectedDate,
+    },
+    {
+      label: "Tomorrow",
+      date: tomorrow,
+    },
+  ];
+
+  function getTransactionsForDay(date) {
+    return transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+
+      return (
+        transactionDate.toDateString() === date.toDateString()
+      );
+    });
+  }
+
   return (
     <Card>
-      <Title>
-        Transactions for{" "}
-        {selectedDate.toLocaleDateString("en-GB")}
-      </Title>
+      {days.map((day) => {
+        const dayTransactions = getTransactionsForDay(day.date);
 
-      {transactions.length === 0 ? (
-        <p>No transactions for this day.</p>
-      )
-       : 
-      (
-        transactions.map((transaction) => (
-          <Transaction key={transaction._id}>
-            <span>{transaction.title}</span>
-            <span>{transaction.amount}</span>
-          </Transaction>
-        ))
-      )}
+        return (
+          <Day key={day.date.toISOString()}>
+            <DayTitle>
+              {day.label}{" "}
+              {day.date.toLocaleDateString("en-GB")}
+            </DayTitle>
+
+            {dayTransactions.length === 0 ? (
+              <p>No transactions.</p>
+            ) : (
+              dayTransactions.map((transaction) => (
+                <Transaction key={transaction._id}>
+                  <span>{transaction.title}</span>
+
+                  <span>
+                    {transaction.amount.toFixed(2)} €
+                  </span>
+                </Transaction>
+              ))
+            )}
+          </Day>
+        );
+      })}
     </Card>
   );
 }

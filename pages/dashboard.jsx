@@ -206,9 +206,10 @@ export default function Dashboard() {
   // ====================
 
   const {
-    data: accounts = [],
-    mutate: mutateAccounts,
-  } = useSWR("/api/bankaccounts");
+      data: accounts = [],
+      mutate: mutateAccounts,
+    } = useSWR("/api/bankaccounts");
+  
 
   const { data, error, isLoading, mutate } = useSWR(
     selectedAccount
@@ -264,6 +265,7 @@ const selectedDateTransactions =
   function handleAccountSelect(accountId) {
     setActiveSection("accounts");
     setSelectedAccount(accountId);
+    setActiveSection("charts");
     setIsBankFormOpen(false);
     setIsFormOpen(false);
     }
@@ -408,14 +410,14 @@ const selectedDateTransactions =
       )}
 
       <SidebarWrapper>
-        <BankSideBar
-            accounts={accounts}
-            selectedAccount={selectedAccount}
-            setSelectedAccount={handleAccountSelect}
-            onAddAccount={handleAddAccount}
-            isBankFormOpen={isBankFormOpen}
-            isMenuOpen={isMenuOpen}
-          />
+       <BankSideBar
+          accounts={accounts}
+          selectedAccount={selectedAccount}
+          onAccountSelect={handleAccountSelect}
+          onAddAccount={handleAddAccount}
+          isBankFormOpen={isBankFormOpen}
+          isMenuOpen={isMenuOpen}
+        />
       </SidebarWrapper>
 
 
@@ -485,15 +487,6 @@ const selectedDateTransactions =
           setPdfLoading={setPdfLoading}
 
         />
-        <WeekPicker
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          transactions={data ?? []}
-        />
-        <DayTransactions
-          selectedDate={selectedDate}
-          transactions={selectedDateTransactions}
-        />
 
       <AddButton
         onClick={() => setIsFormOpen((isOpen) => !isOpen)}
@@ -533,6 +526,15 @@ const selectedDateTransactions =
     </>
   ) : ( <>
         <Welcome variant="dashboard" />
+          <WeekPicker
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          transactions={data ?? []}
+        />
+        <DayTransactions
+          selectedDate={selectedDate}
+          // all Transcation data
+          transactions={data ?? []}        />
       </>
     )}
   </MainContent>

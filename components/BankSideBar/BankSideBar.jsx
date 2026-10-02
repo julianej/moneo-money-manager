@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Plus, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import useSWR from "swr";
 
 import BankAccountCard from "./BankAccountCard";
 
@@ -165,7 +166,7 @@ const SyncStatus = styled.span`
 export default function BankSideBar({
   accounts = [],
   selectedAccount,
-  setSelectedAccount,
+  onAccountSelect,
   onAddAccount,
   isBankFormOpen,
 }) {
@@ -203,7 +204,7 @@ export default function BankSideBar({
             account={account}
             selected={selectedAccount === account._id}
             disabled={isBankFormOpen}
-             onClick={() => setSelectedAccount(account._id)}
+             onClick={() => onAccountSelect(account._id)}
           />
         ))}
       </AccountList>
