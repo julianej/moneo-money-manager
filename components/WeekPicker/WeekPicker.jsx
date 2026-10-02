@@ -13,6 +13,16 @@ const WrapperWeekPicker = styled.div`
   }
 `;
 
+const DayButton = styled.button`
+  border: 1px solid transparent;
+
+  ${({ $isToday }) =>
+    $isToday &&
+    `
+      border: 2px solid black;
+      border-radius: 5rem;
+    `}
+`;
 
 export default function WeekPicker() {
       const today = new Date();
@@ -36,26 +46,47 @@ export default function WeekPicker() {
     console.log("WEEK PICKER:", day);
     console.log("Monday:", monday);
 
-    const week = [
-        // 7 days
-    ]
+//     [
+//   Date,
+//   Date,
+//   Date,
+//   Date,
+//   Date,
+//   Date,
+//   Date
+// ]
 
+    // This creates an Array with 7 positions.
+    // const week = Array.from({ length: 7 },)
+    const week = Array.from({ length: 7 }, 
+    // (value, position) => {
+    (value, index) => { 
+
+    const date = new Date(monday);
+        date.setDate(monday.getDate() + index);
+
+        return date;
+    });
+
+    console.log("WEEK PICKER:", week);
 
 return (
-    <div>
-        <WrapperWeekPicker>
-             {week.map((date) => (
-            <button
-                key={date.toISOString()}
-                onClick={() => setSelectedDate(date)}
-            >
-                {date.toLocaleDateString("en-US", {
-                weekday: "short",
-                })}
-                {date.getDate()}
-            </button>
-            ))}
-      </WrapperWeekPicker>
-    </div>
-  );
-}
+  <WrapperWeekPicker>
+    {week.map((date) => {
+      const isToday = date.toDateString() === today.toDateString();
+
+      return (
+        <DayButton
+          key={date.toISOString()}
+          onClick={() => setSelectedDate(date)}
+          $isToday={isToday}
+        >
+          {date.toLocaleDateString("en-US", {
+            weekday: "short",
+          })}
+          {date.getDate()}
+        </DayButton>
+      );
+    })}
+  </WrapperWeekPicker>
+);}
