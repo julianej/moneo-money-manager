@@ -4,20 +4,22 @@ import { ChevronDown } from "lucide-react";
 
 const Card = styled.div`
   width: 100%;
-  padding: 20px;
+  padding: 1rem;
   border: 2px solid black;
   border-radius: 20px;
 
   ${({ $variant }) =>
     $variant === "year" &&
-    `
+    ` padding: 1rem;
       grid-column: 1 / -1;
-    `}
+      @media (min-width: 740px) {
+      padding: 2rem 2rem 2rem 3rem;}` 
+    }
 `;
 
 const CardHeader = styled.button`
   width: 100%;
-  padding: 20px;
+  padding: 0;
   border: none;
   background: none;
   text-align: left;
@@ -27,6 +29,9 @@ const CardHeader = styled.button`
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+
+  @media (min-width: 740px) {
+      padding: 2rem;}
 `;
 
 const CardHeaderRight = styled.div`
@@ -37,7 +42,9 @@ const CardHeaderRight = styled.div`
 
 const CardTitle = styled.h2`
   margin: 0 0 4px;
-  font-size: 4rem;
+  font-size: 2rem;
+  @media (min-width: 740px) {
+      font-size: 4rem;;}
 `;
 
 const CardDate = styled.p`
@@ -59,17 +66,25 @@ const CardContent = styled.div`
 const FlexWrapperSum = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
-  gap: 2rem;
+  /* align-items: center; */
+  justify-content: space-between;
+  gap: 0rem;
+  padding: 0rem 0rem 0 3rem;
+  font-size: 0.8rem;
 
   p,
   strong {
     margin: 0;
   }
 
-  strong {
-    font-size: 1rem;
-  }
+   @media (min-width: 740px) {
+     font-size: 1rem;
+     gap: 2rem;
+
+    strong {
+    font-size: 0.8rem;
+    }
+   }
 `;
 
 const SumWrapper = styled.div`
@@ -80,18 +95,29 @@ const SumWrapper = styled.div`
 
 const YearHeader = styled.div`
   display: grid;
-  grid-template-columns: 2.5fr 4fr 0.5fr;;
+  grid-template-columns: 1fr 2fr 0fr;
   align-items: center;
-  gap: 2rem;
+  justify-content: space-between;
+  gap: 1rem;
+  @media (min-width: 740px) {
+      grid-template-columns: 2.5fr 4fr 0.5fr;
+      gap: 2rem;
+    }
 `;
 
 const YearSum = styled.div`
   display: flex;
-  flex-direction: row;
-  /* grid-template-columns: auto auto; */
-  gap: 2rem;
-  margin: 0 2rem 0 0;
+  flex-direction: column;
+  grid-template-columns: auto auto;
+  gap: 1rem;
+  margin: 0;
   font-size: 1rem;
+
+  @media (min-width: 740px) {
+     margin: 0 2rem 0 0;
+     flex-direction: row;
+      gap: 2rem;
+     }
 `;
 
 const ToggleButton = styled.button`
