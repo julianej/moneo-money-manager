@@ -201,7 +201,6 @@ export default function TransactionForm({
   onCancel,
   onDelete,
   onSave,
-  isDeleting,
   showToast,
   mutate
 }) {

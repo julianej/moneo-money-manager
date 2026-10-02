@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { X, } from "lucide-react";
 import {SubmitButton,CancelButton,} from "@/styles/ButtonStyles";
-
+import {cleanCategory, isValidCategory,categoryExists,} from "../../utils/cleanCategory";
 
 const Form = styled.form`
   display: flex;
@@ -130,6 +130,7 @@ export default function BankAccountForm({
   const [bic, setBic] = useState("");
   // const [balance, setBalance] = useState("");
   const [errors, setErrors] = useState({});
+  const [categoryError, setCategoryError] = useState("");
 
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
@@ -183,7 +184,8 @@ export default function BankAccountForm({
       }
     }
 
-    // Balance
+
+  // add Balance MAYBE LATER
   //   if (balance === "") {
   //     newErrors.balance = "Balance is required.";
   //   } else if (isNaN(Number(balance))) {
@@ -199,26 +201,35 @@ export default function BankAccountForm({
 
 
     // Add Categories
-    function handleAddCategory() {
-      const name = newCategory.trim();
+   function handleAddCategory() {
+    const categoryName = cleanCategory(newCategory);
 
-      if (!name) return;
-
-      const alreadyExists = categories.some(
-        (category) => category.toLowerCase() === name.toLowerCase()
-      );
-
-      if (alreadyExists) {
-        return;
-      }
-
-      setCategories((currentCategories) => [
-        ...currentCategories,
-        name,
-      ]);
-
-      setNewCategory("");
+    if (!categoryName) {
+      setCategoryError("Category name is required.");
+      return;
     }
+
+    if (!isValidCategory(categoryName)) {
+      setCategoryError(
+        "Category must contain between 3 and 30 characters."
+      );
+      return;
+    }
+
+    if (categoryExists(categories, categoryName)) {
+      setCategoryError("This category already exists.");
+      return;
+    }
+
+    setCategories((currentCategories) => [
+      ...currentCategories,
+      categoryName,
+    ]);
+
+    setNewCategory("");
+    setCategoryError("");
+  }
+
     // Remove Categories
     function handleRemoveCategory(categoryToRemove) {
       setCategories((currentCategories) =>
@@ -411,46 +422,49 @@ export default function BankAccountForm({
       </Field> */}
       <CategorySection>
         <CategoryTitle>Categories</CategoryTitle>
-  <CategoryListWrapper>
-        {categories.map((category) => (
-          <CategoryItem key={category}>
-            <span>{category}</span>
+        <CategoryListWrapper>
+           {categories.map((category) => (
+              <CategoryItem key={category}>
+                <span>{category}</span>
 
-            <button
-              type="button"
-              onClick={() => handleRemoveCategory(category)}
-            >
-              ×
-            </button>
-          </CategoryItem>
-        ))}
-</CategoryListWrapper>
-        <CategoryInputWrapper>
-          <input
-            type="text"
-            value={newCategory}
-            onChange={(event) => setNewCategory(event.target.value)}
-            placeholder="Category name"
-          />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveCategory(category)}
+                >
+                  ×
+                </button>
+              </CategoryItem>
+            ))}
+            </CategoryListWrapper>
+            <CategoryInputWrapper>
+              <input
+                type="text"
+                value={newCategory}
+                onChange={(event) => setNewCategory(event.target.value)}
+                placeholder="Category name"
+              />
 
-          <button
+              <button
+                type="button"
+                onClick={handleAddCategory}
+              >
+                + Add category
+              </button>
+            </CategoryInputWrapper>
+            {categoryError && (
+                <ErrorMessage>{categoryError}</ErrorMessage>
+              )}
+            </CategorySection>
+
+          <SubmitButton type="submit">
+            Add Bank Account
+          </SubmitButton>
+
+          <CancelButton
             type="button"
-            onClick={handleAddCategory}
+            onClick={onCancel}
           >
-            + Add category
-          </button>
-        </CategoryInputWrapper>
-      </CategorySection>
-
-      <SubmitButton type="submit">
-        Add Bank Account
-      </SubmitButton>
-
-      <CancelButton
-        type="button"
-        onClick={onCancel}
-      >
-        Cancel
+            Cancel
       </CancelButton>
     </Form>
   );
