@@ -17,6 +17,8 @@ import {
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
+import WeekPicker from "../components/WeekPicker/WeekPicker";
+
 import Welcome from "@/components/Welcome/Welcome";
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
 import BankAccountForm from "@/components/BankSideBar/BankAccountForm";
@@ -393,14 +395,14 @@ function handleAccountsClick() {
       )}
 
       <SidebarWrapper>
-      <BankSideBar
-          accounts={accounts}
-          selectedAccount={selectedAccount}
-          setSelectedAccount={handleAccountSelect}
-          onAddAccount={handleAddAccount}
-          isBankFormOpen={isBankFormOpen}
-          isMenuOpen={isMenuOpen}
-        />
+        <BankSideBar
+            accounts={accounts}
+            selectedAccount={selectedAccount}
+            setSelectedAccount={handleAccountSelect}
+            onAddAccount={handleAddAccount}
+            isBankFormOpen={isBankFormOpen}
+            isMenuOpen={isMenuOpen}
+          />
       </SidebarWrapper>
 
 
@@ -414,28 +416,29 @@ function handleAccountsClick() {
 
       <MenuProfileWrapper>
         <p>Hallo Juliane</p>
-       <MenuProfile
+         <MenuProfile
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
             isLoggedIn={true}
             listItems={profileItems}
             />
-      </MenuProfileWrapper>
+        </MenuProfileWrapper>
 
-    {/* BANK ACCOUNT SPINNER */}
-    {isAddingAccount || isDeletingAccount ? (
-        <div>
-          <p>
-            {isAddingAccount
-              ? "Adding bank account..."
-              : "Deleting bank account..."}
-          </p>
+      {/* BANK ACCOUNT SPINNER */}
+      {isAddingAccount || isDeletingAccount ? (
+          <div>
+            <p>
+              {isAddingAccount
+                ? "Adding bank account..."
+                : "Deleting bank account..."}
+            </p>
 
-          <Spinner />
-        </div>
-      ) : selectedAccount ? (
+            <Spinner />
+          </div>
+        ) : 
+      
+    selectedAccount ? (
     <>
-
       <Title>
         {selectedAccountData?.bank} <br />
         {selectedAccountData?.name}
@@ -507,8 +510,10 @@ function handleAccountsClick() {
         pdfLoading={pdfLoading}
       />
     </>
-  ) : (
-         <Welcome variant="dashboard" />
+  ) : ( <>
+        <Welcome variant="dashboard" />
+        <WeekPicker />
+      </>
     )}
   </MainContent>
       {/* BANK ACCOUNT FORM */}

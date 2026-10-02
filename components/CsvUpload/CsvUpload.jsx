@@ -107,8 +107,8 @@ export default function CsvUpload({ onFileSelect }) {
         }
 
       try {
-  // Normalize TRANSACTION ROW values
-  const transactions = results.data.map((row, index) => {
+    // Normalize TRANSACTION ROW values
+    const transactions = results.data.map((row, index) => {
     const clean = cleanRow(row);
 
     const date = cleanDate(clean.date);
