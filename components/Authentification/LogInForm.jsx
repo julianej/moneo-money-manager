@@ -15,6 +15,7 @@ const AuthCard = styled.div`
   padding: 32px;
   border: 2px solid black;
   border-radius: 24px;
+  background-color: white;
 `;
 
 const Title = styled.h1`
@@ -73,6 +74,7 @@ const ErrorMessage = styled.p`
 `;
 
 export default function LoginForm() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -80,8 +82,10 @@ export default function LoginForm() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    // Reset error message before making the request
     setError("");
 
+    // Make a POST request to the login API route
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -93,8 +97,10 @@ export default function LoginForm() {
       }),
     });
 
+    // ASYNC FUNCTION, WE NEED TO AWAIT THE RESPONSE AND THEN PARSE IT AS JSON
     const data = await response.json();
 
+    // NO RESPONSE OK, THEN SET ERROR MESSAGE
     if (!response.ok) {
       setError(data.message);
       return;
@@ -106,7 +112,7 @@ export default function LoginForm() {
   return (
     <AuthWrapper>
       <AuthCard>
-        <Title>Welcome back</Title>
+        <Title>Welcome,</Title>
 
         <Intro>
           Log in to your Money Manager.
