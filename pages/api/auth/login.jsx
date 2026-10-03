@@ -1,6 +1,7 @@
-import dbConnect from "../../../db/dbConnect";
-import User from "../../../db/models/User/User";
+import dbConnect from "../../../db/connect";
+import User from "../../../db/models/Users/Users";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
