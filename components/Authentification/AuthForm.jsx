@@ -3,14 +3,10 @@ import { useState } from "react";
 
 import LogInForm from "./LogInForm";
 import RegisterForm from "./RegisterForm";
+import ForgotPwForm from "./ForgotPwForm";
 
 export default function AuthView({ onClose }) {
-    
-  const [activeTab, setActiveTab] = useState("login");
-
-  function handleRegistered() {
-    setActiveTab("login");
-  }
+  const [activeView, setActiveView] = useState("login");
 
   return (
     <AuthCard>
@@ -22,34 +18,41 @@ export default function AuthView({ onClose }) {
         ×
       </CloseButton>
 
-      <Tabs>
-        <Tab
-          type="button"
-          $active={activeTab === "login"}
-          onClick={() => setActiveTab("login")}
-        >
-          Login
-        </Tab>
+      {activeView !== "forgot-pw" && (
+        <Tabs>
+          <Tab
+            type="button"
+            $active={activeView === "login"}
+            onClick={() => setActiveView("login")}
+          >
+            Login
+          </Tab>
 
-        <Tab
-          type="button"
-          $active={activeTab === "register"}
-          onClick={() => setActiveTab("register")}
-        >
-          Register
-        </Tab>
-      </Tabs>
+          <Tab
+            type="button"
+            $active={activeView === "register"}
+            onClick={() => setActiveView("register")}
+          >
+            Register
+          </Tab>
+        </Tabs>
+      )}
 
-      {activeTab === "login" && (
+      {activeView === "login" && (
         <LogInForm
-          onClose={onClose}
+          onForgotPassword={() => setActiveView("forgot-pw")}
         />
       )}
 
-      {activeTab === "register" && (
+      {activeView === "register" && (
         <RegisterForm
-          onClose={onClose}
-          onRegistered={handleRegistered}
+          onRegistered={() => setActiveView("login")}
+        />
+      )}
+
+      {activeView === "forgot-pw" && (
+        <ForgotPwForm
+          onBackToLogin={() => setActiveView("login")}
         />
       )}
     </AuthCard>
