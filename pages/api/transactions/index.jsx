@@ -1,5 +1,7 @@
 import dbConnect from "@/db/connect";
 import Transactions from "@/db/models/Transactions/Transactions";
+import { getAuthenticatedUserId } from "../../../utils/cleanUserAuth";
+
 
 export default async function handler(request, response) {
   try {
@@ -7,7 +9,19 @@ export default async function handler(request, response) {
 
     // CREATE
     if (request.method === "POST") {
-      const transaction = await Transactions.create(request.body);
+      // const transaction = await Transactions.create(request.body);
+      const userId = getAuthenticatedUserId(request);
+
+      if (!userId) {
+        return response.status(401).json({
+          error: "Unauthorized",
+        });
+      }
+
+      const transaction = await Transactions.create({
+        ...request.body,
+        user: userId,
+      });
 
       return response.status(201).json(transaction);
     }
@@ -16,12 +30,23 @@ export default async function handler(request, response) {
     if (request.method === "GET") {
 
       // NEW SCHEMA OBJECT
+      const userId = getAuthenticatedUserId(request);
+
+      if (!userId) {
+        return response.status(401).json({
+          error: "Unauthorized",
+        });
+      }
+
       const { account } = request.query;
 
-
       const filter = account
-        ? { account }
-        : {};
+        ? { account, user: userId }
+        : { user: userId };
+
+      // const filter = account
+      //   ? { account }
+      //   : {};
 
       const transactions = await Transactions.find(filter).sort({
         date: -1,

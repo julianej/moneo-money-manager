@@ -1,13 +1,25 @@
 import dbConnect from "@/db/connect";
 import BankAccounts from "@/db/models/BankAccounts/BankAccounts";
+import { getAuthenticatedUserId } from "@/utils/cleanUserAuth";
 
 export default async function handler(request, response) {
   try {
     await dbConnect();
 
+    const userId = getAuthenticatedUserId(request);
+      
+    if (!userId) {
+      return response.status(401).json({
+        error: "Unauthorized",
+      });
+    }
+
     // CREATE
     if (request.method === "POST") {
-      const account = await BankAccounts.create(request.body);
+          const account = await BankAccounts.create({
+         ...request.body,
+        user: userId,
+      });
 
       return response.status(201).json(account);
     }

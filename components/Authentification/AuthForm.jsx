@@ -45,6 +45,7 @@ export default function AuthView({ onClose }) {
       )}
 
       {activeView === "register" && (
+
         <RegisterForm
           onRegistered={() => setActiveView("login")}
         />

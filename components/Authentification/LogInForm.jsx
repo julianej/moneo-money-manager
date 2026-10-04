@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 const Title = styled.h1`
   margin: 0 0 8px;
@@ -69,6 +70,8 @@ const ErrorMessage = styled.p`
 `;
 
 export default function LoginForm({ onForgotPassword }) {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -98,7 +101,8 @@ export default function LoginForm({ onForgotPassword }) {
       return;
     }
 
-    console.log("Logged in:", data.user);
+    router.push("/dashboard");
+    // console.log("Logged in:", data.user);
   }
 
   return (

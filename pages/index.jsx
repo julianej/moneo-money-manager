@@ -2,13 +2,11 @@ import Welcome from "@/components/Welcome/Welcome";
 import styled from "styled-components";
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import AsciiBackground from "@/components/AsciiBackground/AsciiBackground";
-// import LoginForm from "@/components/Authentification/LogInForm";
 import AuthForm from "@/components/Authentification/AuthForm";
-
-
 
 import { useState } from "react";
 // import { useRouter } from "next/router";
+
 
 const LoginOverlay = styled.div`
   position: fixed;
@@ -63,10 +61,9 @@ export default function HomePage() {
           setIsMenuOpen={setIsMenuOpen} 
           isLoggedIn={false} 
           onLogIn={onLogIn}
-          // onLogin={onLogIn} 
           listItems={listMenuItems} />
 
-    {/* LOGIN FORM AS ANOTHER FEATURE*/} 
+    {/* LOGIN FORM */} 
          {isLoginFormOpen && ( 
           <LoginOverlay>
              <AuthForm

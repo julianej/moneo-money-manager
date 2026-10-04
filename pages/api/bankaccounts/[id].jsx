@@ -5,6 +5,7 @@ import Transactions from "@/db/models/Transactions/Transactions";
 export default async function handler(request, response) {
   await dbConnect();
 
+  // BANKACCOUNT DELETE 
   const { id } = request.query;
 
   if (request.method === "DELETE") {
@@ -14,14 +15,18 @@ export default async function handler(request, response) {
         account: id,
       });
 
-      // Delete the bank account
-      const account = await BankAccounts.findByIdAndDelete(id);
+      // Delete the bank account with USER ID
+     const userId = getAuthenticatedUserId(req);
 
-      if (!account) {
+      if (!userId) {
         return response.status(404).json({
           error: "Bank account not found.",
         });
       }
+
+      // Get the user ID from the account
+      const accounts = await BankAccounts.find({
+      user: userId,});
 
       return response.status(200).json({
         message: "Bank account and transactions deleted successfully.",

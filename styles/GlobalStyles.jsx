@@ -1,12 +1,19 @@
 import { createGlobalStyle } from "styled-components";
 
-
 export const GlobalStyle = createGlobalStyle`
 
   *,
   *::before,
   *::after {
     box-sizing: border-box;
+  }
+
+  @font-face {
+    font-family: "IBM Plex Mono";
+    src: url("/lib/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf")
+      format("truetype");
+    font-weight: 400;
+    font-style: normal;
   }
 
   body {
@@ -16,6 +23,12 @@ export const GlobalStyle = createGlobalStyle`
     background-repeat: repeat;
     background-size: 600px 300px;
   }
+
+  h1 {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 100;
+  font-style: normal;
+}
   
    input,
   select,
