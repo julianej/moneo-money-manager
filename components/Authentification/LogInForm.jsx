@@ -1,23 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-const AuthWrapper = styled.main`
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-`;
-
-const AuthCard = styled.div`
-  width: 100%;
-  max-width: 420px;
-  padding: 32px;
-  border: 2px solid black;
-  border-radius: 24px;
-  background-color: white;
-`;
-
 const Title = styled.h1`
   margin: 0 0 8px;
   font-size: 2.5rem;
@@ -68,13 +51,24 @@ const SubmitButton = styled.button`
   }
 `;
 
+const ResetLink = styled.button`
+  align-self: flex-start;
+
+  padding: 0;
+  border: 0;
+  background: transparent;
+
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
 const ErrorMessage = styled.p`
   margin: 0;
   color: #d00;
 `;
 
-export default function LoginForm() {
-
+export default function LoginForm({ onForgotPassword }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -85,7 +79,6 @@ export default function LoginForm() {
     // Reset error message before making the request
     setError("");
 
-    // Make a POST request to the login API route
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -97,10 +90,9 @@ export default function LoginForm() {
       }),
     });
 
-    // ASYNC FUNCTION, WE NEED TO AWAIT THE RESPONSE AND THEN PARSE IT AS JSON
+    // Handle the response from the server
     const data = await response.json();
 
-    // NO RESPONSE OK, THEN SET ERROR MESSAGE
     if (!response.ok) {
       setError(data.message);
       return;
@@ -110,46 +102,49 @@ export default function LoginForm() {
   }
 
   return (
-    <AuthWrapper>
-      <AuthCard>
-        <Title>Welcome,</Title>
+    <>
+      <Title>Welcome,</Title>
 
-        <Intro>
-          Log in to your Money Manager.
-        </Intro>
+      <Intro>
+        Log in to your Money Manager.
+      </Intro>
 
-        <Form onSubmit={handleSubmit}>
-          <Field>
-            <Label htmlFor="email">Email</Label>
+      <Form onSubmit={handleSubmit}>
+        <Field>
+          <Label htmlFor="email">Email</Label>
 
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-          </Field>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+        </Field>
 
-          <Field>
-            <Label htmlFor="password">Password</Label>
+        <Field>
+          <Label htmlFor="password">Password</Label>
 
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </Field>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          />
+        </Field>
+        <ResetLink
+          type="button"
+          onClick={onForgotPassword}
+        >
+          Forgot password?
+        </ResetLink>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-
-          <SubmitButton type="submit">
-            Log in
-          </SubmitButton>
-        </Form>
-      </AuthCard>
-    </AuthWrapper>
+        <SubmitButton type="submit">
+          Log in
+        </SubmitButton>
+      </Form>
+    </>
   );
 }

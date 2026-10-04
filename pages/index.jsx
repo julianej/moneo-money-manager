@@ -2,7 +2,9 @@ import Welcome from "@/components/Welcome/Welcome";
 import styled from "styled-components";
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import AsciiBackground from "@/components/AsciiBackground/AsciiBackground";
-import LoginForm from "@/components/Authentification/LogInForm";
+// import LoginForm from "@/components/Authentification/LogInForm";
+import AuthForm from "@/components/Authentification/AuthForm";
+
 
 
 import { useState } from "react";
@@ -22,7 +24,7 @@ const LoginOverlay = styled.div`
 
 export default function HomePage() {
   // const router = useRouter();
-  
+
   const [isLoginFormOpen, setIsLoginFormOpen] = useState(false); // HERE SET LOGIN-FORM LATERs
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -67,7 +69,7 @@ export default function HomePage() {
     {/* LOGIN FORM AS ANOTHER FEATURE*/} 
          {isLoginFormOpen && ( 
           <LoginOverlay>
-            <LoginForm
+             <AuthForm
               onClose={() => setIsLoginFormOpen(false)}
             />
           </LoginOverlay>
