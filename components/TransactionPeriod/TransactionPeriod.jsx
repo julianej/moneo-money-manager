@@ -11,41 +11,56 @@ const Cards = styled.div`
   }
 `;
 
-const YearCard = styled(PeriodCard)`
-  grid-column: 1 / -1;
-`;
-
 export default function TransactionPeriod({
   selectedDate,
   transactions,
 }) {
   const date = new Date(selectedDate);
 
+  // =========================
   // TODAY
+  // =========================
+
   const startOfToday = new Date(date);
   startOfToday.setHours(0, 0, 0, 0);
 
   const endOfToday = new Date(date);
   endOfToday.setHours(23, 59, 59, 999);
 
+  // =========================
   // WEEK
+  // =========================
+
   const startOfWeek = new Date(date);
   const day = startOfWeek.getDay();
+
   const difference = day === 0 ? -6 : 1 - day;
 
-  startOfWeek.setDate(startOfWeek.getDate() + difference);
+  startOfWeek.setDate(
+    startOfWeek.getDate() + difference
+  );
+
   startOfWeek.setHours(0, 0, 0, 0);
 
   const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+  endOfWeek.setDate(
+    endOfWeek.getDate() + 6
+  );
+
   endOfWeek.setHours(23, 59, 59, 999);
 
+  // =========================
   // MONTH
+  // =========================
+
   const startOfMonth = new Date(
     date.getFullYear(),
     date.getMonth(),
     1
   );
+
+  startOfMonth.setHours(0, 0, 0, 0);
 
   const endOfMonth = new Date(
     date.getFullYear(),
@@ -53,28 +68,41 @@ export default function TransactionPeriod({
     0
   );
 
+  endOfMonth.setHours(23, 59, 59, 999);
+
+  // =========================
   // YEAR
+  // =========================
+
   const startOfYear = new Date(
     date.getFullYear(),
     0,
     1
   );
 
-const endOfYear = new Date(
-  date.getFullYear(),
-  11,
-  31
-);
+  startOfYear.setHours(0, 0, 0, 0);
 
-endOfYear.setHours(23, 59, 59, 999);
-endOfMonth.setHours(23, 59, 59, 999);
+  const endOfYear = new Date(
+    date.getFullYear(),
+    11,
+    31
+  );
 
-// GET TRANSACTION FOR PERIOD -START-END
-  function getTransactionsForPeriod(startDate, endDate) {
-    //return
+  endOfYear.setHours(23, 59, 59, 999);
+
+  // =========================
+  // GET TRANSACTIONS
+  // =========================
+
+  function getTransactionsForPeriod(
+    startDate,
+    endDate
+  ) {
     return transactions.filter((transaction) => {
-      const transactionDate = new Date(transaction.date);
-      //return
+      const transactionDate = new Date(
+        transaction.date
+      );
+
       return (
         transactionDate >= startDate &&
         transactionDate <= endDate
@@ -82,51 +110,62 @@ endOfMonth.setHours(23, 59, 59, 999);
     });
   }
 
-  const yearTransactions = getTransactionsForPeriod(
-    startOfYear,
-    endOfYear
-  );
+  const yearTransactions =
+    getTransactionsForPeriod(
+      startOfYear,
+      endOfYear
+    );
 
-  const monthTransactions = getTransactionsForPeriod(
-    startOfMonth,
-    endOfMonth
-  );
+  const monthTransactions =
+    getTransactionsForPeriod(
+      startOfMonth,
+      endOfMonth
+    );
 
-  const weekTransactions = getTransactionsForPeriod(
-    startOfWeek,
-    endOfWeek
-  );
+  const weekTransactions =
+    getTransactionsForPeriod(
+      startOfWeek,
+      endOfWeek
+    );
 
-  const todayTransactions = getTransactionsForPeriod(
-    startOfToday,
-    endOfToday
-  );
-
+  const todayTransactions =
+    getTransactionsForPeriod(
+      startOfToday,
+      endOfToday
+    );
 
   return (
     <Cards>
-     <PeriodCard
+      <PeriodCard
         title={`Year ${date.getFullYear()}`}
         transactions={yearTransactions}
         variant="year"
+        period="year"
       />
 
       <PeriodCard
         title="Month"
         date={`${date.getMonth() + 1} / ${date.getFullYear()}`}
         transactions={monthTransactions}
+        period="month"
       />
 
       <PeriodCard
         title="Week"
-        date={`${startOfWeek.toLocaleDateString("en-GB")} – ${endOfWeek.toLocaleDateString("en-GB")}`}
+        date={`${startOfWeek.toLocaleDateString(
+          "en-GB"
+        )} – ${endOfWeek.toLocaleDateString(
+          "en-GB"
+        )}`}
         transactions={weekTransactions}
+        period="week"
       />
 
       <PeriodCard
         title="Today"
         date={date.toLocaleDateString("en-GB")}
         transactions={todayTransactions}
+        period="day"
       />
     </Cards>
   );
