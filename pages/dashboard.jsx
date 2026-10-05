@@ -12,6 +12,8 @@ import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigati
 import Welcome from "@/components/Welcome/Welcome";
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
 import BankAccountForm from "@/components/BankSideBar/BankAccountForm";
+import PricingPlanCard from "@/components/PricingPlanCard/PricingPlanCard";
+
 import AccountBalance from "@/components/AccountBalance/AccountBalance";
 import TransactionForm from "@/components/TransactionForm/TransactionForm";
 import TransactionList from "@/components/TransactionList/TransactionList";
@@ -152,6 +154,19 @@ const BankAccountFormWrapper = styled.div`
     @media (min-width: 740px) {
      left: 25%;}
 `;
+
+
+const CardWrapper = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  overflow-x: auto;
+
+  @media (min-width: 740px) {
+    overflow-x: visible;
+  }
+`;
+
 
 // ====================
 // COMPONENT
@@ -566,7 +581,12 @@ async function handleDeleteTransaction(transactionId) {
       />
     </>
   ) : ( <>
-        <Welcome variant="dashboard" />
+       <Welcome variant="dashboard" />
+       <CardWrapper>
+         <PricingPlanCard variant="current" />
+          <PricingPlanCard variant="upgrade" />
+           <PricingPlanCard variant="referral" />
+          </CardWrapper>
       </>
     )}
   </MainContent>
