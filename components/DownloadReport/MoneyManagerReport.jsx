@@ -124,6 +124,7 @@ expensesAmount: {
 
 export default function MoneyManagerReport({
   transactions = [], 
+  categories = [],
   account,
 }) {
 
@@ -205,7 +206,8 @@ export default function MoneyManagerReport({
             </Text>
 
             <Text style={styles.expensesAmount}>
-              {totalExpenses.toFixed(2)} €
+             {/* // VALUE */}
+              {(-totalExpenses).toFixed(2)} €
             </Text>
           </View>
         </View>
@@ -235,8 +237,11 @@ export default function MoneyManagerReport({
               </Text>
 
               <Text style={styles.transactionDate}>
-                {transaction.category || "No category"}
-                {" · "}
+                {categories?.find(
+                    (category) =>
+                      String(category._id) === String(transaction.category)
+                  )?.category || "No category"}
+                  {" · "}
                 {transaction.date
                   ? new Date(transaction.date).toLocaleDateString("de-DE")
                   : "No date"}

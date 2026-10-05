@@ -27,9 +27,10 @@ const DownloadIcon = styled.span`
 
 export default function DownloadButton({
   transactions = [],
+  categories = [],
   account,
   setPdfLoading,
-  selectedType = "all",
+  selectedType = "all"
 }) {
 
   async function handleDownload() {
@@ -49,10 +50,12 @@ export default function DownloadButton({
     // Give React one frame to render the loading overlay
     await new Promise((resolve) => requestAnimationFrame(resolve));
 
+
     try {
       const blob = await pdf(
         <MoneyManagerReport
           transactions={transactions}
+          categories={categories}
           account={account}
         />
       ).toBlob();

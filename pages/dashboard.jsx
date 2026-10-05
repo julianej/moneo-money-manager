@@ -5,6 +5,15 @@ import { useRouter } from "next/router"; // MENU LINK
 import { X, Plus,LogOut } from "lucide-react";
 import styled from "styled-components";
 import { Spinner } from "@/styles/LoadingStyles";
+import {
+  Toast,
+  ToastContent,
+  ToastTitle,
+  ToastMessage,
+  ToastClose,
+} from "@/styles/ToastMessage";
+
+
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
@@ -121,24 +130,6 @@ const PrimaryButton = styled.button`
 `;
 
 
-const Toast = styled.div`
-  position: fixed;
-  top: 2rem;
-  left: 0;
-  right: 0;
-
-  width: fit-content;
-  margin: 0 auto;
-
-  z-index: 9999;
-
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-
-  background: black;
-  color: white;
-`;
-
 const BankAccountFormWrapper = styled.div`
     position: absolute;
     width: 100%;
@@ -221,6 +212,16 @@ export default function Dashboard() {
       : null
   );
 
+  const { data: categories, error: categoriesError, } = useSWR(
+    selectedAccount
+      ? `/api/categories?account=${selectedAccount}`
+      : null
+  );
+
+console.log("DASHBOARD selectedAccount:", selectedAccount);
+console.log("DASHBOARD categories:", categories);
+console.log("DASHBOARD categoriesError:", categoriesError);
+
 
   const router = useRouter();
 
@@ -241,7 +242,6 @@ function handleAccountsClick() {
   }
 }
 
-
   // ====================
   // ACCOUNT
   // ====================
@@ -258,7 +258,11 @@ function handleAccountsClick() {
   }
 
   async function handleDeleteAccount() {
+   console.log("DELETE ACCOUNT CLICKED");
+
   if (!selectedAccount) return;
+      console.log("NO SELECTED ACCOUNT");
+
 
   setIsDeletingAccount(true);
 
@@ -279,10 +283,12 @@ function handleAccountsClick() {
 
     await mutateAccounts();
 
+    showToast("Bank Account deleted.", "success");
+
+    // CLEARING 
     setSelectedAccount(null);
     setIsFormOpen(false);
 
-    showToast("Bank account deleted successfully.");
   } catch (error) {
     console.error(error);
   } finally {
@@ -352,14 +358,16 @@ function handleAccountsClick() {
   }
 
   function showToast(message) {
-    setSuccessMessage(message);
+  console.log("SHOW TOAST:", message);
 
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 2000);
-  }
+  setSuccessMessage(message);
 
+  setTimeout(() => {
+    setSuccessMessage("");
+  }, 2000);
+}
 
+// ACCOUNT DATA OBJECT
   const selectedAccountData = accounts.find(
   (account) => String(account._id) === String(selectedAccount)
 );
@@ -367,7 +375,22 @@ function handleAccountsClick() {
   return (
     <Main>
 
-      {message && <Toast>{message}</Toast>}
+      {message && (
+        <Toast>
+          <ToastContent>
+            <ToastTitle>Success</ToastTitle>
+            <ToastMessage>{message}</ToastMessage>
+          </ToastContent>
+
+          <ToastClose
+            type="button"
+            onClick={() => setSuccessMessage("")}
+            aria-label="Close notification"
+          >
+            ×
+          </ToastClose>
+        </Toast>
+      )}
 
       <SidebarWrapper>
       <BankSideBar
@@ -426,8 +449,11 @@ function handleAccountsClick() {
 
       <TransactionFilter
           transactions={data ?? []}
+          categories={categories}
           accounts={accounts}
-          selectedAccount={selectedAccountData}
+          // selectedAccount={selectedAccount}
+            selectedAccountData={selectedAccountData}
+
           filteredTransactions={filteredTransactions}
           selectedYear={selectedYear}
           setSelectedYear={setSelectedYear}
@@ -463,6 +489,7 @@ function handleAccountsClick() {
 
       {isFormOpen && (
         <TransactionForm
+          categories={categories}
           selectedAccount={selectedAccount}
           onCancel={() => setIsFormOpen(false)}
           showToast={showToast}
@@ -472,6 +499,7 @@ function handleAccountsClick() {
 
       <TransactionList
         transactions={filteredTransactions}
+        categories={categories}
         selectedAccount={selectedAccount}
         onDeleteAccount={handleDeleteAccount}
         mutate={mutate}
@@ -488,6 +516,7 @@ function handleAccountsClick() {
         <BankAccountFormWrapper>
           <BankAccountForm
             onCancel={() => setIsBankFormOpen(false)}
+            // mutateACCOUNTS
             mutate={mutateAccounts}
             setIsAddingAccount={setIsAddingAccount}
           />

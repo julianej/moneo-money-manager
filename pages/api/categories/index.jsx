@@ -6,9 +6,28 @@ export default async function handler(request, response) {
     await dbConnect();
 
     if (request.method === "GET") {
-      const categories = await Categories.find();
+      //take the account value from the URL query string
+      ///api/categories?account=6abd055ad28881b6bcbb58b9
+      //account === "6abd055ad28881b6bcbb58b9"
+      const { account } = request.query;
+      const filter = account ? { account } : {};
+
+      //That returns all categories from all bank accounts.
+      //const categories = await Categories.find();
+      //filters categories for specific {account}
+      const categories = await Categories.find(filter);
 
       return response.status(200).json(categories);
+    }
+
+    if (request.method === "POST") {
+    const { category, account } = request.body;
+
+    const newCategory = await Categories.create({
+      category,
+      account,
+    });  
+    return response.status(201).json(newCategory);
     }
 
     return response.status(405).json({
@@ -17,7 +36,7 @@ export default async function handler(request, response) {
   } catch (error) {
      console.error(error);
     return response.status(500).json({
-      error: "Internal server error",
+          error: error.message,
     });
   }
 }

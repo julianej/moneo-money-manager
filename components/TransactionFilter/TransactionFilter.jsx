@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import DownloadButton from "../DownloadReport/DownloadButton";
+import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState,} from "react";
 
 const FilterWrapper = styled.div`
   display: flex;
@@ -57,23 +58,6 @@ const FilterSelect = styled.select`
   }
 `;
 
-const FilterButton = styled.button`
-  padding: 8px 14px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  background: ${({ $active }) =>
-    $active ? "black" : "transparent"};
-  color: ${({ $active }) =>
-    $active ? "white" : "black"};
-
-  cursor: pointer;
-  transition: 0.2s ease;
-
-  &:hover {
-    background: #000;
-    color: #fff;
-  }
-`;
 
 const MonthSelect = styled.select`
   width: 100%;
@@ -100,9 +84,11 @@ const MonthSelect = styled.select`
 
 export default function TransactionFilter({
   transactions = [],
+   categories = [],
   filteredTransactions,
   setPdfLoading,
-  selectedAccount,
+  //SELECTED ACCOUNT OBJECT
+  selectedAccountData,
   selectedYear,
   setSelectedYear,
   selectedMonth,
@@ -153,6 +139,13 @@ export default function TransactionFilter({
           return matchesYear && matchesType;
         })
           .map((transaction) => transaction.category)
+          // .map((transaction) => {
+          //   const category = categories.find((
+          //     category) => category._id === transaction.category
+          // );
+          // return category?.category;
+        // })
+
       .filter(Boolean)
   ),
 ].sort();
@@ -248,25 +241,16 @@ export default function TransactionFilter({
             Category
           </FilterLabel>
 
-          <FilterSelect
-            id="category-filter"
-            value={selectedCategories[0] || "all"}
-            onChange={(event) => {
-              const value = event.target.value;
+           <CategoryDropdown
+                value={selectedCategories[0] || ""}
+                categories={categories}
+                placeholder="All Categories"
+                onChange={(event) => {
+                  const value = event.target.value;
 
-              setSelectedCategories(
-                value === "all" ? [] : [value]
-              );
-            }}
-          >
-            <option value="all">All Categories</option>
-
-            {availableCategories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </FilterSelect>
+                  setSelectedCategories(value ? [value] : []);
+                }}
+              />
         </FilterGroup>
       </FilterRow>
     </FilterWrapper>

@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Loading, Spinner } from "@/styles/LoadingStyles";
-// import { X, Plus } from "lucide-react";
 
 // ====================
 // STYLES
@@ -111,6 +110,7 @@ const Amount = styled.p`
 
 export default function TransactionCard({
   transaction,
+  categories = [],
   onEdit,
   isSelected,
   isHighlighted,
@@ -138,8 +138,20 @@ export default function TransactionCard({
                 : transaction.title}
             </TransactionTitle>
 
-          <Category>
-            {transaction.category}
+    <Category>
+          {categories?.find(
+            (category) =>
+              String(category._id) === String(transaction.category)
+          )?.category || transaction.category
+
+            // categories?.find(
+            //   // Find the category whose _id matches the transaction's category ID:
+            //   (category) => category._id  === transaction.category)
+            //   // Then get its name from the category property:
+            //   ?.category
+            //  // || if no matching category is found, you'll see the stored ID instead.
+            //    || transaction.category)}
+        }
           </Category>
         </div>
 

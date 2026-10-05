@@ -5,6 +5,10 @@ import styled from "styled-components";
 import TransactionCard from "../TransactionCard/TransactionCard";
 import TransactionForm from "../TransactionForm/TransactionForm";
 
+// new IMPORTS
+import CsvUpload from "../CsvUpload/CsvUpload";
+import CsvPreview from "../CsvUpload/CsvPreview";
+
 import DialogPopup from "../DialogPopup/DialogPopup";
 
 // ====================
@@ -120,7 +124,6 @@ const DownloadText = styled.span`
 `;
 
 
-
 // ====================
 // COMPONENT
 // ====================
@@ -130,6 +133,7 @@ export default function TransactionList({
   transactions,
   mutate,
   showToast,
+  categories=[],
   selectedAccount,
   onDeleteAccount,
   pdfLoading,
@@ -140,6 +144,9 @@ export default function TransactionList({
   const [deletingTransactionPopup, setDeletingTransactionPopup] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
+
+  // new USESTATE 
+  const [importedTransactions, setImportedTransactions] = useState([]);
 
 
   function handleEdit(transaction) {
@@ -172,25 +179,27 @@ export default function TransactionList({
     setDeletingTransactionPopup(null);
     setDeletingId(id);
 
-  try {
-    const response = await fetch(`/api/transactions/${id}`, {
-      method: "DELETE",
-    });
+    //DELETE TRANSACTION
+    try {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: "DELETE",
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to delete transaction");
+      if (!response.ok) {
+        throw new Error("Failed to delete transaction");
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
+      setDeletingId(null);
+
+      await mutate();
+
+    } catch (error) {
+      console.error(error);
+      setDeletingId(null);
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-
-    setDeletingId(null);
-
-    await mutate();
-  } catch (error) {
-    console.error(error);
-    setDeletingId(null);
   }
-}
 
 return (
   <>
@@ -198,11 +207,52 @@ return (
       <List>
         <h2>Your Transaction List</h2>
 
-        {/* Empty State */}
-        {transactions.length === 0 ? (
-          <EmptyState>
-            No transactions yet.
-          </EmptyState>
+      {/* Empty State */}
+       {transactions.length === 0 ? (
+          <>
+            <EmptyState>
+              No transactions yet.
+            </EmptyState>
+
+       {/* CSV UPLOAD */}
+           {importedTransactions.length > 0 ? (
+                <CsvPreview
+                    transactions={importedTransactions}
+                    categories={categories}
+                    selectedAccount={selectedAccount}
+                    onTitleChange={(index, title) => {
+                      setImportedTransactions((currentTransactions) =>
+                        currentTransactions.map(
+                          (transaction, transactionIndex) =>
+                            transactionIndex === index
+                              ? { ...transaction, title }
+                              : transaction
+                        )
+                      );
+                    }}
+                    onCategoryChange={(index, category) => {
+                      setImportedTransactions((currentTransactions) =>
+                        currentTransactions.map(
+                          (transaction, transactionIndex) =>
+                            transactionIndex === index
+                              ? { ...transaction, category }
+                              : transaction
+                        )
+                      );
+                    }}
+                    // onImport={handleSubmitImport}
+                    onCancel={() => setImportedTransactions([])}
+                    mutate={mutate}
+                    showToast={showToast}
+                  />
+              ) : (
+                <CsvUpload
+                  onFileSelect={(csvData) => {
+                    setImportedTransactions(csvData);
+                  }}
+                />
+              )}
+          </>
         ) : (
           transactions.map((transaction) => (
             <CardWrapper
@@ -211,6 +261,7 @@ return (
             >
               <TransactionCard
                 transaction={transaction}
+                categories={categories}
                 onEdit={() => handleEdit(transaction)}
                 isSelected={editingTransaction?._id === transaction._id}
                 isHighlighted={highlightedId === transaction._id}
@@ -221,6 +272,7 @@ return (
               {editingTransaction?._id === transaction._id && (
                 <TransactionForm
                   transaction={editingTransaction}
+                  categories={categories}
                   selectedAccount={selectedAccount}
                   onDelete={() => handleDeleteClick(transaction)}
                   onCancel={handleCancel}

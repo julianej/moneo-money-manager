@@ -1,8 +1,9 @@
 
 import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
-import useSWR from "swr";
 import styled from "styled-components";
+import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
+
 
 
 // ====================
@@ -195,11 +196,11 @@ const EditRow = styled.div`
 
 export default function TransactionForm({
   transaction,
+  categories,
   selectedAccount,
   onCancel,
   onDelete,
   onSave,
-  isDeleting,
   showToast,
   mutate
 }) {
@@ -216,8 +217,9 @@ export default function TransactionForm({
   const [type, setType] = useState("");
   const [date, setDate] = useState("");
 
-  // const { data: errors, .. } = useFormState();
-  const {data: categories, error, isLoading } = useSWR("/api/categories");
+console.log("TRANSACTION FORM categories:", categories);
+console.log("TRANSACTION FORM category:", category);
+
 
   // ====================
   // POPULATE FORM
@@ -226,6 +228,10 @@ export default function TransactionForm({
   // useEffect(()=>{
   //   setTrigger(); // After this the errors are re/generated 
   // },[someDependency])
+
+  useEffect(() => {
+  console.log("CATEGORIES CHANGED IN FORM:", categories);
+}, [categories]);
 
   useEffect(() => {
     if (transaction) {
@@ -351,9 +357,8 @@ export default function TransactionForm({
 
     // If editing, call onSave updates the TransactionCard
     if (isEditing) {
-      onSave(transaction._id);
-      showToast("Transaction updated successfully.");
-      return;
+        onSave(transaction._id);
+        return;
     }
 
 
@@ -380,19 +385,6 @@ export default function TransactionForm({
         "Something went wrong. Please try again."
       );
     }
-  }
-
-
-  // ====================
-  // LOADING / ERROR
-  // ====================
-
-  if (isLoading) {
-    return <p>Loading categories...</p>;
-  }
-
-  if (error) {
-    return <p>Failed to load categories.</p>;
   }
 
 
@@ -442,20 +434,15 @@ export default function TransactionForm({
   <EditRow>
     <Field>
       <Label htmlFor="category">Transaction Category</Label>
-      <Select
-        id="category"
+      <CategoryDropdown
         value={category}
-        onChange={(event) => setCategory(event.target.value)}
-        required
-      >
-        <option value="">Please select a category</option>
-
-        {categories.map((item) => (
-          <option key={item._id} value={item.category}>
-            {item.category}
-          </option>
-        ))}
-      </Select>
+        categories={categories}
+        placeholder="Select category"
+        // onChange={onChange}
+       onChange={(event) => {
+          setCategory(event.target.value);
+        }}
+      />
     </Field>
 
     <Fieldset>

@@ -1,11 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { X, } from "lucide-react";
-import {
-  SubmitButton,
-  CancelButton,
-} from "@/styles/ButtonStyles";
-
+import {SubmitButton,CancelButton,} from "@/styles/ButtonStyles";
+import {cleanCategory, isValidCategory,categoryExists,} from "../../utils/cleanCategory";
 
 const Form = styled.form`
   display: flex;
@@ -63,6 +60,53 @@ const CloseButton = styled.button`
 `;
 
 
+const CategorySection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const CategoryTitle = styled.h2`
+  margin: 0;
+  font-size: 1rem;
+  text-transform: uppercase;
+`;
+
+const CategoryListWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+`;
+
+const CategoryItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 135px;
+  padding: 0.6rem 0.75rem;
+
+  border: 1px solid #000;
+  border-radius: 8px;
+`;
+
+const CategoryInputWrapper = styled.div`
+  display: flex;
+  gap: 0.5rem;
+
+  input {
+    flex: 1;
+  }
+
+  button {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #000;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+`;
+
+
 const Field = styled.div`
   display: flex;
   flex-direction: column;
@@ -84,8 +128,12 @@ export default function BankAccountForm({
   const [bank, setBank] = useState("");
   const [iban, setIban] = useState("");
   const [bic, setBic] = useState("");
-  const [balance, setBalance] = useState("");
+  // const [balance, setBalance] = useState("");
   const [errors, setErrors] = useState({});
+  const [categoryError, setCategoryError] = useState("");
+
+  const [categories, setCategories] = useState([]);
+  const [newCategory, setNewCategory] = useState("");
 
   function validateForm() {
     const newErrors = {};
@@ -136,64 +184,139 @@ export default function BankAccountForm({
       }
     }
 
-    // Balance
-    if (balance === "") {
-      newErrors.balance = "Balance is required.";
-    } else if (isNaN(Number(balance))) {
-      newErrors.balance = "Balance must be a number.";
-    }
+
+  // add Balance MAYBE LATER
+  //   if (balance === "") {
+  //     newErrors.balance = "Balance is required.";
+  //   } else if (isNaN(Number(balance))) {
+  //     newErrors.balance = "Balance must be a number.";
+  //   }
+
+
 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
 
-    if (!validateForm()) {
+    // Add Categories
+   function handleAddCategory() {
+    const categoryName = cleanCategory(newCategory);
+
+    if (!categoryName) {
+      setCategoryError("Category name is required.");
       return;
     }
 
-    setIsAddingAccount(true);
+    if (!isValidCategory(categoryName)) {
+      setCategoryError(
+        "Category must contain between 3 and 30 characters."
+      );
+      return;
+    }
 
-    try {
-      const response = await fetch("/api/bankaccounts", {
+    if (categoryExists(categories, categoryName)) {
+      setCategoryError("This category already exists.");
+      return;
+    }
+
+    setCategories((currentCategories) => [
+      ...currentCategories,
+      categoryName,
+    ]);
+
+    setNewCategory("");
+    setCategoryError("");
+  }
+
+    // Remove Categories
+    function handleRemoveCategory(categoryToRemove) {
+      setCategories((currentCategories) =>
+        currentCategories.filter(
+          (category) => category !== categoryToRemove
+        )
+      );
+    }
+
+
+  async function handleSubmit(event) {
+  event.preventDefault();
+
+  // 01.Validate Form
+  if (!validateForm()) {
+    return;
+  }
+
+  // 02. add Account
+  setIsAddingAccount(true);
+
+  try {
+    // 1. Create bank account
+    const response = await fetch("/api/bankaccounts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name.trim(),
+        bank: bank.trim(),
+        iban: iban.replace(/\s/g, "").toUpperCase(),
+        bic: bic.replace(/\s/g, "").toUpperCase(),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("BANK ACCOUNT ERROR:", data);
+      return;
+    }
+
+    console.log("BANK ACCOUNT CREATED:", data);
+
+    // 2. Create categories for the new account
+    for (const category of categories) {
+      console.log("SENDING CATEGORY:", {
+        category: category,
+        account: data._id,
+      });
+
+      const categoryResponse = await fetch("/api/categories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: name.trim(),
-          bank: bank.trim(),
-          iban: iban
-            .replace(/\s/g, "")
-            .toUpperCase(),
-          bic: bic
-            .replace(/\s/g, "")
-            .toUpperCase(),
-          balance: Number(balance),
+          category: category,
+          account: data._id,
         }),
       });
 
-      const data = await response.json();
+      const categoryData = await categoryResponse.json();
 
-      if (!response.ok) {
-        console.error(data);
-        return;
+      console.log(
+        "CATEGORY RESPONSE:",
+        categoryResponse.status,
+        categoryData
+      );
+
+      if (!categoryResponse.ok) {
+        console.error("CATEGORY ERROR:", categoryData);
+        throw new Error("Category creation failed");
       }
-
-      // SUCCESS
-      await mutate();
-      onCancel();
-
-
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsAddingAccount(false);
     }
+    // 3. Refresh bank accounts
+    await mutate();
+
+    // 4. Close form
+    onCancel();
+  } catch (error) {
+  console.error("CREATE ACCOUNT ERROR:", error);
+  } finally {
+    setIsAddingAccount(false);
   }
+}
 
   return (
     <Form onSubmit={handleSubmit} noValidate>
@@ -279,7 +402,7 @@ export default function BankAccountForm({
         )}
       </Field>
 
-      <Field>
+      {/* <Field>
           <label htmlFor="account-balance">Balance</label>
 
         <input
@@ -296,17 +419,52 @@ export default function BankAccountForm({
             {errors.balance}
           </ErrorMessage>
         )}
-      </Field>
+      </Field> */}
+      <CategorySection>
+        <CategoryTitle>Categories</CategoryTitle>
+        <CategoryListWrapper>
+           {categories.map((category) => (
+              <CategoryItem key={category}>
+                <span>{category}</span>
 
-      <SubmitButton type="submit">
-        Add Bank Account
-      </SubmitButton>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveCategory(category)}
+                >
+                  ×
+                </button>
+              </CategoryItem>
+            ))}
+            </CategoryListWrapper>
+            <CategoryInputWrapper>
+              <input
+                type="text"
+                value={newCategory}
+                onChange={(event) => setNewCategory(event.target.value)}
+                placeholder="Category name"
+              />
 
-      <CancelButton
-        type="button"
-        onClick={onCancel}
-      >
-        Cancel
+              <button
+                type="button"
+                onClick={handleAddCategory}
+              >
+                + Add category
+              </button>
+            </CategoryInputWrapper>
+            {categoryError && (
+                <ErrorMessage>{categoryError}</ErrorMessage>
+              )}
+            </CategorySection>
+
+          <SubmitButton type="submit">
+            Add Bank Account
+          </SubmitButton>
+
+          <CancelButton
+            type="button"
+            onClick={onCancel}
+          >
+            Cancel
       </CancelButton>
     </Form>
   );
