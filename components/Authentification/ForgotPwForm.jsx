@@ -106,10 +106,7 @@ export default function ForgotPwForm({ onBackToLogin }) {
     <>
       <Title>Forgot password?</Title>
 
-      <Intro>
-        Enter your email address and we'll send you a
-        password reset link.
-      </Intro>
+      <Intro> Enter your email address and we&apos;ll send you a password reset link. </Intro>
 
       <Form onSubmit={handleSubmit}>
         <Field>
