@@ -5,14 +5,6 @@ import { useRouter } from "next/router"; // MENU LINK
 import { X, Plus,LogOut } from "lucide-react";
 import styled from "styled-components";
 import { Spinner } from "@/styles/LoadingStyles";
-import {
-  Toast,
-  ToastContent,
-  ToastTitle,
-  ToastMessage,
-  ToastClose,
-} from "@/styles/ToastMessage";
-
 
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
@@ -28,6 +20,8 @@ import TransactionSearch from "@/components/TransactionSearch/TransactionSearch"
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
 import TransactionPeriod from "@/components/TransactionPeriod/TransactionPeriod";
 
+import ToastMessage from "@/components/ToastMessage/ToastMessage";
+import DialogPopup from "@/components/DialogPopup/DialogPopup";
 
 // ====================
 // STYLES
@@ -166,6 +160,7 @@ const BankAccountFormWrapper = styled.div`
 
 export default function Dashboard() {
 
+    const router = useRouter();
     const profileItems = [
         // {
         // label: "Profile Settings",
@@ -207,10 +202,14 @@ export default function Dashboard() {
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [message, setSuccessMessage] = useState("");
+  // TOAST MESSAGE
+  const [message, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
 
   const [isAddingAccount, setIsAddingAccount] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -241,8 +240,6 @@ console.log("DASHBOARD categories:", categories);
 console.log("DASHBOARD categoriesError:", categoriesError);
 
 
-  const router = useRouter();
-
 // ====================
 // FLOATING NAVIGATION
 // ====================
@@ -257,6 +254,39 @@ function handleAccountsClick() {
 
   if (accounts?.length > 0) {
     setSelectedAccount(accounts[0]._id);
+  }
+}
+
+  // ====================
+  // TRANSACTION DELETE
+  // ====================
+
+async function handleDeleteTransaction(transactionId) {
+  try {
+    const response = await fetch(
+      `/api/transactions/${transactionId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(data);
+      showToast("Failed to delete transaction.", "error");
+      return;
+    }
+
+    await mutate();
+
+    showToast("Transaction deleted successfully.", "success");
+
+    setShowDeleteDialog(false);
+
+  } catch (error) {
+    console.error("DELETE TRANSACTION ERROR:", error);
+    showToast("Failed to delete transaction.", "error");
   }
 }
 
@@ -302,7 +332,7 @@ function handleAccountsClick() {
 
     await mutateAccounts();
 
-    showToast("Bank Account deleted.", "success");
+    showToast("Bank Account deleted successfully.", "success");
 
     // CLEARING 
     setSelectedAccount(null);
@@ -376,14 +406,14 @@ function handleAccountsClick() {
     );
   }
 
-  function showToast(message) {
-  console.log("SHOW TOAST:", message);
+  // TOAST MESSAGE
+ function showToast(message, type = "success") {
+    setToastMessage(message);
+    setToastType(type);
 
-  setSuccessMessage(message);
-
-  setTimeout(() => {
-    setSuccessMessage("");
-  }, 2000);
+    setTimeout(() => {
+      setToastMessage("");
+    }, 2000);
 }
 
 // ACCOUNT DATA OBJECT
@@ -395,20 +425,11 @@ function handleAccountsClick() {
     <Main>
 
       {message && (
-        <Toast>
-          <ToastContent>
-            <ToastTitle>Success</ToastTitle>
-            <ToastMessage>{message}</ToastMessage>
-          </ToastContent>
-
-          <ToastClose
-            type="button"
-            onClick={() => setSuccessMessage("")}
-            aria-label="Close notification"
-          >
-            ×
-          </ToastClose>
-        </Toast>
+       <ToastMessage
+          message={message}
+          type={toastType}
+          onClose={() => setToastMessage("")}
+        />
       )}
 
       <SidebarWrapper>
@@ -538,6 +559,10 @@ function handleAccountsClick() {
         mutate={mutate}
         showToast={showToast}
         pdfLoading={pdfLoading}
+        onRequestDelete={(transaction) => {
+          setSelectedTransaction(transaction);
+          setShowDeleteDialog(true);
+        }}
       />
     </>
   ) : ( <>
@@ -550,15 +575,24 @@ function handleAccountsClick() {
         <BankAccountFormWrapper>
           <BankAccountForm
             onCancel={() => setIsBankFormOpen(false)}
-            // mutateACCOUNTS
             mutate={mutateAccounts}
             setIsAddingAccount={setIsAddingAccount}
           />
         </BankAccountFormWrapper>
         )}
 
-      {/* )} */}
-
+        {showDeleteDialog && selectedTransaction && (
+          <DialogPopup
+            transaction={selectedTransaction}
+            onDelete={() =>
+              handleDeleteTransaction(selectedTransaction._id)
+            }
+            onCancel={() => {
+              setShowDeleteDialog(false);
+              setSelectedTransaction(null);
+            }}
+          />
+        )}
     </Main>
   );
 }

@@ -98,7 +98,6 @@ export default function TransactionFilter({
   setSelectedCategories,
 }) {
 
-  console.log("categories:", categories);
 
 // ====================
 // YEARS
@@ -119,141 +118,120 @@ export default function TransactionFilter({
 
 
 // ====================
-// CATEGORIES
-// ====================
-
-  const availableCategories = [
-    ...new Set(
-      transactions
-        .filter((transaction) => {
-          const transactionYear = new Date(transaction.date)
-            .getFullYear()
-            .toString();
-
-          const matchesYear =
-            selectedYear === "all" || transactionYear === selectedYear;
-
-          const matchesType =
-            selectedType === "all" || transaction.type === selectedType;
-
-          return matchesYear && matchesType;
-        })
-          .map((transaction) => transaction.category)
-          // .map((transaction) => {
-          //   const category = categories.find((
-          //     category) => category._id === transaction.category
-          // );
-          // return category?.category;
-        // })
-
-      .filter(Boolean)
-  ),
-].sort();
-
-
-// ====================
 // RESET CATEGORY
 // ====================
-
 useEffect(() => {
   setSelectedCategories([]);
-}, [selectedYear, selectedType, setSelectedCategories]);
+}, [
+  selectedYear,
+  selectedMonth,
+  selectedType,
+  setSelectedCategories,
+]);
+
 
   return (
+  <>
     <FilterWrapper>
-        {/* ... / PDF DOWNLAOD */}
+
+      {/* PDF DOWNLOAD */}
       <DownloadButton
-          transactions={filteredTransactions}
-          categories={categories}
-          account={selectedAccountData}
-          setPdfLoading={setPdfLoading}
-          selectedType={selectedType}
-        />
- <FilterRow>
-{/* ==================== YEAR ==================== */}
-      <FilterGroup>
-  <FilterLabel htmlFor="year-filter">
-    Year
-  </FilterLabel>
+        transactions={filteredTransactions}
+        categories={categories}
+        account={selectedAccountData}
+        setPdfLoading={setPdfLoading}
+        selectedType={selectedType}
+      >
+        Download PDF
+      </DownloadButton>
 
-  <FilterSelect
-    id="year-filter"
-    value={selectedYear}
-    onChange={(event) => setSelectedYear(event.target.value)}
-  >
-    <option value="all">All Years</option>
+      <FilterRow>
+        {/* ==================== YEAR ==================== */}
+        <FilterGroup>
+          <FilterLabel htmlFor="year-filter">
+            Year
+          </FilterLabel>
 
-    {years.map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
-  </FilterSelect>
-</FilterGroup>
-{/* ==================== MONTH ==================== */}
+          <FilterSelect
+            id="year-filter"
+            value={selectedYear}
+            onChange={(event) => setSelectedYear(event.target.value)}
+          >
+            <option value="all">All Years</option>
 
-<FilterGroup>
-  <FilterLabel htmlFor="month-filter">
-    Month
-  </FilterLabel>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </FilterSelect>
+        </FilterGroup>
 
-  <MonthSelect
-    id="month-filter"
-    value={selectedMonth}
-    onChange={(event) => setSelectedMonth(event.target.value)}
-  >
-    <option value="all">All Months</option>
-    <option value="0">January</option>
-    <option value="1">February</option>
-    <option value="2">March</option>
-    <option value="3">April</option>
-    <option value="4">May</option>
-    <option value="5">June</option>
-    <option value="6">July</option>
-    <option value="7">August</option>
-    <option value="8">September</option>
-    <option value="9">October</option>
-    <option value="10">November</option>
-    <option value="11">December</option>
-  </MonthSelect>
-</FilterGroup>
+        {/* ==================== MONTH ==================== */}
+        <FilterGroup>
+          <FilterLabel htmlFor="month-filter">
+            Month
+          </FilterLabel>
 
-  {/* ==================== TYPE ==================== */}
-  <FilterGroup>
-    <FilterLabel htmlFor="type-filter">
-      Type
-    </FilterLabel>
+          <MonthSelect
+            id="month-filter"
+            value={selectedMonth}
+            onChange={(event) => setSelectedMonth(event.target.value)}
+          >
+            <option value="all">All Months</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </MonthSelect>
+        </FilterGroup>
 
-    <FilterSelect
-      id="type-filter"
-      value={selectedType}
-      onChange={(event) => setSelectedType(event.target.value)}
-    >
-      <option value="all">All Types</option>
-      <option value="income">Income</option>
-      <option value="expense">Expense</option>
-    </FilterSelect>
-  </FilterGroup>
-  </FilterRow>
-  {/* ==================== ROW 2: CATEGORY ==================== */}
-  <FilterRow>
-  <FilterGroup>
+        {/* ==================== TYPE ==================== */}
+        <FilterGroup>
+          <FilterLabel htmlFor="type-filter">
+            Type
+          </FilterLabel>
+
+          <FilterSelect
+            id="type-filter"
+            value={selectedType}
+            onChange={(event) => setSelectedType(event.target.value)}
+          >
+            <option value="all">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </FilterSelect>
+        </FilterGroup>
+      </FilterRow>
+
+      {/* ==================== ROW 2: CATEGORY ==================== */}
+      <FilterRow>
+        <FilterGroup>
           <FilterLabel htmlFor="category-filter">
             Category
           </FilterLabel>
 
-           <CategoryDropdown
-                value={selectedCategories[0] || ""}
-                categories={categories}
-                placeholder="All Categories"
-                onChange={(event) => {
-                  const value = event.target.value;
+          <CategoryDropdown
+            value={selectedCategories[0] || ""}
+            categories={categories}
+            placeholder="All Categories"
+            onChange={(event) => {
+              const value = event.target.value;
 
-                  setSelectedCategories(value ? [value] : []);
-                }}
-              />
+              setSelectedCategories(value ? [value] : []);
+            }}
+          />
         </FilterGroup>
       </FilterRow>
+
     </FilterWrapper>
-  );
-}
+  </>
+);}
