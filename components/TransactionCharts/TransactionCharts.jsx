@@ -10,7 +10,7 @@ import {
   Legend,
 } from "recharts";
 
-export default function TransactionChart({
+export default function TransactionCharts({
   transactions = [],
   period = "month",
 }) {

@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import TransactionChart from "../TransactionCharts/TransactionCharts";
+import TransactionCharts from "./TransactionCharts";
+
 
 const Card = styled.div`
   width: 100%;
