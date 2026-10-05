@@ -20,7 +20,7 @@ import TransactionList from "@/components/TransactionList/TransactionList";
 
 import TransactionSearch from "@/components/TransactionSearch/TransactionSearch";
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
-import TransactionPeriod from "@/components/TransactionPeriod/TransactionPeriod";
+import TransactionPeriod from "@/components/TransactionCharts/TransactionPeriod";
 
 import ToastMessage from "@/components/ToastMessage/ToastMessage";
 import DialogPopup from "@/components/DialogPopup/DialogPopup";

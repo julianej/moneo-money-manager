@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import TransactionCharts from "./TransactionCharts";
+
 
 const Card = styled.div`
   width: 100%;
@@ -138,6 +140,7 @@ export default function PeriodCard({
   date,
   transactions,
   variant = "default",
+  period
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -191,6 +194,10 @@ export default function PeriodCard({
             <ChartArea>
               {/* Charts will go here later */}
               Charts
+                <TransactionCharts
+                    transactions={transactions}
+                    period={period}
+                  />
             </ChartArea>
           )}
         </>
@@ -211,22 +218,29 @@ export default function PeriodCard({
           </CardHeader>
 
           {isOpen && (
-            <CardContent>
-              <SumWrapper>
-                <div>
-                  <p>Income</p>
-                  <strong>{income.toFixed(2)} €</strong>
-                </div>
+              <CardContent>
+                <SumWrapper>
+                  <div>
+                    <p>Income</p>
+                    <strong>{income.toFixed(2)} €</strong>
+                  </div>
 
-                <div>
-                  <p>Expenses</p>
-                  <strong>{expenses.toFixed(2)} €</strong>
-                </div>
-              </SumWrapper>
+                  <div>
+                    <p>Expenses</p>
+                    <strong>{expenses.toFixed(2)} €</strong>
+                  </div>
+                </SumWrapper>
 
-              <p>{transactions.length} transactions</p>
-            </CardContent>
-          )}
+                <p>{transactions.length} transactions</p>
+
+                <ChartArea>
+                  <TransactionCharts
+                    transactions={transactions}
+                    period={period}
+                  />
+                </ChartArea>
+              </CardContent>
+            )}
         </>
       )}
     </Card>
