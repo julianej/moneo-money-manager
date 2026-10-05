@@ -72,44 +72,41 @@ export default function ForgotPwForm({ onBackToLogin }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+async function handleSubmit(event) {
+  event.preventDefault();
 
-    setMessage("");
-    setError("");
+  setMessage("");
+  setError("");
 
-    try {
-      const response = await fetch("/api/auth/forgot-pw", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-        }),
-      });
+  try {
+    const response = await fetch("/api/auth/forgot-pw", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        setError(data.message);
-        return;
-      }
-
-      setMessage(data.message);
-    } catch (error) {
-      setError("Something went wrong. Please try again.");
+    if (!response.ok) {
+      setError(data.message);
+      return;
     }
+
+    setMessage(data.message);
+  } catch (requestError) {
+    setError("Something went wrong. Please try again.");
   }
+}
 
   return (
     <>
       <Title>Forgot password?</Title>
 
-      <Intro>
-        Enter your email address and we'll send you a
-        password reset link.
-      </Intro>
+      <Intro> Enter your email address and we&apos;ll send you a password reset link. </Intro>
 
       <Form onSubmit={handleSubmit}>
         <Field>
