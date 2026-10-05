@@ -1,16 +1,14 @@
 import styled from "styled-components";
+
 export const Toast = styled.div`
   position: fixed;
-  top: 0rem;
-
+  top: 0;
   width: 100%;
   box-sizing: border-box;
-
   z-index: 9999;
 
   display: flex;
   text-align: center;
-  /* align-items: flex-start; */
   justify-content: space-between;
   gap: 2rem;
 
@@ -18,8 +16,6 @@ export const Toast = styled.div`
 
   background: #090909;
   color: white;
-
-  /* box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25); */
 
   animation: slideDown 0.4s ease-out;
 
@@ -29,14 +25,9 @@ export const Toast = styled.div`
     }
 
     to {
-      top: 0rem;
-    }}
-    @media (min-width: 740px) {
-        width: 100%;
-        font-size: 5rem;
-        padding: 7rem 1.5rem 7rem;
+      top: 0;
     }
-
+  }
 `;
 
 export const ToastContent = styled.div`
@@ -44,6 +35,7 @@ export const ToastContent = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
+  padding: 4rem 1rem 4rem;
 
   flex: 1;
   text-align: center;
@@ -56,12 +48,17 @@ export const ToastTitle = styled.strong`
   letter-spacing: 0.08em;
 `;
 
-export const ToastMessage = styled.span`
+export const ToastText = styled.span`
+  white-space: pre-line;
+
   font-size: 1rem;
   line-height: 1.4;
-     @media (min-width: 740px) {
-        font-size: 5rem;
-    }
+  line-height: 1.4;
+
+  @media (min-width: 740px) {
+    font-size: 5rem;
+    line-height: 5rem;
+  }
 `;
 
 export const ToastClose = styled.button`
@@ -73,6 +70,5 @@ export const ToastClose = styled.button`
   line-height: 1;
 
   cursor: pointer;
-
   padding: 0;
 `;
