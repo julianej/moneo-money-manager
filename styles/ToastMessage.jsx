@@ -11,13 +11,17 @@ export const Toast = styled.div`
   text-align: center;
   justify-content: space-between;
   gap: 2rem;
+  color: white;
 
   padding: 1.25rem 1.5rem;
 
-  background: #090909;
-  color: white;
-
   animation: slideDown 0.4s ease-out;
+
+  background: ${({ type }) =>
+  type === "error" ? "black" : "#777777eb"};
+ 
+  color: ${({ type }) => 
+  type === "error" ? "white" : "black"};
 
   @keyframes slideDown {
     from {
@@ -64,11 +68,18 @@ export const ToastText = styled.span`
 export const ToastClose = styled.button`
   border: none;
   background: transparent;
-  color: white;
+  text-align: center;
 
   font-size: 1.5rem;
   line-height: 1;
 
   cursor: pointer;
   padding: 0;
+  color: ${({ type }) =>
+  type === "error" ? "white" : "black"};
+
+  @media (min-width: 740px) {
+      font-size: 2rem;
+  }
+
 `;

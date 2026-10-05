@@ -161,9 +161,13 @@ const CardWrapper = styled.div`
   gap: 1rem;
   margin-top: 2rem;
   overflow-x: auto;
+  flex-direction: column;
+  text-align: center;
 
   @media (min-width: 740px) {
     overflow-x: visible;
+    flex-direction: row;
+    text-align: left;
   }
 `;
 
@@ -217,8 +221,9 @@ export default function Dashboard() {
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+
   // TOAST MESSAGE
-  const [message, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
 
   const [isAddingAccount, setIsAddingAccount] = useState(false);
@@ -421,10 +426,10 @@ async function handleDeleteTransaction(transactionId) {
     );
   }
 
-  // TOAST MESSAGE
- function showToast(message, type = "success") {
-    setToastMessage(message);
-    setToastType(type);
+  // TOAST MESSAGE 
+ function showToast(toastMessage, toastType = "success") {
+    setToastMessage(toastMessage);
+    setToastType(toastType);
 
     setTimeout(() => {
       setToastMessage("");
@@ -439,10 +444,10 @@ async function handleDeleteTransaction(transactionId) {
   return (
     <Main>
 
-      {message && (
+      {toastMessage && (
        <ToastMessage
-          message={message}
-          type={toastType}
+          toastMessage={toastMessage}
+          toastType={toastType}
           onClose={() => setToastMessage("")}
         />
       )}

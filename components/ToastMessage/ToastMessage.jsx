@@ -10,24 +10,23 @@ import {
 
 
 export default function ToastMessage({
-  message,
-  type = "success",
+  toastMessage = "",
+  toastType = "success",
   onClose,
 }) {
-  if (!message) return null;
+  if (!toastMessage) return null;
 
   return (
-    <Toast $type={type}>
+    <Toast $type={toastType}>
       <ToastContent>
         <ToastTitle>
-          {type === "error" ? "Error" : "Success"}
+          {toastType === "error" ? "Error" : "Success"}
         </ToastTitle>
 
-        <ToastText>{message}</ToastText>
+        <ToastText>{toastMessage}</ToastText>
 
       </ToastContent>
-
-      <ToastClose
+        <ToastClose
         type="button"
         onClick={onClose}
         aria-label="Close notification"
