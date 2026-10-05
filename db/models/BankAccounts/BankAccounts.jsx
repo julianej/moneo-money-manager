@@ -4,6 +4,11 @@ const { Schema } = mongoose;
 
 const bankAccountSchema = new Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     bank: {
       type: String,
       required: true,

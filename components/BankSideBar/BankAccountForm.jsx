@@ -9,19 +9,22 @@ const Form = styled.form`
   flex-direction: column;
   gap: 1rem;
 
-  padding: 5rem;
+  padding: 3rem;
   border: 2px solid #000;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
 
   width: 100%;
-  height: 100%;
+  height: auto;
   position: fixed;
   z-index: 7777;
 
   @media (min-width: 740px) {
     width: 50%;
     left: 25%;
+    height:100vh;
+    padding: 5rem;
   }
 `;
 

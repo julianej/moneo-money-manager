@@ -9,7 +9,6 @@ const FilterWrapper = styled.div`
   flex-direction: row;
   gap: 1rem;
   padding: 2rem 0;
-  overflow: scroll;
 
   @media (min-width: 739px) {
         flex-direction: row;

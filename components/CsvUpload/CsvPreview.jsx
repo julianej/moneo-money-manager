@@ -171,8 +171,8 @@ export default function CsvPreview({
 
     if (hasErrors) {
       showToast(
-        "Please fix the transactions \n before importing.",
-        "error"
+        "Please fix the transactions \n before importing.", // toastMessage
+        "error" // toastType
       );
 
       return;

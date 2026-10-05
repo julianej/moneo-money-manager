@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router"; // MENU LINK
 
 import { X, Plus,LogOut } from "lucide-react";
@@ -12,12 +12,16 @@ import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigati
 import Welcome from "@/components/Welcome/Welcome";
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
 import BankAccountForm from "@/components/BankSideBar/BankAccountForm";
+import PricingPlanCard from "@/components/PricingPlanCard/PricingPlanCard";
+
 import AccountBalance from "@/components/AccountBalance/AccountBalance";
 import TransactionForm from "@/components/TransactionForm/TransactionForm";
 import TransactionList from "@/components/TransactionList/TransactionList";
 
 import TransactionSearch from "@/components/TransactionSearch/TransactionSearch";
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
+import TransactionPeriod from "@/components/TransactionCharts/TransactionPeriod";
+
 import ToastMessage from "@/components/ToastMessage/ToastMessage";
 import DialogPopup from "@/components/DialogPopup/DialogPopup";
 
@@ -98,7 +102,22 @@ const Title = styled.h1`
     background-color: white;
     padding: 3rem;
     text-align: center; 
+    justify-content: center;
     border-radius: 1rem;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    gap: 1rem;
+
+  span {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  @media (min-width: 740px) {
+    span {
+    font-size: 4rem;}}
+
 `;
 
 
@@ -136,6 +155,23 @@ const BankAccountFormWrapper = styled.div`
      left: 25%;}
 `;
 
+
+const CardWrapper = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  overflow-x: auto;
+  flex-direction: column;
+  text-align: center;
+
+  @media (min-width: 740px) {
+    overflow-x: visible;
+    flex-direction: row;
+    text-align: left;
+  }
+`;
+
+
 // ====================
 // COMPONENT
 // ====================
@@ -168,10 +204,12 @@ export default function Dashboard() {
   // ====================
   // STATE
   // ====================
+  const [transactionView, setTransactionView] = useState("list");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [activeSection, setActiveSection] = useState("home"); // DASHBOARD DEFAULT
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
 
@@ -183,8 +221,9 @@ export default function Dashboard() {
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+
   // TOAST MESSAGE
-  const [message, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
 
   const [isAddingAccount, setIsAddingAccount] = useState(false);
@@ -231,11 +270,13 @@ function handleHomeClick() {
 }
 
 function handleAccountsClick() {
-  setActiveSection("accounts");
-
-  if (accounts?.length > 0) {
-    setSelectedAccount(accounts[0]._id);
+  if (accounts?.length === 0) {
+    setIsBankFormOpen(true);
+    return;
   }
+
+  setActiveSection("accounts");
+  setSelectedAccount(accounts[0]._id);
 }
 
   // ====================
@@ -277,6 +318,7 @@ async function handleDeleteTransaction(transactionId) {
 
   function handleAccountSelect(accountId) {
     setActiveSection("accounts");
+    setActiveSection("charts");
     setSelectedAccount(accountId);
     setIsBankFormOpen(false);
     setIsFormOpen(false);
@@ -286,12 +328,14 @@ async function handleDeleteTransaction(transactionId) {
     setIsBankFormOpen(true);
   }
 
-  async function handleDeleteAccount() {
-   console.log("DELETE ACCOUNT CLICKED");
+ async function handleDeleteAccount() {
+  console.log("DELETE ACCOUNT CLICKED");
+  console.log("selectedAccount:", selectedAccount);
 
-  if (!selectedAccount) return;
-      console.log("NO SELECTED ACCOUNT");
-
+  if (!selectedAccount) {
+    console.log("NO SELECTED ACCOUNT");
+    return;
+  }
 
   setIsDeletingAccount(true);
 
@@ -305,8 +349,10 @@ async function handleDeleteTransaction(transactionId) {
 
     const data = await response.json();
 
+    console.log("DELETE RESPONSE:", response.status, data);
+
     if (!response.ok) {
-      console.error(data);
+      console.error("DELETE FAILED:", data);
       return;
     }
 
@@ -314,24 +360,22 @@ async function handleDeleteTransaction(transactionId) {
 
     showToast("Bank Account deleted successfully.", "success");
 
-    // CLEARING 
     setSelectedAccount(null);
     setIsFormOpen(false);
 
   } catch (error) {
-    console.error(error);
+    console.error("DELETE ERROR:", error);
   } finally {
     setIsDeletingAccount(false);
   }
 }
-
   // ====================
   // FILTER
   // ====================
 
 
-  const matchesFilter = (transaction) => {
-     const transactionDate = new Date(transaction.date);
+    const matchesFilter = (transaction) => {
+    const transactionDate = new Date(transaction.date);
 
     const matchesSearch =
     transaction.title
@@ -386,10 +430,10 @@ async function handleDeleteTransaction(transactionId) {
     );
   }
 
-  // TOAST MESSAGE
- function showToast(message, type = "success") {
-    setToastMessage(message);
-    setToastType(type);
+  // TOAST MESSAGE 
+ function showToast(toastMessage, toastType = "success") {
+    setToastMessage(toastMessage);
+    setToastType(toastType);
 
     setTimeout(() => {
       setToastMessage("");
@@ -404,23 +448,23 @@ async function handleDeleteTransaction(transactionId) {
   return (
     <Main>
 
-      {message && (
+      {toastMessage && (
        <ToastMessage
-          message={message}
-          type={toastType}
+          toastMessage={toastMessage}
+          toastType={toastType}
           onClose={() => setToastMessage("")}
         />
       )}
 
       <SidebarWrapper>
-      <BankSideBar
-          accounts={accounts}
-          selectedAccount={selectedAccount}
-          setSelectedAccount={handleAccountSelect}
-          onAddAccount={handleAddAccount}
-          isBankFormOpen={isBankFormOpen}
-          isMenuOpen={isMenuOpen}
-        />
+        <BankSideBar
+            accounts={accounts}
+            selectedAccount={selectedAccount}
+            setSelectedAccount={handleAccountSelect}
+            onAddAccount={handleAddAccount}
+            isBankFormOpen={isBankFormOpen}
+            isMenuOpen={isMenuOpen}
+          />
       </SidebarWrapper>
 
 
@@ -428,39 +472,57 @@ async function handleDeleteTransaction(transactionId) {
      <FloatingNavigation
         activeSection={activeSection}
         onHome={handleHomeClick}
+        selectedAccount={selectedAccount}
         onAccounts={handleAccountsClick}
+        transactionView={transactionView}
+        onTransactionViewChange={setTransactionView}
+        onCharts={() => setActiveSection("charts")}
         onAddTransaction={() => setIsFormOpen(true)}
+        // PROP STATE for +ADD
+        // isFormOpen={isFormOpen}
         />
 
       <MenuProfileWrapper>
         <p>Hallo Juliane</p>
-       <MenuProfile
+         <MenuProfile
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
             isLoggedIn={true}
             listItems={profileItems}
             />
-      </MenuProfileWrapper>
+        </MenuProfileWrapper>
 
-    {/* BANK ACCOUNT SPINNER */}
-    {isAddingAccount || isDeletingAccount ? (
-        <div>
-          <p>
-            {isAddingAccount
-              ? "Adding bank account..."
-              : "Deleting bank account..."}
-          </p>
+      {/* BANK ACCOUNT SPINNER */}
+      {isAddingAccount || isDeletingAccount ? (
+          <div>
+            <p>
+              {isAddingAccount
+                ? "Adding bank account..."
+                : "Deleting bank account..."}
+            </p>
 
-          <Spinner />
-        </div>
-      ) : selectedAccount ? (
+            <Spinner />
+          </div>
+        ) : 
+      
+    selectedAccount ? (
     <>
-
       <Title>
-        {selectedAccountData?.bank} <br />
-        {selectedAccountData?.name}
+          <span> {selectedAccountData?.bank} </span>
+         <span> {selectedAccountData?.name}</span>
       </Title>
 
+
+      {transactionView === "chart" && (
+          <TransactionPeriod
+          selectedDate={selectedDate}
+          transactions={data ?? []}
+        />
+       )} 
+
+      <AccountBalance
+        transactions={filteredTransactions}
+      />
       <TransactionSearch
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -486,10 +548,6 @@ async function handleDeleteTransaction(transactionId) {
           setPdfLoading={setPdfLoading}
 
         />
-
-      <AccountBalance
-        transactions={filteredTransactions}
-      />
 
       <AddButton
         onClick={() => setIsFormOpen((isOpen) => !isOpen)}
@@ -531,8 +589,14 @@ async function handleDeleteTransaction(transactionId) {
         }}
       />
     </>
-  ) : (
-         <Welcome variant="dashboard" />
+  ) : ( <>
+       <Welcome variant="dashboard" />
+       <CardWrapper>
+         <PricingPlanCard variant="current" />
+          <PricingPlanCard variant="upgrade" />
+           <PricingPlanCard variant="referral" />
+          </CardWrapper>
+      </>
     )}
   </MainContent>
       {/* BANK ACCOUNT FORM */}

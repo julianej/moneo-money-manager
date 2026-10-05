@@ -2,7 +2,13 @@
 import styled from "styled-components";
 
 const Select = styled.select`
-  padding: 0.5rem;
+   padding: 0.7rem 0.8rem;
+
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+
+  background: white;
+  color: #0d0d0d;
 `;
 
 export default function CategoryDropdown({ 
