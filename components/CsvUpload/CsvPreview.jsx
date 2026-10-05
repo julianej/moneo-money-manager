@@ -81,6 +81,11 @@ const ImportButton = styled.button`
   &:hover {
     background: #333;
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const EmptyMessage = styled.p`
@@ -103,6 +108,7 @@ export default function CsvPreview({
   mutate,
   showToast,
 }) {
+  const [isImporting, setIsImporting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   /*
@@ -284,10 +290,12 @@ export default function CsvPreview({
               </CancelButton>
 
               <ImportButton
-                type="button"
-                onClick={handleSubmitImport}
-              >
-                Import All
+                  type="button"
+                  onClick={handleSubmitImport}
+                  disabled={isImporting}
+                >
+                  {/* IMPORTING STATE */}
+                  {isImporting ? "Importing..." : "Import All"}
               </ImportButton>
             </ButtonWrapper>
           </TransactionCsvHeader>
