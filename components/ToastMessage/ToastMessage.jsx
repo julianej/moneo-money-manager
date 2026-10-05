@@ -1,4 +1,5 @@
 
+
 import {
   Toast,
   ToastContent,
@@ -6,6 +7,7 @@ import {
   ToastText,
   ToastClose,
 } from "@/styles/ToastMessage";
+
 
 export default function ToastMessage({
   message,

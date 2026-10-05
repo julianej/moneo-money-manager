@@ -119,78 +119,56 @@ export default function TransactionFilter({
 
 
 // ====================
-// CATEGORIES
-// ====================
-
-  const availableCategories = [
-    ...new Set(
-      transactions
-        .filter((transaction) => {
-          const transactionYear = new Date(transaction.date)
-            .getFullYear()
-            .toString();
-
-          const matchesYear =
-            selectedYear === "all" || transactionYear === selectedYear;
-
-          const matchesType =
-            selectedType === "all" || transaction.type === selectedType;
-
-          return matchesYear && matchesType;
-        })
-          .map((transaction) => transaction.category)
-          // .map((transaction) => {
-          //   const category = categories.find((
-          //     category) => category._id === transaction.category
-          // );
-          // return category?.category;
-        // })
-
-      .filter(Boolean)
-  ),
-].sort();
-
-
-// ====================
 // RESET CATEGORY
 // ====================
+useEffect(() => {
+  setSelectedCategories([]);
+}, [
+  selectedYear,
+  selectedMonth,
+  selectedType,
+  setSelectedCategories,
+]);
 
-    useEffect(() => {
-      setSelectedCategories([]);
-    }, [selectedYear, selectedMonth, selectedType, setSelectedCategories]);
 
-      return (
-        <FilterWrapper>
-            {/* ... / PDF DOWNLAOD */}
-          <DownloadButton
-              transactions={filteredTransactions}
-              account={selectedAccount}
-              setPdfLoading={setPdfLoading}
-              selectedType={selectedType}
-            />
-    <FilterRow>
-      {/* ==================== YEAR ==================== */}
-            <FilterGroup>
-        <FilterLabel htmlFor="year-filter">
-          Year
-        </FilterLabel>
+  return (
+  <>
+    <FilterWrapper>
 
-        <FilterSelect
-          id="year-filter"
-          value={selectedYear}
-          onChange={(event) => setSelectedYear(event.target.value)}
-        >
-          <option value="all">All Years</option>
+      {/* PDF DOWNLOAD */}
+      <DownloadButton
+        transactions={filteredTransactions}
+        categories={categories}
+        account={selectedAccountData}
+        setPdfLoading={setPdfLoading}
+        selectedType={selectedType}
+      >
+        Download PDF
+      </DownloadButton>
 
-          {years.map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </FilterSelect>
-      </FilterGroup>
+      <FilterRow>
+        {/* ==================== YEAR ==================== */}
+        <FilterGroup>
+          <FilterLabel htmlFor="year-filter">
+            Year
+          </FilterLabel>
+
+          <FilterSelect
+            id="year-filter"
+            value={selectedYear}
+            onChange={(event) => setSelectedYear(event.target.value)}
+          >
+            <option value="all">All Years</option>
+
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </FilterSelect>
+        </FilterGroup>
+
         {/* ==================== MONTH ==================== */}
-
         <FilterGroup>
           <FilterLabel htmlFor="month-filter">
             Month
@@ -218,7 +196,7 @@ export default function TransactionFilter({
         </FilterGroup>
 
         {/* ==================== TYPE ==================== */}
-              <FilterGroup>
+        <FilterGroup>
           <FilterLabel htmlFor="type-filter">
             Type
           </FilterLabel>
@@ -233,26 +211,28 @@ export default function TransactionFilter({
             <option value="expense">Expense</option>
           </FilterSelect>
         </FilterGroup>
-        </FilterRow>
-        {/* ==================== ROW 2: CATEGORY ==================== */}
-        <FilterRow>
+      </FilterRow>
+
+      {/* ==================== ROW 2: CATEGORY ==================== */}
+      <FilterRow>
         <FilterGroup>
           <FilterLabel htmlFor="category-filter">
             Category
           </FilterLabel>
 
-           <CategoryDropdown
-                value={selectedCategories[0] || ""}
-                categories={categories}
-                placeholder="All Categories"
-                onChange={(event) => {
-                  const value = event.target.value;
+          <CategoryDropdown
+            value={selectedCategories[0] || ""}
+            categories={categories}
+            placeholder="All Categories"
+            onChange={(event) => {
+              const value = event.target.value;
 
-                  setSelectedCategories(value ? [value] : []);
-                }}
-              />
+              setSelectedCategories(value ? [value] : []);
+            }}
+          />
         </FilterGroup>
       </FilterRow>
+
     </FilterWrapper>
-  );
-}
+  </>
+);}

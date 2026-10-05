@@ -35,6 +35,7 @@ export const ToastContent = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
+  padding: 4rem 1rem 4rem;
 
   flex: 1;
   text-align: center;
@@ -48,11 +49,15 @@ export const ToastTitle = styled.strong`
 `;
 
 export const ToastText = styled.span`
+  white-space: pre-line;
+
   font-size: 1rem;
+  line-height: 1.4;
   line-height: 1.4;
 
   @media (min-width: 740px) {
     font-size: 5rem;
+    line-height: 5rem;
   }
 `;
 

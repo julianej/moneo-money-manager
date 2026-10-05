@@ -124,6 +124,10 @@ return (
   <Transaction
     $isSelected={isSelected}
     $isHighlighted={isHighlighted}
+     onDelete={() => {
+    setShowDeleteDialog(true);
+    setSelectedTransaction(transaction);
+  }}
   >
     {isDeleting && (
       <Loading>
@@ -178,5 +182,6 @@ return (
       </EditButton>
     </ButtonWrapper>
   </Transaction>
+
 );
 }

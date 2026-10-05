@@ -19,7 +19,7 @@ import TransactionList from "@/components/TransactionList/TransactionList";
 import TransactionSearch from "@/components/TransactionSearch/TransactionSearch";
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
 import ToastMessage from "@/components/ToastMessage/ToastMessage";
-
+import DialogPopup from "@/components/DialogPopup/DialogPopup";
 
 // ====================
 // STYLES
@@ -188,6 +188,8 @@ export default function Dashboard() {
 
   const [isAddingAccount, setIsAddingAccount] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -238,6 +240,39 @@ function handleAccountsClick() {
 }
 
   // ====================
+  // TRANSACTION DELETE
+  // ====================
+
+async function handleDeleteTransaction(transactionId) {
+  try {
+    const response = await fetch(
+      `/api/transactions/${transactionId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(data);
+      showToast("Failed to delete transaction.", "error");
+      return;
+    }
+
+    await mutate();
+
+    showToast("Transaction deleted successfully.", "success");
+
+    setShowDeleteDialog(false);
+
+  } catch (error) {
+    console.error("DELETE TRANSACTION ERROR:", error);
+    showToast("Failed to delete transaction.", "error");
+  }
+}
+
+  // ====================
   // ACCOUNT
   // ====================
 
@@ -278,7 +313,7 @@ function handleAccountsClick() {
 
     await mutateAccounts();
 
-    showToast("Bank Account deleted.", "success");
+    showToast("Bank Account deleted successfully.", "success");
 
     // CLEARING 
     setSelectedAccount(null);
@@ -491,6 +526,10 @@ function handleAccountsClick() {
         mutate={mutate}
         showToast={showToast}
         pdfLoading={pdfLoading}
+        onRequestDelete={(transaction) => {
+          setSelectedTransaction(transaction);
+          setShowDeleteDialog(true);
+        }}
       />
     </>
   ) : (
@@ -502,15 +541,24 @@ function handleAccountsClick() {
         <BankAccountFormWrapper>
           <BankAccountForm
             onCancel={() => setIsBankFormOpen(false)}
-            // mutateACCOUNTS
             mutate={mutateAccounts}
             setIsAddingAccount={setIsAddingAccount}
           />
         </BankAccountFormWrapper>
         )}
 
-      {/* )} */}
-
+        {showDeleteDialog && selectedTransaction && (
+          <DialogPopup
+            transaction={selectedTransaction}
+            onDelete={() =>
+              handleDeleteTransaction(selectedTransaction._id)
+            }
+            onCancel={() => {
+              setShowDeleteDialog(false);
+              setSelectedTransaction(null);
+            }}
+          />
+        )}
     </Main>
   );
 }
