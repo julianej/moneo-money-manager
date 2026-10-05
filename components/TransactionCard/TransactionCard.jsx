@@ -120,63 +120,63 @@ export default function TransactionCard({
   // "2025-08-20"
   const date = new Date(transaction.date);
 
-  return (
-     <Transaction
-        $isSelected={isSelected}
-        $isHighlighted={isHighlighted}
-      >
-        {isDeleting && (
-          <Loading>
-            <Spinner />
-          </Loading>
-        )}
-
-        <div>
-          <TransactionTitle>
-              {transaction.title.length > 15
-                ? `${transaction.title.slice(0, 15)}...`
-                : transaction.title}
-            </TransactionTitle>
-
-    <Category>
-          {categories?.find(
-            (category) =>
-              String(category._id) === String(transaction.category)
-          )?.category || transaction.category
-
-            // categories?.find(
-            //   // Find the category whose _id matches the transaction's category ID:
-            //   (category) => category._id  === transaction.category)
-            //   // Then get its name from the category property:
-            //   ?.category
-            //  // || if no matching category is found, you'll see the stored ID instead.
-            //    || transaction.category)}
-        }
-          </Category>
-        </div>
-
-        <div>
-          <DateText>
-            {date.toLocaleDateString("de-DE")}
-          </DateText>
-
-          <Time>
-            {date.toLocaleTimeString("de-DE", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </Time>
-        </div>
-
-        <Amount $isIncome={transaction.amount >= 0}>
-          {transaction.amount} €
-        </Amount>
-
-        <ButtonWrapper>
-          <EditButton type="button" onClick={onEdit}>
-            Edit
-          </EditButton>
-        </ButtonWrapper>
-      </Transaction>
+return (
+  <Transaction
+    $isSelected={isSelected}
+    $isHighlighted={isHighlighted}
+  >
+    {isDeleting && (
+      <Loading>
+        <Spinner />
+      </Loading>
     )}
 
+    <div>
+      <TransactionTitle>
+        {transaction.title.length > 15
+          ? `${transaction.title.slice(0, 15)}...`
+          : transaction.title}
+      </TransactionTitle>
+
+      <Category>
+        {/* Find the category whose _id matches the transaction's category ID:*/}
+
+        {categories?.find(
+          (category) =>
+            String(category._id) === String(transaction.category)
+              /* (category) => category._id  === transaction.category)*/
+              /* // Then get its name from the category property: */
+              )?.category || transaction.category}
+            {/* || if no matching category is found, you'll see the stored ID instead*/}
+
+      </Category>
+    </div>
+
+    <div>
+      <DateText>
+        {date.toLocaleDateString("de-DE")}
+      </DateText>
+
+      <Time>
+        {date.toLocaleTimeString("de-DE", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </Time>
+    </div>
+
+    <Amount $isIncome={transaction.amount >= 0}>
+      {Number(transaction.amount).toLocaleString("de-DE", {
+        style: "currency",
+        currency: "EUR",
+      })}
+    </Amount>
+
+    <ButtonWrapper>
+      <EditButton type="button" onClick={onEdit}>
+        Edit
+      </EditButton>
+    </ButtonWrapper>
+  </Transaction>
+);
+}

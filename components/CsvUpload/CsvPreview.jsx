@@ -102,7 +102,7 @@ async function handleSubmitImport() {
     );
 
     if (hasMissingCategory) {
-      showToast("Please select a category for every transaction.");
+      showToast("Please select a category for every transaction.", "error");
       return;
     }
 
@@ -112,7 +112,7 @@ async function handleSubmitImport() {
 
     if (hasInvalidTitle) {
       showToast(
-        "Please check your transaction titles. Titles must contain at least 3 characters."
+        "Please check your transaction titles. Titles must contain at least 3 characters.", "error"
       );
       return;
     }
@@ -150,7 +150,7 @@ async function handleSubmitImport() {
 
     await mutate();
 
-    showToast("Transactions imported successfully");
+      showToast("Transaction file Importet successfully.", "success");
 
     onCancel();
   } catch (error) {
