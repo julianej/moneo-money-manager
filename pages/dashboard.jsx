@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router"; // MENU LINK
 
 import { X, Plus,LogOut } from "lucide-react";
@@ -270,11 +270,13 @@ function handleHomeClick() {
 }
 
 function handleAccountsClick() {
-  setActiveSection("accounts");
-
-  if (accounts?.length > 0) {
-    setSelectedAccount(accounts[0]._id);
+  if (accounts?.length === 0) {
+    setIsBankFormOpen(true);
+    return;
   }
+
+  setActiveSection("accounts");
+  setSelectedAccount(accounts[0]._id);
 }
 
   // ====================
@@ -326,12 +328,14 @@ async function handleDeleteTransaction(transactionId) {
     setIsBankFormOpen(true);
   }
 
-  async function handleDeleteAccount() {
-      console.log("DELETE ACCOUNT CLICKED");
+ async function handleDeleteAccount() {
+  console.log("DELETE ACCOUNT CLICKED");
+  console.log("selectedAccount:", selectedAccount);
 
-  if (!selectedAccount) return;
-      console.log("NO SELECTED ACCOUNT");
-
+  if (!selectedAccount) {
+    console.log("NO SELECTED ACCOUNT");
+    return;
+  }
 
   setIsDeletingAccount(true);
 
@@ -345,8 +349,10 @@ async function handleDeleteTransaction(transactionId) {
 
     const data = await response.json();
 
+    console.log("DELETE RESPONSE:", response.status, data);
+
     if (!response.ok) {
-      console.error(data);
+      console.error("DELETE FAILED:", data);
       return;
     }
 
@@ -354,17 +360,15 @@ async function handleDeleteTransaction(transactionId) {
 
     showToast("Bank Account deleted successfully.", "success");
 
-    // CLEARING 
     setSelectedAccount(null);
     setIsFormOpen(false);
 
   } catch (error) {
-    console.error(error);
+    console.error("DELETE ERROR:", error);
   } finally {
     setIsDeletingAccount(false);
   }
 }
-
   // ====================
   // FILTER
   // ====================
