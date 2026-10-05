@@ -118,38 +118,6 @@ export default function TransactionFilter({
   ;
 
 
-// ====================
-// CATEGORIES
-// ====================
-
-  const availableCategories = [
-    ...new Set(
-      transactions
-        .filter((transaction) => {
-          const transactionYear = new Date(transaction.date)
-            .getFullYear()
-            .toString();
-
-          const matchesYear =
-            selectedYear === "all" || transactionYear === selectedYear;
-
-          const matchesType =
-            selectedType === "all" || transaction.type === selectedType;
-
-          return matchesYear && matchesType;
-        })
-          .map((transaction) => transaction.category)
-          // .map((transaction) => {
-          //   const category = categories.find((
-          //     category) => category._id === transaction.category
-          // );
-          // return category?.category;
-        // })
-
-      .filter(Boolean)
-  ),
-].sort();
-
 
 // ====================
 // RESET CATEGORY
@@ -164,7 +132,7 @@ export default function TransactionFilter({
             {/* ... / PDF DOWNLAOD */}
           <DownloadButton
               transactions={filteredTransactions}
-              account={selectedAccount}
+                account={selectedAccountData}
               setPdfLoading={setPdfLoading}
               selectedType={selectedType}
             />

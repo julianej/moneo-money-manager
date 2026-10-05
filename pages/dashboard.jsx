@@ -150,6 +150,7 @@ const BankAccountFormWrapper = styled.div`
 
 export default function Dashboard() {
 
+    const router = useRouter();
     const profileItems = [
         // {
         // label: "Profile Settings",
@@ -222,8 +223,6 @@ console.log("DASHBOARD selectedAccount:", selectedAccount);
 console.log("DASHBOARD categories:", categories);
 console.log("DASHBOARD categoriesError:", categoriesError);
 
-
-  const router = useRouter();
 
 // ====================
 // FLOATING NAVIGATION
