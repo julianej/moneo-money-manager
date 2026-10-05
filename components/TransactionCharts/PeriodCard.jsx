@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import TransactionChart from "../TransactionChart/TransactionChart";
+import TransactionCharts from "../TransactionCharts/TransactionCharts";
 
 const Card = styled.div`
   width: 100%;
@@ -193,7 +193,7 @@ export default function PeriodCard({
             <ChartArea>
               {/* Charts will go here later */}
               Charts
-                <TransactionChart
+                <TransactionCharts
                     transactions={transactions}
                     period={period}
                   />
@@ -233,7 +233,7 @@ export default function PeriodCard({
                 <p>{transactions.length} transactions</p>
 
                 <ChartArea>
-                  <TransactionChart
+                  <TransactionCharts
                     transactions={transactions}
                     period={period}
                   />
