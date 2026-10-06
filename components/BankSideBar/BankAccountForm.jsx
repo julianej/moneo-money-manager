@@ -23,8 +23,11 @@ const Form = styled.form`
   @media (min-width: 740px) {
     width: 50%;
     left: 25%;
-    height:100vh;
+    height: 100vh;
     padding: 5rem;
+    overflow: scroll;
+    position: absolute;
+    z-index: 77777;
   }
 `;
 
@@ -109,11 +112,15 @@ const CategoryInputWrapper = styled.div`
   }
 `;
 
-
 const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+`;
+
+const Button = styled.button`
+  background: ${({ $variant }) =>
+    $variant === "primary" ? "black" : "white"};
 `;
 
 const ErrorMessage = styled.span`
@@ -364,7 +371,7 @@ async function handleSubmit(event) {
       <FormSubTitle>Bank Account Info</FormSubTitle>
 
       <Field>
-         <label htmlFor="account-name">Account Name</label>
+         <label htmlFor="account-name">Account Wallet</label>
         <input
           type="text"
           placeholder="Account name"

@@ -78,10 +78,90 @@ const AddBankAccountButton = styled.button`
   border: 1px solid #000;
   border-radius: 8px;
 
-  background: ${({ $selected }) => ($selected ? "#000" : "#fff")};
-  color: ${({ $selected }) => ($selected ? "#fff" : "#000")};
+  background: ${({ $selected }) =>
+    $selected ? "#000" : "#fff"};
+
+  color: ${({ $selected }) =>
+    $selected ? "#fff" : "#000"};
 
   cursor: pointer;
+
+  position: relative;
+
+  ${({ $onboarding }) =>
+    $onboarding &&
+    `
+      border: 2px solid #000;
+      transform: translateY(-2px);
+
+      &::before {
+        content: "START HERE";
+        position: absolute;
+        left: 0;
+        bottom: calc(100% + 8px);
+
+        font-family: "Silkscreen", sans-serif;
+        font-size: 0.65rem;
+        letter-spacing: 0.05em;
+
+        color: #000;
+        white-space: nowrap;
+      }
+
+      svg {
+        animation: onboardingArrow 1.2s ease-in-out infinite;
+      }
+
+      @keyframes onboardingArrow {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+
+        50% {
+          transform: translateX(4px);
+        }
+      }
+    `}
+`;
+
+const OnboardingPulse = styled.span`
+    position: absolute;
+    top: 50%;
+    right: -30px;
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    background: #00000079;
+    transform: translateY(-50%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+
+    border: 1px solid #000;
+    border-radius: 50%;
+
+    animation: pulse 1.5s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.7);
+      opacity: 1;
+    }
+
+    70% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+
+    100% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }
 `;
 
 const SidebarSection = styled.section`
@@ -168,6 +248,8 @@ export default function BankSideBar({
   setSelectedAccount,
   onAddAccount,
   isBankFormOpen,
+  showAccountOnboarding,
+  setShowAccountOnboarding,
 }) {
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -209,14 +291,20 @@ export default function BankSideBar({
       </AccountList>
 
 {/*/ ADD BANK ACCOUNT BUTTON */}
-      <AddBankAccountButton
-        type="button"
-        $selected={isBankFormOpen}
-        onClick={onAddAccount}
-      >
-        <span>Add Bank Account</span>
-        <Plus size={18} />
-      </AddBankAccountButton>
+     <AddBankAccountButton
+          type="button"
+          $selected={isBankFormOpen}
+          $onboarding={showAccountOnboarding} 
+          onClick={() => {
+            setShowAccountOnboarding(false);
+            onAddAccount();
+          }}
+        >
+          <span>Add Bank Account</span>
+          <Plus size={18} />
+
+  {showAccountOnboarding && <OnboardingPulse />}
+        </AddBankAccountButton>
 
       <SyncSection>
         <SyncButton
@@ -236,4 +324,5 @@ export default function BankSideBar({
       </SyncSection>
     </SidebarContent>
   </SidebarSection>
-)};
+);
+}
