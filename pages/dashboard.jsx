@@ -1,8 +1,8 @@
 import useSWR from "swr";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router"; // MENU LINK
 
-import { X, Plus,LogOut } from "lucide-react";
+import { X, Plus,LogOut, User } from "lucide-react";
 import styled from "styled-components";
 import { Spinner } from "@/styles/LoadingStyles";
 
@@ -142,20 +142,6 @@ const PrimaryButton = styled.button`
 `;
 
 
-const BankAccountFormWrapper = styled.div`
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.8);
-    left: 0%;
-    top: 0%;
-    z-index: 77777;
-    height: 100vh;
-    @media (min-width: 740px) {
-     left: 25%;}
-`;
-
-
 const CardWrapper = styled.div`
   display: flex;
   gap: 1rem;
@@ -163,6 +149,7 @@ const CardWrapper = styled.div`
   overflow-x: auto;
   flex-direction: column;
   text-align: center;
+  margin-bottom: 15rem;
 
   @media (min-width: 740px) {
     overflow-x: visible;
@@ -181,16 +168,16 @@ export default function Dashboard() {
 
     const router = useRouter();
     const profileItems = [
-        // {
-        // label: "Profile Settings",
-        // icon: <User size={20} />,
+        {
+        label: "Profile Settings",
+        icon: <User size={20} />,
+        onClick: () => {
+            router.push("/profile.jsx");
+        },
         // onClick: () => {
-        //     router.push("/profile.jsx");
+        //     console.log("Profile Settings");
         // },
-        // // onClick: () => {
-        // //     console.log("Profile Settings");
-        // // },
-        // },
+        },
         {
         label: "Log Out",
         icon: <LogOut size={20} />,
