@@ -255,7 +255,7 @@ export default function LogInForm({ onLoggedIn }) {
 
         <Input
           type="email"
-          placeholder="Email"
+          placeholder="test@example.com"
           value={email}
           onChange={(event) =>
             setEmail(event.target.value)
@@ -265,7 +265,7 @@ export default function LogInForm({ onLoggedIn }) {
 
         <Input
           type="password"
-          placeholder="Password"
+          placeholder="Password123!"
           value={password}
           onChange={(event) =>
             setPassword(event.target.value)
