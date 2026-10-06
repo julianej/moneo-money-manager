@@ -18,7 +18,7 @@ export const Toast = styled.div`
   animation: slideDown 0.4s ease-out;
 
   background: ${({ type }) =>
-  type === "error" ? "black" : "#777777eb"};
+  type === "error" ? "black" : "#777777"};
  
   color: ${({ type }) => 
   type === "error" ? "white" : "black"};
