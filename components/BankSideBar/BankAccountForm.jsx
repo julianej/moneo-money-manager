@@ -125,7 +125,9 @@ const ErrorMessage = styled.span`
 export default function BankAccountForm({
   onCancel,
   mutate,
+  isAddingAccount,
   setIsAddingAccount,
+  accountLimitMessage,
 }) {
   const [name, setName] = useState("");
   const [bank, setBank] = useState("");
@@ -134,6 +136,7 @@ export default function BankAccountForm({
   // const [balance, setBalance] = useState("");
   const [errors, setErrors] = useState({});
   const [categoryError, setCategoryError] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
@@ -243,15 +246,17 @@ export default function BankAccountForm({
     }
 
 
-  async function handleSubmit(event) {
+async function handleSubmit(event) {
   event.preventDefault();
 
-  // 01.Validate Form
+  setSubmitError("");
+
+  // 01. Validate Form
   if (!validateForm()) {
     return;
   }
 
-  // 02. add Account
+  // 02. Add Account
   setIsAddingAccount(true);
 
   try {
@@ -271,8 +276,14 @@ export default function BankAccountForm({
 
     const data = await response.json();
 
+    // Free plan / other API errors
     if (!response.ok) {
       console.error("BANK ACCOUNT ERROR:", data);
+
+      setSubmitError(
+        data.error || "Failed to create bank account."
+      );
+
       return;
     }
 
@@ -309,13 +320,20 @@ export default function BankAccountForm({
         throw new Error("Category creation failed");
       }
     }
+
     // 3. Refresh bank accounts
     await mutate();
 
     // 4. Close form
     onCancel();
+
   } catch (error) {
-  console.error("CREATE ACCOUNT ERROR:", error);
+    console.error("CREATE ACCOUNT ERROR:", error);
+
+    setSubmitError(
+      error.message || "Something went wrong. Please try again."
+    );
+
   } finally {
     setIsAddingAccount(false);
   }
@@ -336,6 +354,12 @@ export default function BankAccountForm({
         <br />
         Account Details
       </FormTitle>
+
+        {accountLimitMessage && (
+          <ErrorMessage>
+            {accountLimitMessage}
+          </ErrorMessage>
+        )}
 
       <FormSubTitle>Bank Account Info</FormSubTitle>
 
@@ -459,9 +483,17 @@ export default function BankAccountForm({
               )}
             </CategorySection>
 
-          <SubmitButton type="submit">
-            Add Bank Account
-          </SubmitButton>
+        
+           <SubmitButton
+              type="submit"
+              disabled={
+                isAddingAccount || Boolean(accountLimitMessage)
+              }
+            >
+              {isAddingAccount
+                ? "Adding account..."
+                : "Add Bank Account"}
+            </SubmitButton>
 
           <CancelButton
             type="button"

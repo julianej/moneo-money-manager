@@ -1,54 +1,60 @@
 import dbConnect from "@/db/connect";
 import BankAccounts from "@/db/models/BankAccounts/BankAccounts";
-import Transactions from "@/db/models/Transactions/Transactions";
 import { getAuthenticatedUserId } from "@/utils/cleanUserAuth";
 
 export default async function handler(request, response) {
   await dbConnect();
 
-  const { id } = request.query;
+  const userId = getAuthenticatedUserId(request);
 
-  if (request.method === "DELETE") {
+  if (!userId) {
+    return response.status(401).json({
+      error: "Unauthorized.",
+    });
+  }
+
+  // =========================
+  // POST - CREATE BANK ACCOUNT
+  // =========================
+
+  if (request.method === "POST") {
     try {
-      const userId = getAuthenticatedUserId(request);
+      // ---------------------------------
+      // FREE PLAN: MAXIMUM 1 BANK ACCOUNT
+      // ---------------------------------
 
-      if (!userId) {
-        return response.status(401).json({
-          error: "Unauthorized.",
-        });
-      }
-
-      // Check that the account belongs to the logged-in user
-      const account = await BankAccounts.findOne({
-        _id: id,
+      const accountCount = await BankAccounts.countDocuments({
         user: userId,
       });
 
-      if (!account) {
-        return response.status(404).json({
-          error: "Bank account not found.",
+      if (accountCount >= 1) {
+        return response.status(403).json({
+          error: "Free plan allows only 1 bank account.",
         });
       }
 
-      // Delete all transactions belonging to this account
-      await Transactions.deleteMany({
-        account: id,
-      });
+      // ---------------------------------
+      // CREATE BANK ACCOUNT
+      // ---------------------------------
 
-      // Delete the bank account
-      await BankAccounts.deleteOne({
-        _id: id,
+      const { bank, name, iban, bic, balance } = request.body;
+
+      const newAccount = await BankAccounts.create({
         user: userId,
+        bank,
+        name,
+        iban,
+        bic,
+        balance,
       });
 
-      return response.status(200).json({
-        message: "Bank account and transactions deleted successfully.",
-      });
+      return response.status(201).json(newAccount);
+
     } catch (error) {
-      console.error("DELETE BANK ACCOUNT ERROR:", error);
+      console.error("CREATE BANK ACCOUNT ERROR:", error);
 
       return response.status(500).json({
-        error: "Failed to delete bank account.",
+        error: error.message,
       });
     }
   }

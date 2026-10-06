@@ -208,6 +208,7 @@ export default function BankSideBar({
         ))}
       </AccountList>
 
+{/*/ ADD BANK ACCOUNT BUTTON */}
       <AddBankAccountButton
         type="button"
         $selected={isBankFormOpen}

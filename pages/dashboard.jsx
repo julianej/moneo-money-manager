@@ -220,7 +220,9 @@ export default function Dashboard() {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCategories, setSelectedCategories] = useState([]);
 
+  // ADD ACCOUNT FORM STATE
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [accountLimitMessage, setAccountLimitMessage] = useState("");
 
   // TOAST MESSAGE
   const [toastMessage, setToastMessage] = useState("");
@@ -259,6 +261,7 @@ console.log("DASHBOARD selectedAccount:", selectedAccount);
 console.log("DASHBOARD categories:", categories);
 console.log("DASHBOARD categoriesError:", categoriesError);
 
+const hasReachedAccountLimit = accounts?.length >= 1;
 
 // ====================
 // FLOATING NAVIGATION
@@ -324,9 +327,28 @@ async function handleDeleteTransaction(transactionId) {
     setIsFormOpen(false);
     }
 
-  function handleAddAccount() {
-    setIsBankFormOpen(true);
+  async function handleAddAccount() {
+  setAccountLimitMessage("");
+  setIsFormOpen(true);
+  
+  try {
+    const response = await fetch("/api/bankaccounts");
+    const accounts = await response.json();
+
+    if (!response.ok) {
+      return;
+    }
+
+    if (accounts.length >= 1) {
+      setAccountLimitMessage(
+        "Free plan allows only 1 bank account."
+      );
+    }
+
+  } catch (error) {
+    console.error("CHECK ACCOUNTS ERROR:", error);
   }
+}
 
  async function handleDeleteAccount() {
   console.log("DELETE ACCOUNT CLICKED");
@@ -462,6 +484,7 @@ async function handleDeleteTransaction(transactionId) {
             selectedAccount={selectedAccount}
             setSelectedAccount={handleAccountSelect}
             onAddAccount={handleAddAccount}
+            // BANK FORM OPEN STATE
             isBankFormOpen={isBankFormOpen}
             isMenuOpen={isMenuOpen}
           />
@@ -600,15 +623,15 @@ async function handleDeleteTransaction(transactionId) {
     )}
   </MainContent>
       {/* BANK ACCOUNT FORM */}
-      {isBankFormOpen && (
-        <BankAccountFormWrapper>
-          <BankAccountForm
-            onCancel={() => setIsBankFormOpen(false)}
-            mutate={mutateAccounts}
-            setIsAddingAccount={setIsAddingAccount}
-          />
-        </BankAccountFormWrapper>
-        )}
+      {isFormOpen && (
+        <BankAccountForm
+          onCancel={() => setIsFormOpen(false)}
+          mutate={mutateAccounts}
+          isAddingAccount={isAddingAccount}
+          setIsAddingAccount={setIsAddingAccount}
+          accountLimitMessage={accountLimitMessage}
+        />
+      )}
 
         {showDeleteDialog && selectedTransaction && (
           <DialogPopup
