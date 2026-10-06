@@ -4,7 +4,7 @@ import styled from "styled-components";
 export default function Welcome({ variant = "default" }) {
   return (
     <WelcomeWrapper $variant={variant}>
-      <h1>Welcome to Money Manager</h1>
+      <h1>Welcome to Money Manager [MONEO]</h1>
        <h2>Keep track of your finances, manage your bank accounts,
         and stay informed about your transactions.
       </h2> 
@@ -28,6 +28,7 @@ const WelcomeWrapper = styled.section`
     font-size: 2rem;
     text-transform: uppercase;
     margin-bottom: 1.5rem;
+    margin-top: 4rem;
   }
   
   h2 {
