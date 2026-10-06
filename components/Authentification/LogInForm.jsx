@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 const Title = styled.h1`
@@ -105,6 +105,20 @@ export default function LoginForm({ onForgotPassword }) {
     // console.log("Logged in:", data.user);
   }
 
+  useEffect(() => {
+  const script = document.createElement("script");
+
+  script.src = "https://accounts.google.com/gsi/client";
+  script.async = true;
+  script.defer = true;
+
+  document.body.appendChild(script);
+
+  return () => {
+    document.body.removeChild(script);
+  };
+}, []);
+
   return (
     <>
       <Title>Welcome,</Title>
@@ -148,6 +162,21 @@ export default function LoginForm({ onForgotPassword }) {
         <SubmitButton type="submit">
           Log in
         </SubmitButton>
+           <div
+              id="g_id_onload"
+              data-client_id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+              data-callback="handleGoogleLogin"
+              data-locale="en"
+            />
+            <div
+              className="g_id_signin"
+              data-type="standard"
+              data-size="large"
+              data-theme="outline"
+              data-text="continue_with"
+              data-shape="rectangular"
+              data-logo_alignment="left"
+            ></div>
       </Form>
     </>
   );

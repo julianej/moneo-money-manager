@@ -18,9 +18,15 @@ const UserSchema = new Schema(
       trim: true,
     },
 
-    passwordHash: {
+   passwordHash: {
       type: String,
-      required: true,
+      default: null,
+    },
+
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     
     passwordResetToken: {

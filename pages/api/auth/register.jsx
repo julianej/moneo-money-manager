@@ -36,6 +36,7 @@ export default async function handler(req, res) {
     });
   }
 
+  // HASH PW
   const passwordHash = await bcrypt.hash(password, 12);
 
   // Create the user
