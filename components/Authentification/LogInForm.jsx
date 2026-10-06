@@ -1,67 +1,80 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-
-const Title = styled.h1`
-  margin: 0 0 8px;
-  font-size: 2.5rem;
-`;
-
-const Intro = styled.p`
-  margin: 0 0 32px;
-`;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-`;
-
-const Field = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  font-size: 0.9rem;
-  font-weight: 600;
+  gap: 1rem;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 14px 16px;
-  border: 2px solid black;
-  border-radius: 12px;
-  font-size: 1rem;
-  box-sizing: border-box;
+  padding: 0.75rem;
+
+  border: 1px solid #000;
+  border-radius: 8px;
+
+  font: inherit;
 `;
 
 const SubmitButton = styled.button`
-  padding: 14px 20px;
-  border: 2px solid black;
-  border-radius: 12px;
-  background: black;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
+  width: 100%;
+  padding: 0.75rem 1rem;
+
+  border: 1px solid #000;
+  border-radius: 8px;
+
+  background: #000;
+  color: #fff;
+
+  font: inherit;
   cursor: pointer;
 
-  &:hover {
-    opacity: 0.8;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 
-const ResetLink = styled.button`
-  align-self: flex-start;
+const GoogleLoginButton = styled.button`
+  width: 100%;
+  padding: 0.75rem 1rem;
 
-  padding: 0;
-  border: 0;
-  background: transparent;
+  border: 1px solid #000;
+  border-radius: 8px;
 
-  font-size: 0.9rem;
-  text-decoration: underline;
+  background: #fff;
+  color: #000;
+
+  font: inherit;
   cursor: pointer;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const Divider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  margin: 0.5rem 0;
+
+  color: #666;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+  }
 `;
 
 const ErrorMessage = styled.p`
@@ -69,114 +82,217 @@ const ErrorMessage = styled.p`
   color: #d00;
 `;
 
-export default function LoginForm({ onForgotPassword }) {
-  const router = useRouter();
-
+export default function LogInForm({ onLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  /*
+   * Load Google Identity Services once.
+   */
+  useEffect(() => {
+    const existingScript = document.querySelector(
+      'script[src="https://accounts.google.com/gsi/client"]'
+    );
 
-    // Reset error message before making the request
-    setError("");
-
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-
-    // Handle the response from the server
-    const data = await response.json();
-
-    if (!response.ok) {
-      setError(data.message);
+    if (existingScript) {
       return;
     }
 
-    router.push("/dashboard");
-    // console.log("Logged in:", data.user);
+    const script = document.createElement("script");
+
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  /*
+   * Normal email/password login.
+   */
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(
+          data.message || "Invalid email or password."
+        );
+        return;
+      }
+
+      if (onLoggedIn) {
+        onLoggedIn(data.user);
+      }
+    } catch (error) {
+      console.error("LOGIN ERROR:", error);
+
+      setError(
+        "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  useEffect(() => {
-  const script = document.createElement("script");
+  /*
+   * Google login.
+   *
+   * We use Google's OAuth popup and receive
+   * the credential through the callback.
+   */
+  function handleGoogleClick() {
+    setError("");
 
-  script.src = "https://accounts.google.com/gsi/client";
-  script.async = true;
-  script.defer = true;
+    if (!window.google) {
+      setError(
+        "Google login is not available yet. Please try again."
+      );
+      return;
+    }
 
-  document.body.appendChild(script);
+    if (!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
+      console.error(
+        "NEXT_PUBLIC_GOOGLE_CLIENT_ID is missing."
+      );
 
-  return () => {
-    document.body.removeChild(script);
-  };
-}, []);
+      setError(
+        "Google login is not configured."
+      );
+
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    window.google.accounts.id.initialize({
+      client_id:
+        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+
+      callback: async (response) => {
+        try {
+          const result = await fetch(
+            "/api/auth/google",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                credential: response.credential,
+              }),
+            }
+          );
+
+          const data = await result.json();
+
+          if (!result.ok) {
+            setError(
+              data.message ||
+                "Google login failed."
+            );
+
+            return;
+          }
+
+          if (onLoggedIn) {
+            onLoggedIn(data.user);
+          }
+        } catch (error) {
+          console.error(
+            "GOOGLE LOGIN ERROR:",
+            error
+          );
+
+          setError(
+            "Something went wrong with Google login."
+          );
+        } finally {
+          setIsSubmitting(false);
+        }
+      },
+    });
+
+    /*
+     * Trigger Google's authentication UI.
+     */
+    window.google.accounts.id.prompt();
+  }
 
   return (
     <>
-      <Title>Welcome,</Title>
-
-      <Intro>
-        Log in to your Money Manager.
-      </Intro>
-
       <Form onSubmit={handleSubmit}>
-        <Field>
-          <Label htmlFor="email">Email</Label>
+        {error && (
+          <ErrorMessage>
+            {error}
+          </ErrorMessage>
+        )}
 
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-        </Field>
+        <Input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(event) =>
+            setEmail(event.target.value)
+          }
+          required
+        />
 
-        <Field>
-          <Label htmlFor="password">Password</Label>
+        <Input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(event) =>
+            setPassword(event.target.value)
+          }
+          required
+        />
 
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-        </Field>
-        <ResetLink
-          type="button"
-          onClick={onForgotPassword}
+        <SubmitButton
+          type="submit"
+          disabled={isSubmitting}
         >
-          Forgot password?
-        </ResetLink>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-
-        <SubmitButton type="submit">
-          Log in
+          {isSubmitting
+            ? "Logging in..."
+            : "Log in"}
         </SubmitButton>
-           <div
-              id="g_id_onload"
-              data-client_id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-              data-callback="handleGoogleLogin"
-              data-locale="en"
-            />
-            <div
-              className="g_id_signin"
-              data-type="standard"
-              data-size="large"
-              data-theme="outline"
-              data-text="continue_with"
-              data-shape="rectangular"
-              data-logo_alignment="left"
-            ></div>
+
+        <Divider>
+          <span>or</span>
+        </Divider>
+
+        <GoogleLoginButton
+          type="button"
+          onClick={handleGoogleClick}
+          disabled={isSubmitting}
+        >
+          Continue with Google
+        </GoogleLoginButton>
       </Form>
     </>
   );
