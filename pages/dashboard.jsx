@@ -223,6 +223,7 @@ export default function Dashboard() {
   // ADD ACCOUNT FORM STATE
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [accountLimitMessage, setAccountLimitMessage] = useState("");
+  const [showAccountOnboarding, setShowAccountOnboarding] = useState(false);
 
   // TOAST MESSAGE
   const [toastMessage, setToastMessage] = useState("");
@@ -273,13 +274,15 @@ function handleHomeClick() {
 }
 
 function handleAccountsClick() {
+  setActiveSection("accounts");
+
   if (accounts?.length === 0) {
-    setIsBankFormOpen(true);
+    setShowAccountOnboarding(true);
     return;
   }
 
-  setActiveSection("accounts");
   setSelectedAccount(accounts[0]._id);
+  setShowAccountOnboarding(false);
 }
 
   // ====================
@@ -330,7 +333,7 @@ async function handleDeleteTransaction(transactionId) {
   async function handleAddAccount() {
   setAccountLimitMessage("");
   setIsFormOpen(true);
-  
+
   try {
     const response = await fetch("/api/bankaccounts");
     const accounts = await response.json();
@@ -487,6 +490,8 @@ async function handleDeleteTransaction(transactionId) {
             // BANK FORM OPEN STATE
             isBankFormOpen={isBankFormOpen}
             isMenuOpen={isMenuOpen}
+            showAccountOnboarding={showAccountOnboarding}
+            setShowAccountOnboarding={setShowAccountOnboarding}
           />
       </SidebarWrapper>
 
