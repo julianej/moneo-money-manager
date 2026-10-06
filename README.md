@@ -1,4 +1,4 @@
-# Money Manager
+# Money Manager [ MONEO ]
 
 ## Description
 
