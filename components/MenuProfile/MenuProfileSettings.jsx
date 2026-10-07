@@ -1,16 +1,20 @@
 import styled from "styled-components";
+import PricingPlanCard from "@/components/PricingPlanCard/PricingPlanCard";
 import { useState } from "react";
+import { Trash2, X } from "lucide-react";
+import {CloseButton} from "@/styles/ButtonStyles";
+
 
 const ProfileWrapper = styled.div`
   padding: 24px;
   /* background: #000; */
-  color: #878787;
-  width: 50%;
+  width: 70%;
   position: fixed;
 `;
 
-const ProfileTitle = styled.h1`
-  margin-bottom: 32px;
+const ProfileTitle = styled.h2`
+  margin: 0 0 2rem;
+  font-size: 1.2rem;
 `;
 
 const ProfileSection = styled.section`
@@ -49,26 +53,32 @@ const Input = styled.input`
 
 const Value = styled.span`
   font-size: 18px;
-  color: white;
+  color: #000000;
 `;
 
-const SaveButton = styled.button`
-  margin-top: 10px;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 999px;
-  background: white;
-  color: black;
-  cursor: pointer;
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 12px;
 `;
+
 
 const DeleteButton = styled.button`
   margin-top: 24px;
-  padding: 12px 20px;
+  padding: 0.5rem 1rem 0.8rem;
   border: none;
   border-radius: 999px;
-  background: #333;
-  color: #fff;
+  background: #ffffff;
+  color: #060606;
+  cursor: pointer;
+`;
+
+const SubmitButton = styled.button`
+  margin-top: 24px;
+  padding: 0.5rem 1rem 0.8rem;
+  border: none;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #060606;
   cursor: pointer;
 `;
 
@@ -76,7 +86,8 @@ export default function Profile({
   user,
   userLoading,
   userError,
-  onClose,
+  onCancel,
+  onDelete,
 }) {
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -91,6 +102,13 @@ export default function Profile({
 
   return (
     <ProfileWrapper>
+       <CloseButton
+              type="button"
+              onClick={onCancel}
+              aria-label="Close"
+            >
+              <X size={20} />
+         </CloseButton>
       <ProfileTitle>Profile Settings</ProfileTitle>
 
       <ProfileSection>
@@ -117,10 +135,9 @@ export default function Profile({
           />
         </ProfileItem>
 
-        <ProfileItem>
-          <Label>Plan</Label>
-          <Value>{user.plan}</Value>
-        </ProfileItem>
+       <ProfileItem>
+        <PricingPlanCard variant="current" />
+      </ProfileItem>
 
         <ProfileItem>
           <Label>Registered</Label>
@@ -130,14 +147,18 @@ export default function Profile({
           </Value>
         </ProfileItem>
 
-        <SaveButton type="button">
-          Save Changes
-        </SaveButton>
+          <ButtonWrapper>
+          <SubmitButton type="button">
+            Save Changes
+          </SubmitButton>
 
-        <DeleteButton type="button">
-          Delete Account
-        </DeleteButton>
-
+        <DeleteButton
+            type="button"
+            onClick={onDelete}
+          > Delete Profile
+            <Trash2 size={18} />
+          </DeleteButton>
+      </ButtonWrapper>
       </ProfileSection>
     </ProfileWrapper>
   );

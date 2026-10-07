@@ -75,7 +75,7 @@ const AddBankAccountButton = styled.button`
   margin: 1.5rem 0;
   padding: 0.75rem;
 
-  border: 2px soli #555454;
+  border: 2px solid #555454;
   border-radius: 8px;
 
   background: ${({ $selected }) =>
@@ -298,14 +298,14 @@ export default function BankSideBar({
 
 {/*/ ADD BANK ACCOUNT BUTTON */}
      <AddBankAccountButton
-          type="button"
-          $selected={isBankFormOpen}
-          $onboarding={showAccountOnboarding} 
-          onClick={() => {
-            setShowAccountOnboarding(false);
-            onAddAccount();
-          }}
-        >
+        type="button"
+        $selected={isBankFormOpen}
+        $onboarding={showAccountOnboarding}
+        onClick={() => {
+          setShowAccountOnboarding(false);
+          onAddAccount();
+        }}
+      >
           <span>Add Bank Account</span>
           <Plus size={18} />
 

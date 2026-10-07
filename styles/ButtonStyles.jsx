@@ -80,6 +80,24 @@ export const CancelButton = styled.button`
   }
 `;
 
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+`;
+
 export const DeleteButton = styled.button`
   width: 100%;
   padding: 1rem;
@@ -136,4 +154,25 @@ export const IconButton = styled.button`
           color: #fff;
         }
       `}
+`;
+
+export const UploadButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: 0.7rem 1rem;
+
+  border: 1px solid #0d0d0d;
+  border-radius: 0.5rem;
+
+  background: white;
+  color: #0d0d0d;
+
+  cursor: pointer;
+
+  &:hover {
+    background: #0d0d0d;
+    color: white;
+  }
 `;

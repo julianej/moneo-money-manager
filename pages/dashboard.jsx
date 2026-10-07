@@ -356,18 +356,17 @@ async function handleDeleteTransaction(transactionId) {
     setIsSidebarCollapsed(true);
     }
 
-function handleAddAccount() {
-  setAccountLimitMessage("");
-
-  if (accounts.length >= 1) {
+const handleAddAccount = () => {
+  if (user?.plan === "free" && accounts.length >= 1) {
     setAccountLimitMessage(
-      "Free plan allows only 1 bank account."
+      "Your free plan allows only one bank account."
     );
-    return;
+  } else {
+    setAccountLimitMessage("");
   }
 
-  setIsFormOpen(true);
-}
+  setIsBankFormOpen(true);
+};
 
  async function handleDeleteAccount() {
   console.log("DELETE ACCOUNT CLICKED");
@@ -520,6 +519,7 @@ function handleAddAccount() {
 
         <MenuProfile
           isMenuOpen={isMenuOpen}
+          onDelete={handleDeleteAccount}
           isProfileOpen={isProfileOpen}
           setIsProfileOpen={setIsProfileOpen}
           setIsMenuOpen={setIsMenuOpen}
@@ -670,9 +670,9 @@ function handleAddAccount() {
 
     {/* BANK ACCOUNT FORM */}
 
-    {isFormOpen && (
+    {isBankFormOpen && (
       <BankAccountForm
-        onCancel={() => setIsFormOpen(false)}
+        onCancel={() => setIsBankFormOpen(false)}
         mutate={mutateAccounts}
         isAddingAccount={isAddingAccount}
         setIsAddingAccount={setIsAddingAccount}
