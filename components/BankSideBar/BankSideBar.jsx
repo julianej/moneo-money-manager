@@ -75,18 +75,24 @@ const AddBankAccountButton = styled.button`
   margin: 1.5rem 0;
   padding: 0.75rem;
 
-  border: 1px solid #000;
+  border: 2px solid #2d2d2d;
   border-radius: 8px;
 
   background: ${({ $selected }) =>
-    $selected ? "#000" : "#fff"};
+    $selected ? "#000" : "transparent"};
 
   color: ${({ $selected }) =>
-    $selected ? "#fff" : "#000"};
+    $selected ? "#fff" : "#3d3d3d"};
 
   cursor: pointer;
 
   position: relative;
+
+  @media (min-width: 740px) {
+    border: 2px solid #000;
+    color: ${({ $selected }) =>
+      $selected ? "#fff" : "#000"};
+    }
 
   ${({ $onboarding }) =>
     $onboarding &&
