@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import DownloadButton from "../DownloadReport/DownloadButton";
 import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
+import { Plus, ChevronDown } from "lucide-react";
 
 import { useEffect, useState,} from "react";
 
@@ -27,59 +28,148 @@ const FilterGroup = styled.div`
   gap: 0.4rem;
 `;
 
-const FilterLabel = styled.label`
-  font-size: 14px;
-  font-weight: 600;
-  color: #0d0d0d;
-`;
+const AddCategoryButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
 
-const FilterSelect = styled.select`
   width: 100%;
-  padding: 0.7rem 0.8rem;
+  padding: 0.65rem 0.75rem;
 
-  border: 1px solid lightgray;
-  border-radius: 0.5rem;
+  margin-top: 0.25rem;
+  border: none;
+  border-top: 1px solid #ddd;
 
-  background: white;
-  color: #0d0d0d;
+  background: transparent;
+  color: #000;
 
-  font-size: 16px;
+  text-align: left;
+  font: inherit;
+
   cursor: pointer;
 
-  &:focus {
-    outline: none;
-    border-color: black;
-  }
-
-  @media (min-width: 740px) {
-    width: auto;
-    min-width: 160px;
+  &:hover {
+    background: #f2f2f2;
   }
 `;
 
 
-const MonthSelect = styled.select`
+const AddCategoryOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.5);
+`;
+
+const AddCategoryBox = styled.div`
   width: 100%;
-  padding: 0.7rem 0.8rem;
+  max-width: 400px;
 
-  border: 1px solid lightgray;
+  padding: 2rem;
 
-  background: white;
-  color: #0d0d0d;
+  background: #fff;
+  color: #000;
 
-  font-size: 16px;
+  border-radius: 12px;
+  border: 2px solid #000;
+`;
+
+const AddCategoryInput = styled.input`
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+
+  border: 1px solid #000;
+  border-radius: 6px;
+
+  font: inherit;
+`;
+
+const AddCategoryActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
+
+const FilterDropdownWrapper = styled.div`
+  position: relative;
+  width: 100%;
+
+  @media (min-width: 740px) {
+    width: 175px;
+  }
+`;
+
+const FilterDropdownButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  width: 100%;
+  padding: 0.75rem 1rem;
+
+  background: #fff;
+  color: #000;
+
+  border: 1px solid #000;
+  border-radius: 8px;
+
+  font: inherit;
   cursor: pointer;
 
-  &:focus {
-    outline: none;
-    border-color: black;
-  }
-
-  @media (min-width: 740px) {
-    width: auto;
-    min-width: 160px;
+  &:hover {
+    background: #f5f5f5;
   }
 `;
+
+const FilterDropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1000;
+
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+
+  padding: 0.5rem;
+
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+`;
+
+const FilterOption = styled.button`
+  display: block;
+
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+
+  border: none;
+  background: transparent;
+
+  color: #000;
+  text-align: left;
+  font: inherit;
+
+  cursor: pointer;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+`;
+
+
 
 export default function TransactionFilter({
   transactions = [],
@@ -98,6 +188,9 @@ export default function TransactionFilter({
   setSelectedCategories,
 }) {
 
+  const [openFilter, setOpenFilter] = useState(null);
+const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
 
 // ====================
 // YEARS
@@ -129,6 +222,9 @@ useEffect(() => {
   setSelectedCategories,
 ]);
 
+const selectedCategory = categories?.find(
+  (category) => category._id === selectedCategories[0]
+);
 
   return (
   <>
@@ -148,90 +244,256 @@ useEffect(() => {
       <FilterRow>
         {/* ==================== YEAR ==================== */}
         <FilterGroup>
-          <FilterLabel htmlFor="year-filter">
-            Year
-          </FilterLabel>
+          <FilterDropdownWrapper>
+  <FilterDropdownButton
+    type="button"
+    onClick={() =>
+      setOpenFilter(
+        openFilter === "year" ? null : "year"
+      )
+    }
+  >
+    {selectedYear === "all" ? "All Years" : selectedYear}
+    <ChevronDown size={16} />
+          </FilterDropdownButton>
 
-          <FilterSelect
-            id="year-filter"
-            value={selectedYear}
-            onChange={(event) => setSelectedYear(event.target.value)}
-          >
-            <option value="all">All Years</option>
+          {openFilter === "year" && (
+            <FilterDropdownMenu>
+              <FilterOption
+                type="button"
+                onClick={() => {
+                  setSelectedYear("all");
+                  setOpenFilter(null);
+                }}
+              >
+                All Years
+              </FilterOption>
 
-            {years.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </FilterSelect>
+              {years.map((year) => (
+                <FilterOption
+                  key={year}
+                  type="button"
+                  onClick={() => {
+                    setSelectedYear(year);
+                    setOpenFilter(null);
+                  }}
+                >
+                  {year}
+                </FilterOption>
+              ))}
+            </FilterDropdownMenu>
+          )}
+        </FilterDropdownWrapper>
         </FilterGroup>
 
         {/* ==================== MONTH ==================== */}
         <FilterGroup>
-          <FilterLabel htmlFor="month-filter">
-            Month
-          </FilterLabel>
+          <FilterDropdownWrapper>
+  <FilterDropdownButton
+    type="button"
+    onClick={() =>
+      setOpenFilter(
+        openFilter === "month" ? null : "month"
+      )
+    }
+  >
+    {selectedMonth === "all"
+      ? "All Months"
+      : [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ][Number(selectedMonth)]}
 
-          <MonthSelect
-            id="month-filter"
-            value={selectedMonth}
-            onChange={(event) => setSelectedMonth(event.target.value)}
-          >
-            <option value="all">All Months</option>
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
-          </MonthSelect>
+    <ChevronDown size={16} />
+  </FilterDropdownButton>
+
+  {openFilter === "month" && (
+    <FilterDropdownMenu>
+      <FilterOption
+        type="button"
+        onClick={() => {
+          setSelectedMonth("all");
+          setOpenFilter(null);
+        }}
+      >
+        All Months
+      </FilterOption>
+
+      {[
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ].map((month, index) => (
+        <FilterOption
+          key={month}
+          type="button"
+          onClick={() => {
+            setSelectedMonth(String(index));
+            setOpenFilter(null);
+          }}
+        >
+          {month}
+        </FilterOption>
+      ))}
+    </FilterDropdownMenu>
+  )}
+</FilterDropdownWrapper>
         </FilterGroup>
 
         {/* ==================== TYPE ==================== */}
         <FilterGroup>
-          <FilterLabel htmlFor="type-filter">
-            Type
-          </FilterLabel>
+         <FilterDropdownWrapper>
+  <FilterDropdownButton
+    type="button"
+    onClick={() =>
+      setOpenFilter(
+        openFilter === "type" ? null : "type"
+      )
+    }
+  >
+    {selectedType === "all"
+      ? "All Types"
+      : selectedType === "income"
+      ? "Income"
+      : "Expense"}
 
-          <FilterSelect
-            id="type-filter"
-            value={selectedType}
-            onChange={(event) => setSelectedType(event.target.value)}
-          >
-            <option value="all">All Types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </FilterSelect>
+    <ChevronDown size={16} />
+  </FilterDropdownButton>
+
+  {openFilter === "type" && (
+    <FilterDropdownMenu>
+      <FilterOption
+        type="button"
+        onClick={() => {
+          setSelectedType("all");
+          setOpenFilter(null);
+        }}
+      >
+        All Types
+      </FilterOption>
+
+      <FilterOption
+        type="button"
+        onClick={() => {
+          setSelectedType("income");
+          setOpenFilter(null);
+        }}
+      >
+        Income
+      </FilterOption>
+
+      <FilterOption
+        type="button"
+        onClick={() => {
+          setSelectedType("expense");
+          setOpenFilter(null);
+        }}
+      >
+        Expense
+      </FilterOption>
+    </FilterDropdownMenu>
+  )}
+</FilterDropdownWrapper>
         </FilterGroup>
-      </FilterRow>
 
       {/* ==================== ROW 2: CATEGORY ==================== */}
-      <FilterRow>
         <FilterGroup>
-          <FilterLabel htmlFor="category-filter">
-            Category
-          </FilterLabel>
-
-          <CategoryDropdown
-            value={selectedCategories[0] || ""}
-            categories={categories}
-            placeholder="All Categories"
-            onChange={(event) => {
-              const value = event.target.value;
-
-              setSelectedCategories(value ? [value] : []);
-            }}
-          />
+         <FilterDropdownWrapper>
+          <FilterDropdownButton
+              type="button"
+              onClick={() => setIsCategoryOpen((current) => !current)}
+            >
+              {selectedCategory?.category || "All Categories"}
+              <ChevronDown size={16} />
+            </FilterDropdownButton>
+              {isCategoryOpen && (
+                <FilterDropdownMenu>
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategories([]);
+                      setIsCategoryOpen(false);
+                    }}
+                  >
+                    All Categories
+                  </FilterOption>
+                    {categories.map((category) => (
+                      <FilterOption
+                        key={category._id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCategories([category._id]);
+                          setIsCategoryOpen(false);
+                        }}
+                      >
+                        {category.category}
+                      </FilterOption>
+                    ))}
+                  {/* {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.category}
+                    </option>
+                  ))} */} 
+                     <AddCategoryButton
+                    type="button"
+                    onClick={() => {
+                      setIsCategoryOpen(false);
+                      setIsAddCategoryOpen(true);
+                    }}
+                  >
+                    <Plus size={16} />
+                    Add Category
+                  </AddCategoryButton>
+                </FilterDropdownMenu>
+              )}
+            </FilterDropdownWrapper>
         </FilterGroup>
       </FilterRow>
 
     </FilterWrapper>
+    {isAddCategoryOpen && (
+        <AddCategoryOverlay>
+          <AddCategoryBox>
+            <h3>Add Category</h3>
+
+            <input
+              type="text"
+              placeholder="Category name"
+            />
+
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsAddCategoryOpen(false)}
+              >
+                Cancel
+              </button>
+
+              <button type="button">
+                Add
+              </button>
+            </div>
+          </AddCategoryBox>
+        </AddCategoryOverlay>
+      )}
   </>
 );}
