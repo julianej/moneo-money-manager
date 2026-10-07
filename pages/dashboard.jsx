@@ -55,7 +55,8 @@ const MenuProfileWrapper = styled.div`
     justify-content: space-between;
     width: 100%;
     height: 55px;
-    border: 2px solid black;
+    border-top: 1rem solid black;
+    /* border: 2px solid black; */
     background-color: white;
     margin-bottom: 2rem;
     border-radius: 1rem;
@@ -198,6 +199,7 @@ export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("home"); 
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
 
@@ -256,21 +258,34 @@ const hasReachedAccountLimit = accounts?.length >= 1;
 // FLOATING NAVIGATION
 // ====================
 
-function handleHomeClick() {
+
+function onHome() {
   setActiveSection("home");
   setSelectedAccount(null);
+  setIsSidebarCollapsed(true);
+  setShowAccountOnboarding(false);
 }
 
-function handleAccountsClick() {
+function onAccounts() {
   setActiveSection("accounts");
 
-  if (accounts?.length === 0) {
+  if (accounts.length === 0) {
+    // No account → open onboarding
+    setSelectedAccount(null);
+    setIsSidebarCollapsed(false);
     setShowAccountOnboarding(true);
     return;
   }
 
+  // Account exists → directly open List View
   setSelectedAccount(accounts[0]._id);
+  setTransactionView("list");
+  setIsSidebarCollapsed(true);
   setShowAccountOnboarding(false);
+}
+
+function onTransactionViewChange(view) {
+  setTransactionView(view);
 }
 
   // ====================
@@ -312,33 +327,24 @@ async function handleDeleteTransaction(transactionId) {
 
   function handleAccountSelect(accountId) {
     setActiveSection("accounts");
-    setActiveSection("charts");
     setSelectedAccount(accountId);
+    setTransactionView("list");
     setIsBankFormOpen(false);
     setIsFormOpen(false);
+    setIsSidebarCollapsed(true);
     }
 
-  async function handleAddAccount() {
+function handleAddAccount() {
   setAccountLimitMessage("");
-  setIsFormOpen(true);
 
-  try {
-    const response = await fetch("/api/bankaccounts");
-    const accounts = await response.json();
-
-    if (!response.ok) {
-      return;
-    }
-
-    if (accounts.length >= 1) {
-      setAccountLimitMessage(
-        "Free plan allows only 1 bank account."
-      );
-    }
-
-  } catch (error) {
-    console.error("CHECK ACCOUNTS ERROR:", error);
+  if (accounts.length >= 1) {
+    setAccountLimitMessage(
+      "Free plan allows only 1 bank account."
+    );
+    return;
   }
+
+  setIsFormOpen(true);
 }
 
  async function handleDeleteAccount() {
@@ -480,24 +486,22 @@ async function handleDeleteTransaction(transactionId) {
             isMenuOpen={isMenuOpen}
             showAccountOnboarding={showAccountOnboarding}
             setShowAccountOnboarding={setShowAccountOnboarding}
+            isSidebarCollapsed={isSidebarCollapsed}
+            setIsSidebarCollapsed={setIsSidebarCollapsed}
           />
       </SidebarWrapper>
 
 
    <MainContent>
-     <FloatingNavigation
+    <FloatingNavigation
         activeSection={activeSection}
-        onHome={handleHomeClick}
         selectedAccount={selectedAccount}
-        // ACCOUNT SELECTED via FLOATING NAVIGATION
-        onAccounts={handleAccountsClick}
+        onHome={onHome}
+        onAccounts={onAccounts}
         transactionView={transactionView}
-        onTransactionViewChange={setTransactionView}
-        onCharts={() => setActiveSection("charts")}
-        onAddTransaction={() => setIsFormOpen(true)}
-        // PROP STATE for +ADD
-        // isFormOpen={isFormOpen}
-        />
+        onTransactionViewChange={onTransactionViewChange}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
+      />
 
       <MenuProfileWrapper>
         <p>Hallo Juliane</p>

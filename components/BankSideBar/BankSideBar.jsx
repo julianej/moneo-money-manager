@@ -132,7 +132,7 @@ const OnboardingPulse = styled.span`
     width: 95px;
     height: 95px;
     border-radius: 50%;
-    background: #00000079;
+    background: transparent;
     transform: translateY(-50%);
 
   &::before {
@@ -190,7 +190,8 @@ const SidebarSection = styled.section`
 `;
 
 const SidebarContent = styled.div`
-  display: ${({ $isCollapsed }) => ($isCollapsed ? "none" : "block")};
+  display: ${({ $isCollapsed }) =>
+    $isCollapsed ? "none" : "block"};
 
   @media (min-width: 740px) {
     display: block;
@@ -250,34 +251,33 @@ export default function BankSideBar({
   isBankFormOpen,
   showAccountOnboarding,
   setShowAccountOnboarding,
+  isSidebarCollapsed,
+  setIsSidebarCollapsed,
 }) {
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
-  const [isCollapsed, setIsCollapsed] = useState(true);
 
  return (
   <SidebarSection>
     <SidebarHeader>
       <Title>Money Manager</Title>
-
     </SidebarHeader>
-
-
-  <SidebarTitle>Bank Accounts</SidebarTitle>
-   <CollapseButton
+    <SidebarTitle>Bank Accounts</SidebarTitle>
+    <CollapseButton
         type="button"
-        onClick={() => setIsCollapsed((collapsed) => !collapsed)}
-        aria-expanded={!isCollapsed}
+        onClick={() => setIsSidebarCollapsed((current) => !current)}
+        aria-expanded={!isSidebarCollapsed}
         aria-label={
-          isCollapsed ? "Open bank accounts" : "Close bank accounts"
+          isSidebarCollapsed ? "Open bank accounts" : "Close bank accounts"
         }
       >
-        {isCollapsed ? (
+        {isSidebarCollapsed ? (
           <ChevronDown size={20} />
         ) : (
           <ChevronUp size={20} />
         )}
       </CollapseButton>
-          <SidebarContent $isCollapsed={isCollapsed}>
+        <SidebarContent $isCollapsed={isSidebarCollapsed}>
+
       <AccountList>
         {accounts.map((account) => (
           <BankAccountCard
@@ -303,7 +303,7 @@ export default function BankSideBar({
           <span>Add Bank Account</span>
           <Plus size={18} />
 
-  {showAccountOnboarding && <OnboardingPulse />}
+      {showAccountOnboarding && <OnboardingPulse />}
         </AddBankAccountButton>
 
       <SyncSection>

@@ -1,5 +1,10 @@
 import styled from "styled-components";
-import { House, Wallet, ChartColumnBig, Plus, List } from "lucide-react";
+import {
+  House,
+  Wallet,
+  ChartColumnBig,
+  List,
+} from "lucide-react";
 
 const FloatingNavigationWrapper = styled.nav`
   position: fixed;
@@ -77,18 +82,18 @@ export default function FloatingNavigation({
   onAccounts,
   transactionView,
   onTransactionViewChange,
-  // CHARTS PAGE
-  // onCharts,
-  // +ADD
-  isFormOpen,
-  onAddTransaction,
+  setIsSidebarCollapsed,
 }) {
+  
+
   return (
     <FloatingNavigationWrapper>
       <MenuItem
         type="button"
         $active={activeSection === "home"}
-        onClick={onHome}
+        onClick={() => {
+          onHome();
+        }}
       >
         <House size={20} />
         <span>Home</span>
@@ -98,26 +103,17 @@ export default function FloatingNavigation({
         <MenuItem
           type="button"
           $active={activeSection === "accounts"}
-          onClick={onAccounts}
+          onClick={() => {
+            onAccounts();
+          }}
         >
           <Wallet size={20} />
           <span>Accounts</span>
         </MenuItem>
       )}
 
-
       {selectedAccount && (
-        // SELECTED ACCOUNT >
         <>
-          {/* <MenuItem
-            type="button"
-            // +ADD isFormOpen
-            $active={isFormOpen}
-            onClick={onAddTransaction}
-          >
-            <Plus size={22} />
-            <span>Add</span>
-          </MenuItem> */}
           <MenuItem
             type="button"
             $active={transactionView === "list"}
@@ -126,16 +122,16 @@ export default function FloatingNavigation({
             <List size={22} />
             <span>List</span>
           </MenuItem>
+
           <MenuItem
-              type="button"
-              $active={transactionView === "chart"}
-              onClick={() => onTransactionViewChange("chart")}
-            >
-              <ChartColumnBig size={22} />
-              <span>Charts</span>
-            </MenuItem>
+            type="button"
+            $active={transactionView === "chart"}
+            onClick={() => onTransactionViewChange("chart")}
+          >
+            <ChartColumnBig size={22} />
+            <span>Charts</span>
+          </MenuItem>
         </>
-        
       )}
     </FloatingNavigationWrapper>
   );

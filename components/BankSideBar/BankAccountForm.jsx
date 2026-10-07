@@ -296,39 +296,40 @@ async function handleSubmit(event) {
 
     console.log("BANK ACCOUNT CREATED:", data);
 
-    // 2. Create categories for the new account
-    for (const category of categories) {
-      console.log("SENDING CATEGORY:", {
-        category: category,
-        account: data._id,
-      });
-
-      const categoryResponse = await fetch("/api/categories", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          category: category,
-          account: data._id,
-        }),
-      });
-
-      const categoryData = await categoryResponse.json();
-
-      console.log(
-        "CATEGORY RESPONSE:",
-        categoryResponse.status,
-        categoryData
+    if (categories.length > 0) {
+  await Promise.all(
+    categories.map(async (category) => {
+      const categoryResponse = await fetch(
+        "/api/categories",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            category,
+            account: data._id,
+          }),
+        }
       );
 
-      if (!categoryResponse.ok) {
-        console.error("CATEGORY ERROR:", categoryData);
-        throw new Error("Category creation failed");
-      }
-    }
+        const categoryData = await categoryResponse.json();
 
-    // 3. Refresh bank accounts
+        console.log("CATEGORY:", category);
+        console.log("STATUS:", categoryResponse.status);
+        console.log("RESPONSE:", categoryData);
+
+        if (!categoryResponse.ok) {
+          throw new Error(
+            categoryData.error ||
+              `Category creation failed (${categoryResponse.status})`
+          );
+        }
+      })
+    );
+  }
+
+    // 3. Refresh accounts
     await mutate();
 
     // 4. Close form
