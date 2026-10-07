@@ -85,13 +85,7 @@ export default function FloatingNavigation({
   setIsSidebarCollapsed,
 }) {
   
-  function openSidebar() {
-  setIsSidebarCollapsed(false);
-}
 
-  function closeSidebar() {
-    setIsSidebarCollapsed(true);
-  }
   return (
     <FloatingNavigationWrapper>
       <MenuItem
@@ -99,7 +93,6 @@ export default function FloatingNavigation({
         $active={activeSection === "home"}
         onClick={() => {
           onHome();
-          closeSidebar();
         }}
       >
         <House size={20} />
@@ -112,7 +105,6 @@ export default function FloatingNavigation({
           $active={activeSection === "accounts"}
           onClick={() => {
             onAccounts();
-            openSidebar();
           }}
         >
           <Wallet size={20} />

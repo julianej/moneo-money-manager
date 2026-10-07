@@ -261,13 +261,27 @@ const hasReachedAccountLimit = accounts?.length >= 1;
 
 function onHome() {
   setActiveSection("home");
+  setSelectedAccount(null);
   setIsSidebarCollapsed(true);
+  setShowAccountOnboarding(false);
 }
 
 function onAccounts() {
   setActiveSection("accounts");
-  setShowAccountOnboarding(true);
-  setIsSidebarCollapsed(false);
+
+  if (accounts.length === 0) {
+    // No account → open onboarding
+    setSelectedAccount(null);
+    setIsSidebarCollapsed(false);
+    setShowAccountOnboarding(true);
+    return;
+  }
+
+  // Account exists → directly open List View
+  setSelectedAccount(accounts[0]._id);
+  setTransactionView("list");
+  setIsSidebarCollapsed(true);
+  setShowAccountOnboarding(false);
 }
 
 function onTransactionViewChange(view) {
