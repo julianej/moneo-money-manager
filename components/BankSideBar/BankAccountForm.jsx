@@ -297,38 +297,37 @@ async function handleSubmit(event) {
     console.log("BANK ACCOUNT CREATED:", data);
 
     if (categories.length > 0) {
-      await Promise.all(
-        categories.map(async (category) => {
-          const categoryResponse = await fetch(
-            "/api/categories",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-              category,
-              account: data._id,
-              user: user.id,
-            }),
-            }
+  await Promise.all(
+    categories.map(async (category) => {
+      const categoryResponse = await fetch(
+        "/api/categories",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            category,
+            account: data._id,
+          }),
+        }
+      );
+
+        const categoryData = await categoryResponse.json();
+
+        console.log("CATEGORY:", category);
+        console.log("STATUS:", categoryResponse.status);
+        console.log("RESPONSE:", categoryData);
+
+        if (!categoryResponse.ok) {
+          throw new Error(
+            categoryData.error ||
+              `Category creation failed (${categoryResponse.status})`
           );
-
-      const categoryData = await categoryResponse.json();
-
-      console.log("CATEGORY:", category);
-      console.log("STATUS:", categoryResponse.status);
-      console.log("RESPONSE:", categoryData);
-
-      if (!categoryResponse.ok) {
-        throw new Error(
-          categoryData.error ||
-          `Category creation failed (${categoryResponse.status})`
-        );
-      }
-    })
-  );
-}
+        }
+      })
+    );
+  }
 
     // 3. Refresh accounts
     await mutate();
