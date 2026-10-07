@@ -1,11 +1,14 @@
 import styled from "styled-components";
 import { useState } from "react";
 
+
+
+import {Logo} from "@/styles/Logo";
 import LogInForm from "./LogInForm";
 import RegisterForm from "./RegisterForm";
 import ForgotPwForm from "./ForgotPwForm";
 
-export default function AuthView({ onClose }) {
+export default function AuthForm({ onClose }) {
   const [activeView, setActiveView] = useState("login");
 
   return (
@@ -17,6 +20,7 @@ export default function AuthView({ onClose }) {
       >
         ×
       </CloseButton>
+           <Logo>[MONEO]</Logo>
 
       {activeView !== "forgot-pw" && (
         <Tabs>
@@ -68,6 +72,7 @@ const AuthCard = styled.div`
   background: #fff;
   border-radius: 1rem;
   box-sizing: border-box;
+  margin: 2rem;
 `;
 
 const CloseButton = styled.button`
