@@ -38,6 +38,12 @@ export default async function handler(req, res) {
       user.passwordHash
     );
 
+    console.log("LOGIN DEBUG:", {
+      email: normalizedEmail,
+      userFound: !!user,
+      passwordMatches,
+    });
+
     if (!passwordMatches) {
       return res.status(401).json({
         message: "Invalid email or password.",

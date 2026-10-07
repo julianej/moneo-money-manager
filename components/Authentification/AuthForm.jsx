@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
-
+import { useRouter } from "next/router";
 
 
 import {Logo} from "@/styles/Logo";
@@ -8,8 +8,15 @@ import LogInForm from "./LogInForm";
 import RegisterForm from "./RegisterForm";
 import ForgotPwForm from "./ForgotPwForm";
 
-export default function AuthForm({ onClose }) {
+export default function AuthView({ onClose }) {
+  const router = useRouter();
   const [activeView, setActiveView] = useState("login");
+
+  function handleLoggedIn(user) {
+    console.log("Logged in:", user);
+    router.push("/dashboard");
+  }
+
 
   return (
     <AuthCard>
@@ -44,6 +51,7 @@ export default function AuthForm({ onClose }) {
 
       {activeView === "login" && (
         <LogInForm
+          onLoggedIn={handleLoggedIn}
           onForgotPassword={() => setActiveView("forgot-pw")}
         />
       )}
