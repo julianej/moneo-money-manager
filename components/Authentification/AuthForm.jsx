@@ -106,7 +106,10 @@ const Tab = styled.button`
     ${({ $active }) => ($active ? "#000" : "transparent")};
 
   background: transparent;
+  color: #000;
+  appearance: none;
 
+  font-family: inherit;
   font-size: 1rem;
   font-weight: 600;
 
