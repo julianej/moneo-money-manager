@@ -102,6 +102,7 @@ const MenuProfileWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: transparent;
 
   @media (min-width: 740px) {
     top: 3rem;
