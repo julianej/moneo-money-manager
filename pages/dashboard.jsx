@@ -364,7 +364,6 @@ const handleAddAccount = () => {
   } else {
     setAccountLimitMessage("");
   }
-
   setIsBankFormOpen(true);
 };
 

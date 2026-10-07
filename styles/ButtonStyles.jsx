@@ -120,6 +120,40 @@ export const DeleteButton = styled.button`
   }
 `;
 
+export const DeleteAccountButton = styled.button`
+ display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    bottom: 0;
+    position: relative;
+    position: relative;
+    bottom: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 2rem;
+    border: 0.1rem solid lightgrey;
+    background: transparent;
+    color: #000;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    margin: 4rem auto 7rem; 
+  cursor: pointer;
+  text-align: left;
+
+  span {
+    font-size: 0.875rem;
+  }
+
+  &:hover {
+    background: grey;
+    color: #000;
+  }
+
+    @media (min-width: 740px) {
+        margin: 0.5rem;
+    }
+`;
+
 export const IconButton = styled.button`
   display: flex;
   align-items: center;

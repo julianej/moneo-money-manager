@@ -2,14 +2,16 @@ import styled from "styled-components";
 import PricingPlanCard from "@/components/PricingPlanCard/PricingPlanCard";
 import { useState } from "react";
 import { Trash2, X } from "lucide-react";
-import {CloseButton} from "@/styles/ButtonStyles";
+import {CloseButton, DeleteAccountButton} from "@/styles/ButtonStyles";
 
 
 const ProfileWrapper = styled.div`
   padding: 24px;
   /* background: #000; */
-  width: 70%;
+  width: 68%;
   position: fixed;
+  border: 0.2rem solid black;
+  border-radius: 2rem;
 `;
 
 const ProfileTitle = styled.h2`
@@ -62,21 +64,12 @@ const ButtonWrapper = styled.div`
 `;
 
 
-const DeleteButton = styled.button`
-  margin-top: 24px;
-  padding: 0.5rem 1rem 0.8rem;
-  border: none;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #060606;
-  cursor: pointer;
-`;
-
 const SubmitButton = styled.button`
-  margin-top: 24px;
-  padding: 0.5rem 1rem 0.8rem;
+  margin-top: 0.5rem;
+  padding: 0.8rem 1rem 0.9rem;
   border: none;
-  border-radius: 999px;
+  height: 3rem;
+  border-radius: 1rem;
   background: #ffffff;
   color: #060606;
   cursor: pointer;
@@ -152,12 +145,18 @@ export default function Profile({
             Save Changes
           </SubmitButton>
 
-        <DeleteButton
-            type="button"
-            onClick={onDelete}
-          > Delete Profile
-            <Trash2 size={18} />
-          </DeleteButton>
+        <DeleteAccountButton
+             type="button"
+             onClick={() => setShowDeleteProfilePopup(true)}
+             aria-label="Delete bank account"
+             title="Delete bank account"
+           >
+             <Trash2 size={18} />
+       
+             <span>
+               Delete the full Account Profile Data
+             </span>
+           </DeleteAccountButton>
       </ButtonWrapper>
       </ProfileSection>
     </ProfileWrapper>
