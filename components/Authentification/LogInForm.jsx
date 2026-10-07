@@ -265,7 +265,7 @@ export default function LogInForm({ onLoggedIn }) {
 
         <Input
           type="password"
-          placeholder="Password123!"
+          placeholder="TestPassword123!"
           value={password}
           onChange={(event) =>
             setPassword(event.target.value)
