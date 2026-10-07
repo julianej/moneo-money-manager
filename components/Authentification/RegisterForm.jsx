@@ -179,7 +179,7 @@ export default function RegisterForm({ onClose, onRegistered }) {
 
       <Form onSubmit={handleSubmit}>
         <Field>
-          <Label htmlFor="name">
+          <Label htmlFor="name" className="hidden">
             Name
           </Label>
 
@@ -187,6 +187,7 @@ export default function RegisterForm({ onClose, onRegistered }) {
             id="name"
             type="text"
             value={name}
+            placeholder="Your Name"
             onChange={(event) =>
               setName(event.target.value)
             }
@@ -195,7 +196,7 @@ export default function RegisterForm({ onClose, onRegistered }) {
         </Field>
 
         <Field>
-          <Label htmlFor="email">
+          <Label htmlFor="email" className="hidden">
             Email
           </Label>
 
@@ -203,6 +204,7 @@ export default function RegisterForm({ onClose, onRegistered }) {
             id="email"
             type="email"
             value={email}
+            placeholder="E-Mail"
             onChange={(event) =>
               setEmail(event.target.value)
             }
@@ -211,7 +213,7 @@ export default function RegisterForm({ onClose, onRegistered }) {
         </Field>
 
         <Field>
-          <Label htmlFor="password">
+          <Label htmlFor="password" className="hidden">
             Password
           </Label>
 
@@ -219,6 +221,7 @@ export default function RegisterForm({ onClose, onRegistered }) {
             id="password"
             type="password"
             value={password}
+            placeholder="Password"
             onChange={(event) =>
               setPassword(event.target.value)
             }
