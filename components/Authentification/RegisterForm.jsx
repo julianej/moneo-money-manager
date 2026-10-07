@@ -271,7 +271,6 @@ const RegisterCard = styled.div`
 
   width: 100%;
   max-width: 420px;
-  padding: 2rem;
 
   background: #fff;
   border-radius: 1rem;
