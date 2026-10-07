@@ -390,6 +390,6 @@ const ErrorMessage = styled.p`
 
 const SuccessMessage = styled.p`
   margin: 0;
-  color: #087f23;
+  color: #797979;
 `;
 

@@ -29,8 +29,13 @@ export const GlobalStyle = createGlobalStyle`
   font-weight: 100;
   font-style: normal;
 }
+
+  a {
+    color: black;
+    text-decoration: none;
+  }
   
-   input,
+  input,
   select,
   textarea {
     width: 100%;
