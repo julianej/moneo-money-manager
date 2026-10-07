@@ -334,27 +334,17 @@ async function handleDeleteTransaction(transactionId) {
     setIsSidebarCollapsed(true);
     }
 
-  async function handleAddAccount() {
+function handleAddAccount() {
   setAccountLimitMessage("");
-  setIsFormOpen(true);
 
-  try {
-    const response = await fetch("/api/bankaccounts");
-    const accounts = await response.json();
-
-    if (!response.ok) {
-      return;
-    }
-
-    if (accounts.length >= 1) {
-      setAccountLimitMessage(
-        "Free plan allows only 1 bank account."
-      );
-    }
-
-  } catch (error) {
-    console.error("CHECK ACCOUNTS ERROR:", error);
+  if (accounts.length >= 1) {
+    setAccountLimitMessage(
+      "Free plan allows only 1 bank account."
+    );
+    return;
   }
+
+  setIsFormOpen(true);
 }
 
  async function handleDeleteAccount() {

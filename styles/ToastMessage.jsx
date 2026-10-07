@@ -39,7 +39,7 @@ export const ToastContent = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
-  padding: 4rem 1rem 4rem;
+  padding: 10rem 1rem 10rem;
 
   flex: 1;
   text-align: center;
