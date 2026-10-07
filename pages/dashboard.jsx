@@ -57,7 +57,7 @@ const MenuProfileWrapper = styled.div`
     height: 55px;
     border-top: 1rem solid black;
     /* border: 2px solid black; */
-    background-color: white;
+    background-color: transparent;
     margin-bottom: 2rem;
     border-radius: 1rem;
     /* position: fixed; */
