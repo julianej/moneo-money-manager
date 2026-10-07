@@ -194,7 +194,8 @@ export default function Dashboard() {
   const [transactionView, setTransactionView] = useState("list");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [activeSection, setActiveSection] = useState("home"); // DASHBOARD DEFAULT
+  // DASHBOARD DEFAULT
+  const [activeSection, setActiveSection] = useState("home"); 
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   
@@ -488,6 +489,7 @@ async function handleDeleteTransaction(transactionId) {
         activeSection={activeSection}
         onHome={handleHomeClick}
         selectedAccount={selectedAccount}
+        // ACCOUNT SELECTED via FLOATING NAVIGATION
         onAccounts={handleAccountsClick}
         transactionView={transactionView}
         onTransactionViewChange={setTransactionView}

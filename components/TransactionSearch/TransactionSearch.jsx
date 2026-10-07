@@ -1,6 +1,5 @@
 
 import styled from "styled-components";
-import { useState } from "react";
 import { RotateCcw } from "lucide-react";
 
 // ====================
