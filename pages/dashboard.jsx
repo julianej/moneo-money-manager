@@ -189,7 +189,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const today = new Date();
-  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); 
   // const [selectedYear, setSelectedYear] = useState("all");
   // const [selectedMonth, setSelectedMonth] = useState("all");
@@ -416,50 +416,45 @@ const handleAddAccount = () => {
   // FILTER
   // ====================
 
-    const matchesFilter = (transaction) => {
-    const transactionDate = new Date(transaction.date);
+// ====================
+// FILTER
+// ====================
 
-    const matchesSearch =
+const matchesFilter = (transaction) => {
+  const transactionDate = new Date(transaction.date);
+
+  const matchesSearch =
     transaction.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
 
-    const matchesYear =
+  const matchesYear =
     selectedYear === "all" ||
-    new Date(transaction.date).getFullYear().toString() === selectedYear;
+    transactionDate.getFullYear().toString() === selectedYear;
 
-    const matchesMonth =
+  const matchesMonth =
     selectedMonth === "all" ||
     transactionDate.getMonth() === Number(selectedMonth);
 
-    const matchesType =
-      selectedType === "all" ||
-      transaction.type === selectedType;
+  const matchesType =
+    selectedType === "all" ||
+    transaction.type === selectedType;
 
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(transaction.category);
-
-    return (
-      matchesSearch &&
-      matchesYear &&
-      matchesMonth &&
-      matchesType &&
-      matchesCategory
-    );
-  };
-
-const filteredTransactions = transactions.filter((transaction) => {
-  const date = new Date(transaction.date);
-
-  const transactionYear = date.getFullYear();
-  const transactionMonth = date.getMonth() + 1;
+  const matchesCategory =
+    selectedCategories.length === 0 ||
+    selectedCategories.includes(transaction.category);
 
   return (
-    transactionYear === selectedYear &&
-    transactionMonth === selectedMonth
+    matchesSearch &&
+    matchesYear &&
+    matchesMonth &&
+    matchesType &&
+    matchesCategory
   );
-});
+};
+
+const filteredTransactions = transactions.filter(matchesFilter);
+
 
 
     if (transactionsLoading) {
