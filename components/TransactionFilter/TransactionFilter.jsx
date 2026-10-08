@@ -243,9 +243,9 @@ const TypeOption = styled.button`
   }
 
   @media (min-width: 740px) {
-  border: ${({ $active }) => ($active ? "1px solid #000000" : "1px solid #fff")};
+  /* border: ${({ $active }) => ($active ? "1px solid #ffffff" : "1px solid #fff")};
   background: ${({ $active }) => ($active ? "#fefcfc" : "transparent")};
-  color: ${({ $active }) => ($active ? "#000000" : "#000000")};
+  color: ${({ $active }) => ($active ? "#000000" : "#000000")}; */
 
   font: inherit;
   cursor: pointer;
