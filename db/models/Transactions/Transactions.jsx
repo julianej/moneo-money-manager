@@ -39,6 +39,11 @@ const transactionSchema = new mongoose.Schema({
       ref: "User",
       required: true,
     },
+    invoice: {
+      url: String,
+      filename: String,
+      uploadedAt: Date
+    }
 });
 
 const Transactions =

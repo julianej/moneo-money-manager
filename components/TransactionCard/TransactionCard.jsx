@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Loading, Spinner } from "@/styles/LoadingStyles";
+import InvoiceUpload from "../InvoiceUpload/InvoiceUpload";
 
 // ====================
 // STYLES
@@ -17,20 +18,53 @@ const EditButton = styled.button`
   border: 1px solid lightgray;
   border-radius: 0.5rem;
   padding: 0.7rem;
-  color:grey;
+  color: grey;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #000;
+    color: #000;
+  }
+`;
+
+const ActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.7rem 1rem;
+
+  background: transparent;
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+
+  color: #555;
+  font: inherit;
+
+  cursor: pointer;
+
+  &:hover {
+    border-color: #000;
+    color: #000;
+  }
 `;
 
 const Transaction = styled.article`
   position: relative;
+
   display: flex;
   gap: 0.5rem;
   padding: 1rem;
+
   border-radius: 8px;
+
   align-items: center;
   margin: 0;
 
   border: ${({ $isSelected }) =>
-    $isSelected ? "0.1rem solid black" : "0.1rem solid #ccc"};
+    $isSelected
+      ? "0.1rem solid black"
+      : "0.1rem solid #ccc"};
 
   background-color: ${({ $isSelected }) =>
     $isSelected ? "#e0e0e0" : "white"};
@@ -52,31 +86,26 @@ const Transaction = styled.article`
     `}
 
   > div:first-child {
-    flex: 2 0 0 ;
+    flex: 2 0 0;
   }
 
   > div:nth-child(2) {
-      flex: 1 0 0 ;
+    flex: 1 0 0;
   }
+
   > div:nth-child(3) {
-      flex: 2 0 0 ;
+    flex: 2 0 0;
   }
 `;
 
 const TransactionTitle = styled.h2`
+  margin: 0;
+
+  font-size: 0.8rem;
 
   @media (min-width: 739px) {
-      font-size: 2rem;
+    font-size: 2rem;
   }
-
-  margin: 0;
-  flex: 2 0 0;
-  font-size: 0.8rem;
-`;
-
-const Category = styled.p`
-  margin: 0.1rem 0;
-  font-size: 0.8rem;
 `;
 
 const DateText = styled.p`
@@ -84,23 +113,21 @@ const DateText = styled.p`
   font-size: 0.7rem;
 `;
 
-const Time = styled.p`
-  margin: 4px 0;
-  font-size: 0.7rem;
-`;
-
 const Amount = styled.p`
-  font-weight: bold;
-  font-size: 1rem;
   margin: 0;
   padding: 0;
-  flex: 2 0 0;
+
+  font-weight: bold;
+  font-size: 1rem;
+
   text-align: right;
+
   color: ${({ $isIncome }) =>
-  $isIncome ? "black" : "red"};
+    $isIncome ? "black" : "red"};
+
   @media (min-width: 739px) {
-      font-size: 2rem;
-      padding-right: 2rem;
+    font-size: 2rem;
+    padding-right: 2rem;
   }
 `;
 
@@ -115,73 +142,94 @@ export default function TransactionCard({
   isSelected,
   isHighlighted,
   isDeleting,
+  onInvoiceUploaded,
 }) {
-  
-  // "2025-08-20"
   const date = new Date(transaction.date);
 
-return (
-  <Transaction
-    $isSelected={isSelected}
-    $isHighlighted={isHighlighted}
-     onDelete={() => {
-    setShowDeleteDialog(true);
-    setSelectedTransaction(transaction);
-  }}
-  >
-    {isDeleting && (
-      <Loading>
-        <Spinner />
-      </Loading>
-    )}
+  const categoryName =
+    categories?.find(
+      (category) =>
+        String(category._id) ===
+        String(transaction.category)
+    )?.category || transaction.category;
 
-    <div>
-      <TransactionTitle>
-        {transaction.title.length > 15
-          ? `${transaction.title.slice(0, 15)}...`
-          : transaction.title}
-      </TransactionTitle>
+  return (
+    <Transaction
+      $isSelected={isSelected}
+      $isHighlighted={isHighlighted}
+    >
+      {isDeleting && (
+        <Loading>
+          <Spinner />
+        </Loading>
+      )}
 
-      <Category>
-        {/* Find the category whose _id matches the transaction's category ID:*/}
+      {/* ====================
+          TRANSACTION INFO
+      ==================== */}
 
-        {categories?.find(
-          (category) =>
-            String(category._id) === String(transaction.category)
-              /* (category) => category._id  === transaction.category)*/
-              /* // Then get its name from the category property: */
-              )?.category || transaction.category}
-            {/* || if no matching category is found, you'll see the stored ID instead*/}
+      <div>
+        <TransactionTitle>
+          {transaction.title.length > 15
+            ? `${transaction.title.slice(0, 15)}...`
+            : transaction.title}
+        </TransactionTitle>
 
-      </Category>
-    </div>
+        <DateText>
+          {date.toLocaleDateString("de-DE")}
+        </DateText>
+      </div>
 
-    <div>
-      <DateText>
-        {date.toLocaleDateString("de-DE")}
-      </DateText>
+      {/* ====================
+          ACTIONS
+      ==================== */}
 
-      <Time>
-        {date.toLocaleTimeString("de-DE", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </Time>
-    </div>
+      <div>
+        <ButtonWrapper>
+          <InvoiceUpload
+            transaction={transaction}
+            onUploaded={onInvoiceUploaded}
+          />
 
-    <Amount $isIncome={transaction.amount >= 0}>
-      {Number(transaction.amount).toLocaleString("de-DE", {
-        style: "currency",
-        currency: "EUR",
-      })}
-    </Amount>
+          <ActionButton
+            type="button"
+            onClick={() => {
+              // category action
+            }}
+          >
+            {categoryName}
+          </ActionButton>
+        </ButtonWrapper>
+      </div>
 
-    <ButtonWrapper>
-      <EditButton type="button" onClick={onEdit}>
-        Edit
-      </EditButton>
-    </ButtonWrapper>
-  </Transaction>
+      {/* ====================
+          AMOUNT
+      ==================== */}
 
-);
+      <Amount
+        $isIncome={transaction.amount >= 0}
+      >
+        {Number(transaction.amount).toLocaleString(
+          "de-DE",
+          {
+            style: "currency",
+            currency: "EUR",
+          }
+        )}
+      </Amount>
+
+      {/* ====================
+          EDIT
+      ==================== */}
+
+      <ButtonWrapper>
+        <EditButton
+          type="button"
+          onClick={onEdit}
+        >
+          Edit
+        </EditButton>
+      </ButtonWrapper>
+    </Transaction>
+  );
 }
