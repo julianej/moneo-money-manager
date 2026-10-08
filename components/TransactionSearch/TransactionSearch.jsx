@@ -52,8 +52,8 @@ const SearchButton = styled.button`
   border: none;
   text-transform: uppercase;
   border-radius: 0.5rem;
-  background: #000;
-  color: #fff;
+  background: #fff;
+  color: #000;
   cursor: pointer;
 
   &:hover {
