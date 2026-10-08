@@ -216,24 +216,30 @@ const FilterOption = styled.button`
 const TypeToggle = styled.div`
   display: flex;
   align-items: center;
+  font-family: 'IBM PLEX MONO';
   width: 100%;
   border: 1px solid #000;
   background-color: transparent;
   border-radius: 8px;
   overflow: hidden;
+  font-size: 1.5rem;
 
   @media (min-width: 740px) {
     width: 160px;
+    font-size: 1rem;
   }
 `;
 
 const TypeOption = styled.button`
   flex: 1;
   padding: 0.75rem 0.5rem;
-
-  border: ${({ $active }) => ($active ? "1px solid #000" : "1px solid #fff")};
-  background: ${({ $active }) => ($active ? "#010101" : "transparent")};
-  color: ${({ $active }) => ($active ? "#fffefe" : "#080808")};
+  border: 1px solid #000;
+  &:last-child {
+    border-right: none;
+  }
+  border-right: ${({ $active }) => ($active ? "1px solid #828282" : "1px solid transparent")};
+  background: ${({ $active }) => ($active ? "#010101" : "grey")};
+  color: ${({ $active }) => ($active ? "#fffefe" : "#000")};
 
   font: inherit;
   cursor: pointer;
