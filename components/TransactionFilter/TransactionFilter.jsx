@@ -51,6 +51,7 @@ const FilterGroup = styled.div`
   flex-direction: column;
   gap: 0.4rem;
   order: ${({ $order }) => $order};
+  width: 100%;
 
   &:nth-child(1) {
     flex-basis: 100%;
