@@ -130,8 +130,8 @@ const FilterDropdownButton = styled.button`
   width: 100%;
   padding: 0.75rem 1rem;
 
-  background: #fff;
-  color: #000;
+  background: #080808;
+  color: #ffffff;
 
   border: 1px solid #000;
   border-radius: 8px;
@@ -141,11 +141,13 @@ const FilterDropdownButton = styled.button`
 
   &:hover {
     background: #f5f5f5;
+    color:#000;
   }
     @media (min-width: 740px) {
       padding: 0.75rem 1rem;
         gap: 1rem;
-
+        background: #fff;
+        color: #000;
   }
 `;
 
@@ -160,12 +162,18 @@ const FilterDropdownMenu = styled.div`
   overflow-y: auto;
 
   padding: 0.5rem;
+  background: #000000;
+  color: #fafafa;
 
-  background: #fff;
-  border: 1px solid #000;
   border-radius: 8px;
-
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+  @media (min-width: 740px) {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  }
+
 `;
 
 const FilterOption = styled.button`
@@ -177,7 +185,7 @@ const FilterOption = styled.button`
   border: none;
   background: transparent;
 
-  color: #000;
+  color: #fdfcfc;
   text-align: left;
   font: inherit;
 
@@ -185,6 +193,13 @@ const FilterOption = styled.button`
 
   &:hover {
     background: #f2f2f2;
+    color: #000;
+  }
+
+  @media (min-width: 740px) {
+      background: #fff;
+      color: #000;
+      border: 1px solid transparent;
   }
 `;
 
@@ -193,6 +208,7 @@ const TypeToggle = styled.div`
   align-items: center;
   width: 100%;
   border: 1px solid #000;
+  background-color: transparent;
   border-radius: 8px;
   overflow: hidden;
 
@@ -206,14 +222,15 @@ const TypeOption = styled.button`
   padding: 0.75rem 0.5rem;
 
   border: ${({ $active }) => ($active ? "1px solid #000" : "1px solid #fff")};
-  background: ${({ $active }) => ($active ? "#000" : "#fff")};
-  color: ${({ $active }) => ($active ? "#fff" : "#000")};
+  background: ${({ $active }) => ($active ? "#010101" : "transparent")};
+  color: ${({ $active }) => ($active ? "#fffefe" : "#080808")};
 
   font: inherit;
   cursor: pointer;
 
   &:hover {
     background: ${({ $active }) => ($active ? "#000" : "#f2f2f2")};
+    color: ${({ $active }) => ($active ? "#ffffff" : "#000000")};
   }
 `;
 
@@ -248,8 +265,6 @@ export default function TransactionFilter({
 }) {
 
 const [openFilter, setOpenFilter] = useState(null);
-const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-
 const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
 const [newCategory, setNewCategory] = useState("");
 const [categoryError, setCategoryError] = useState("");
@@ -391,9 +406,9 @@ const selectedCategory = categories?.find(
 
       <FilterRow>
 
-    {/* ==================== TYPE ==================== */}
-       <FilterGroup $order={1}>
-          <TypeToggle>
+   {/* ==================== TYPE ==================== */}
+          <FilterGroup $order={1}>
+            <TypeToggle>
               <TypeOption
                 type="button"
                 $active={
@@ -401,14 +416,10 @@ const selectedCategory = categories?.find(
                   selectedType === "all"
                 }
                 onClick={() => {
-                  if (selectedType === "all") {
-                    setSelectedType("income");
-                  } else if (selectedType === "income") {
-                    setSelectedType("all");
-                  } else if (selectedType === "expense") {
+                  if (selectedType === "income") {
                     setSelectedType("all");
                   } else {
-                    setSelectedType("expense");
+                    setSelectedType("income");
                   }
                 }}
               >
@@ -422,18 +433,14 @@ const selectedCategory = categories?.find(
                   selectedType === "all"
                 }
                 onClick={() => {
-                  if (selectedType === "all") {
-                    setSelectedType("expense");
-                  } else if (selectedType === "expense") {
-                    setSelectedType("all");
-                  } else if (selectedType === "income") {
+                  if (selectedType === "expense") {
                     setSelectedType("all");
                   } else {
-                    setSelectedType("income");
+                    setSelectedType("expense");
                   }
                 }}
               >
-              Expense
+                Expense
               </TypeOption>
             </TypeToggle>
          {/* <FilterDropdownWrapper>
@@ -609,57 +616,59 @@ const selectedCategory = categories?.find(
         </FilterGroup>
 
         
-      {/* ==================== ROW 2: CATEGORY ==================== */}
+      {/* ==================== CATEGORY ==================== */}
         <FilterGroup $order={4}>
-         <FilterDropdownWrapper>
-          <FilterDropdownButton
+          <FilterDropdownWrapper>
+            <FilterDropdownButton
               type="button"
-              onClick={() => setIsCategoryOpen((current) => !current)}
+              onClick={() =>
+                setOpenFilter(
+                  openFilter === "category" ? null : "category"
+                )
+              }
             >
               {selectedCategory?.category || "All Categories"}
               <ChevronDown size={16} />
             </FilterDropdownButton>
-              {isCategoryOpen && (
-                <FilterDropdownMenu>
+
+            {openFilter === "category" && (
+              <FilterDropdownMenu>
+                <FilterOption
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategories([]);
+                    setOpenFilter(null);
+                  }}
+                >
+                  All Categories
+                </FilterOption>
+
+                {categories.map((category) => (
                   <FilterOption
+                    key={category._id}
                     type="button"
                     onClick={() => {
-                      setSelectedCategories([]);
-                      setIsCategoryOpen(false);
+                      setSelectedCategories([category._id]);
+                      setOpenFilter(null);
                     }}
                   >
-                    All Categories
+                    {category.category}
                   </FilterOption>
-                    {categories.map((category) => (
-                      <FilterOption
-                        key={category._id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedCategories([category._id]);
-                          setIsCategoryOpen(false);
-                        }}
-                      >
-                        {category.category}
-                      </FilterOption>
-                    ))}
-                  {/* {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.category}
-                    </option>
-                  ))} */} 
-                     <AddCategoryButton
-                    type="button"
-                    onClick={() => {
-                      setIsCategoryOpen(false);
-                      setIsAddCategoryOpen(true);
-                    }}
-                  >
-                    <Plus size={16} />
-                    Add Category
-                  </AddCategoryButton>
-                </FilterDropdownMenu>
-              )}
-            </FilterDropdownWrapper>
+                ))}
+
+                <AddCategoryButton
+                  type="button"
+                  onClick={() => {
+                    setOpenFilter(null);
+                    setIsAddCategoryOpen(true);
+                  }}
+                >
+                  <Plus size={16} />
+                  Add Category
+                </AddCategoryButton>
+              </FilterDropdownMenu>
+            )}
+          </FilterDropdownWrapper>
         </FilterGroup>
       </FilterRow>
 
