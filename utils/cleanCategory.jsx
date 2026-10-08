@@ -17,10 +17,15 @@ export function isValidCategory(category) {
   );
 }
 
-export function categoryExists(categories, category) {
-  const value = cleanCategory(category).toLowerCase();
+export function categoryExists(categories, categoryName) {
+  const value = cleanCategory(categoryName).toLowerCase();
 
-  return categories.some(
-    (item) => item.toLowerCase() === value
-  );
+  return categories.some((item) => {
+    const name =
+      typeof item === "string"
+        ? item
+        : item.category;
+
+    return name?.toLowerCase() === value;
+  });
 }

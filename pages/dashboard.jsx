@@ -264,6 +264,7 @@ export default function Dashboard() {
   const { 
     data: categories, 
     error: categoriesError, 
+    mutate: mutateCategories,
   } = useSWR(
     selectedAccount
       ? `/api/categories?account=${selectedAccount}`
@@ -617,6 +618,7 @@ const filteredTransactions = transactions.filter((transaction) => {
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
                 setPdfLoading={setPdfLoading}
+                mutateCategories={mutateCategories}
               />
 
               <AddButton

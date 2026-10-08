@@ -1,7 +1,15 @@
 import styled from "styled-components";
 import DownloadButton from "../DownloadReport/DownloadButton";
-import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
-import { Plus, ChevronDown } from "lucide-react";
+import CategoryManager from "../CategoryManager/CategoryManager";
+import {
+  cleanCategory,
+  isValidCategory,
+  categoryExists,
+} from "../../utils/cleanCategory";
+import {
+  Plus,
+  ChevronDown,
+} from "lucide-react";
 
 import { useEffect, useState,} from "react";
 
@@ -94,7 +102,6 @@ const AddCategoryBox = styled.div`
   border-radius: 12px;
   border: 2px solid #000;
 `;
-
 
 const FilterDropdownWrapper = styled.div`
   position: relative;
@@ -201,12 +208,14 @@ const TypeOption = styled.button`
   }
 `;
 
+
+
 export default function TransactionFilter({
   transactions = [],
-   categories = [],
+  categories = [],
+  mutateCategories,
   filteredTransactions,
   setPdfLoading,
-  //SELECTED ACCOUNT OBJECT
   selectedAccountData,
   selectedYear,
   setSelectedYear,
@@ -220,7 +229,96 @@ export default function TransactionFilter({
 
 const [openFilter, setOpenFilter] = useState(null);
 const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+
 const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+const [newCategory, setNewCategory] = useState("");
+const [categoryError, setCategoryError] = useState("");
+
+async function handleAddCategory() {
+  const categoryName = cleanCategory(newCategory);
+
+  if (!categoryName) {
+    setCategoryError("Category name is required.");
+    return;
+  }
+
+  if (!isValidCategory(categoryName)) {
+    setCategoryError(
+      "Category must contain between 3 and 30 characters."
+    );
+    return;
+  }
+
+  if (categoryExists(categories, categoryName)) {
+    setCategoryError("This category already exists.");
+    return;
+  }
+
+  if (!selectedAccountData?._id) {
+    setCategoryError("No account selected.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        category: categoryName,
+        account: selectedAccountData._id,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setCategoryError(
+        data.error || "Could not add category."
+      );
+      return;
+    }
+
+    console.log("Category created:", data);
+
+    await mutateCategories();
+
+    setNewCategory("");
+    setCategoryError("");
+    setIsAddCategoryOpen(false);
+
+  } catch (error) {
+    console.error("Add category error:", error);
+    setCategoryError("Something went wrong.");
+  }
+}
+
+
+async function handleDeleteCategory(categoryId) {
+  try {
+    const response = await fetch(`/api/categories/${categoryId}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setCategoryError(data.error || "Could not delete category.");
+      return;
+    }
+
+    await mutateCategories();
+
+    if (selectedCategories.includes(categoryId)) {
+      setSelectedCategories([]);
+    }
+  } catch (error) {
+    console.error(error);
+    setCategoryError("Something went wrong.");
+  }
+}
+
 
 // ====================
 // YEARS
@@ -553,21 +651,43 @@ const selectedCategory = categories?.find(
 
             <input
               type="text"
+              value={newCategory}
+              onChange={(event) => {
+                setNewCategory(event.target.value);
+                setCategoryError("");
+              }}
               placeholder="Category name"
             />
-
             <div>
               <button
                 type="button"
-                onClick={() => setIsAddCategoryOpen(false)}
+                onClick={() => {
+                  setNewCategory("");
+                  setCategoryError("");
+                  setIsAddCategoryOpen(false);
+                }}
               >
                 Cancel
               </button>
 
-              <button type="button">
+              <button
+                type="button"
+                onClick={handleAddCategory}
+              >
                 Add
               </button>
             </div>
+
+            {categoryError && (
+              <p>{categoryError}</p>
+            )}
+
+            <CategoryManager
+                categories={categories}
+                mutateCategories={mutateCategories}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
           </AddCategoryBox>
         </AddCategoryOverlay>
       )}
