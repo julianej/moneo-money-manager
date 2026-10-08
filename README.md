@@ -20,6 +20,7 @@ These features are optional and should serve as a conversation starter for upcom
 
 - **Customisable Categories:** Create and manage custom expense categories to better fit individual needs.
 - **Expense Reports:** Visualise spending patterns with basic visualisations, such as pie charts or bar graphs.
+- 
 - **Receipt Upload:** Attach receipt images to respective expense entries for record-keeping and possible tax documentation.
 - **Recurring Expenses:** Set up recurring entries for regular payments like subscriptions, rent, or utility bills.
 - **Savings Goals:** Set and track savings goals to help allocate funds towards specific objectives.
