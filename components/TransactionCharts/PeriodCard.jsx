@@ -38,12 +38,14 @@ const CardHeader = styled.button`
 
 const CardHeaderRight = styled.div`
   display: flex;
+  color: #000;
   align-items: center;
   gap: 8px;
 `;
 
 const CardTitle = styled.h2`
   margin: 0 0 4px;
+  color: #000;
   font-size: 2rem;
   @media (min-width: 740px) {
       font-size: 4rem;;}
