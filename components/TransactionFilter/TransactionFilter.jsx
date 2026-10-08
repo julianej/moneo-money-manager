@@ -1,8 +1,26 @@
-import styled from "styled-components";
-import DownloadButton from "../DownloadReport/DownloadButton";
-import CategoryDropdown from "../CategoriesDropdown/CategoriesDropdown";
 
-import { useEffect, useState,} from "react";
+import styled from "styled-components";
+import { useEffect, useState } from "react";
+
+import DownloadButton from "../DownloadReport/DownloadButton";
+import CategoryManager from "../CategoryManager/CategoryManager";
+
+import {
+  cleanCategory,
+  isValidCategory,
+  categoryExists,
+} from "../../utils/cleanCategory";
+
+import {
+  Plus,
+  ChevronDown,
+} from "lucide-react";
+
+import {
+  SubmitButton,
+  CancelButton,
+} from "../../styles/ButtonStyles";
+
 
 const FilterWrapper = styled.div`
   display: flex;
@@ -18,75 +36,206 @@ const FilterWrapper = styled.div`
 const FilterRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: nowrap;
+  gap: 0rem;
+  flex-wrap: wrap;
+
+
+  @media (min-width: 738px) {
+    gap: 1rem;
+      flex-wrap: nowrap;
+  }
 `;
+
 const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-`;
-
-const FilterLabel = styled.label`
-  font-size: 14px;
-  font-weight: 600;
-  color: #0d0d0d;
-`;
-
-const FilterSelect = styled.select`
   width: 100%;
-  padding: 0.7rem 0.8rem;
+  order: ${({ $order }) => $order};
 
-  border: 1px solid lightgray;
-  border-radius: 0.5rem;
+  @media (min-width: 738px) {
+    order: ${({ $desktopOrder }) => $desktopOrder};
+  }
+`;
 
-  background: white;
-  color: #0d0d0d;
 
-  font-size: 16px;
+const AddCategoryButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+
+  margin-top: 0.25rem;
+  border: none;
+  border-top: 1px solid #ddd;
+
+  background: transparent;
+  color: #000;
+
+  text-align: left;
+  font: inherit;
+
   cursor: pointer;
 
-  &:focus {
-    outline: none;
-    border-color: black;
-  }
-
-  @media (min-width: 740px) {
-    width: auto;
-    min-width: 160px;
+  &:hover {
+    background: #f2f2f2;
   }
 `;
 
 
-const MonthSelect = styled.select`
+const AddCategoryOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.5);
+`;
+
+const AddCategoryBox = styled.div`
   width: 100%;
-  padding: 0.7rem 0.8rem;
+  max-width: 400px;
 
-  border: 1px solid lightgray;
+  padding: 2rem;
 
-  background: white;
-  color: #0d0d0d;
+  background: #fff;
+  color: #000;
 
-  font-size: 16px;
+  border-radius: 12px;
+  border: 2px solid #000;
+`;
+
+const FilterDropdownWrapper = styled.div`
+  position: relative;
+  width: 100%;
+
+  @media (min-width: 740px) {
+    width: 175px;
+  }
+`;
+
+const FilterDropdownButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0rem;
+
+  width: 100%;
+  padding: 0.75rem 1rem;
+
+  background: #fff;
+  color: #000;
+
+  border: 1px solid #000;
+  border-radius: 8px;
+
+  font: inherit;
   cursor: pointer;
 
-  &:focus {
-    outline: none;
-    border-color: black;
+  &:hover {
+    background: #f5f5f5;
   }
+    @media (min-width: 740px) {
+      padding: 0.75rem 1rem;
+        gap: 1rem;
 
-  @media (min-width: 740px) {
-    width: auto;
-    min-width: 160px;
   }
 `;
+
+const FilterDropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1000;
+
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+
+  padding: 0.5rem;
+
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+`;
+
+const FilterOption = styled.button`
+  display: block;
+
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+
+  border: none;
+  background: transparent;
+
+  color: #000;
+  text-align: left;
+  font: inherit;
+
+  cursor: pointer;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+`;
+
+const TypeToggle = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 8px;
+  overflow: hidden;
+
+  @media (min-width: 740px) {
+    width: 160px;
+  }
+`;
+
+const TypeOption = styled.button`
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+
+  border: ${({ $active }) => ($active ? "1px solid #000" : "1px solid #fff")};
+  background: ${({ $active }) => ($active ? "#000" : "#fff")};
+  color: ${({ $active }) => ($active ? "#fff" : "#000")};
+
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? "#000" : "#f2f2f2")};
+  }
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+
+  ${CancelButton},
+  ${SubmitButton} {
+    flex: 1;
+  }
+`;
+
+
 
 export default function TransactionFilter({
   transactions = [],
-   categories = [],
+  categories = [],
+  mutateCategories,
   filteredTransactions,
   setPdfLoading,
-  //SELECTED ACCOUNT OBJECT
   selectedAccountData,
   selectedYear,
   setSelectedYear,
@@ -97,6 +246,98 @@ export default function TransactionFilter({
   selectedCategories,
   setSelectedCategories,
 }) {
+
+const [openFilter, setOpenFilter] = useState(null);
+const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+
+const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+const [newCategory, setNewCategory] = useState("");
+const [categoryError, setCategoryError] = useState("");
+
+async function handleAddCategory() {
+  const categoryName = cleanCategory(newCategory);
+
+  if (!categoryName) {
+    setCategoryError("Category name is required.");
+    return;
+  }
+
+  if (!isValidCategory(categoryName)) {
+    setCategoryError(
+      "Category must contain between 3 and 30 characters."
+    );
+    return;
+  }
+
+  if (categoryExists(categories, categoryName)) {
+    setCategoryError("This category already exists.");
+    return;
+  }
+
+  if (!selectedAccountData?._id) {
+    setCategoryError("No account selected.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        category: categoryName,
+        account: selectedAccountData._id,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setCategoryError(
+        data.error || "Could not add category."
+      );
+      return;
+    }
+
+    console.log("Category created:", data);
+
+    await mutateCategories();
+
+    setNewCategory("");
+    setCategoryError("");
+    setIsAddCategoryOpen(false);
+
+  } catch (error) {
+    console.error("Add category error:", error);
+    setCategoryError("Something went wrong.");
+  }
+}
+
+
+async function handleDeleteCategory(categoryId) {
+  try {
+    const response = await fetch(`/api/categories/${categoryId}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setCategoryError(data.error || "Could not delete category.");
+      return;
+    }
+
+    await mutateCategories();
+
+    if (selectedCategories.includes(categoryId)) {
+      setSelectedCategories([]);
+    }
+  } catch (error) {
+    console.error(error);
+    setCategoryError("Something went wrong.");
+  }
+}
 
 
 // ====================
@@ -129,6 +370,9 @@ useEffect(() => {
   setSelectedCategories,
 ]);
 
+const selectedCategory = categories?.find(
+  (category) => category._id === selectedCategories[0]
+);
 
   return (
   <>
@@ -146,92 +390,326 @@ useEffect(() => {
       </DownloadButton>
 
       <FilterRow>
+
+    {/* ==================== TYPE ==================== */}
+       <FilterGroup $order={1}>
+          <TypeToggle>
+              <TypeOption
+                type="button"
+                $active={
+                  selectedType === "income" ||
+                  selectedType === "all"
+                }
+                onClick={() => {
+                  if (selectedType === "all") {
+                    setSelectedType("income");
+                  } else if (selectedType === "income") {
+                    setSelectedType("all");
+                  } else if (selectedType === "expense") {
+                    setSelectedType("all");
+                  } else {
+                    setSelectedType("expense");
+                  }
+                }}
+              >
+                Income
+              </TypeOption>
+
+              <TypeOption
+                type="button"
+                $active={
+                  selectedType === "expense" ||
+                  selectedType === "all"
+                }
+                onClick={() => {
+                  if (selectedType === "all") {
+                    setSelectedType("expense");
+                  } else if (selectedType === "expense") {
+                    setSelectedType("all");
+                  } else if (selectedType === "income") {
+                    setSelectedType("all");
+                  } else {
+                    setSelectedType("income");
+                  }
+                }}
+              >
+              Expense
+              </TypeOption>
+            </TypeToggle>
+         {/* <FilterDropdownWrapper>
+              <FilterDropdownButton
+                type="button"
+                onClick={() =>
+                  setOpenFilter(
+                    openFilter === "type" ? null : "type"
+                  )
+                }
+              >
+                {selectedType === "all"
+                  ? "All Types"
+                  : selectedType === "income"
+                  ? "Income"
+                  : "Expense"}
+
+                <ChevronDown size={16} />
+              </FilterDropdownButton>
+
+              {openFilter === "type" && (
+                <FilterDropdownMenu>
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedType("all");
+                      setOpenFilter(null);
+                    }}
+                  >
+                    All Types
+                  </FilterOption>
+
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedType("income");
+                      setOpenFilter(null);
+                    }}
+                  >
+                    Income
+                  </FilterOption>
+
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedType("expense");
+                      setOpenFilter(null);
+                    }}
+                  >
+                    Expense
+                  </FilterOption>
+                </FilterDropdownMenu>
+              )}
+            </FilterDropdownWrapper> */}
+        </FilterGroup>
+
+
         {/* ==================== YEAR ==================== */}
-        <FilterGroup>
-          <FilterLabel htmlFor="year-filter">
-            Year
-          </FilterLabel>
+       <FilterGroup $order={2}>
+          <FilterDropdownWrapper>
+            <FilterDropdownButton
+              type="button"
+              onClick={() =>
+                setOpenFilter(
+                  openFilter === "year" ? null : "year"
+                )
+              }
+            >
+              {selectedYear === "all" ? "All Years" : selectedYear}
+              <ChevronDown size={16} />
+          </FilterDropdownButton>
 
-          <FilterSelect
-            id="year-filter"
-            value={selectedYear}
-            onChange={(event) => setSelectedYear(event.target.value)}
-          >
-            <option value="all">All Years</option>
+          {openFilter === "year" && (
+            <FilterDropdownMenu>
+              <FilterOption
+                type="button"
+                onClick={() => {
+                  setSelectedYear("all");
+                  setOpenFilter(null);
+                }}
+              >
+                All Years
+              </FilterOption>
 
-            {years.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </FilterSelect>
+              {years.map((year) => (
+                <FilterOption
+                  key={year}
+                  type="button"
+                  onClick={() => {
+                    setSelectedYear(year);
+                    setOpenFilter(null);
+                  }}
+                >
+                  {year}
+                </FilterOption>
+              ))}
+            </FilterDropdownMenu>
+          )}
+        </FilterDropdownWrapper>
         </FilterGroup>
 
         {/* ==================== MONTH ==================== */}
-        <FilterGroup>
-          <FilterLabel htmlFor="month-filter">
-            Month
-          </FilterLabel>
+       <FilterGroup $order={3}>
+          <FilterDropdownWrapper>
+            <FilterDropdownButton
+              type="button"
+              onClick={() =>
+                setOpenFilter(
+                  openFilter === "month" ? null : "month"
+                )
+              }
+            >
+              {selectedMonth === "all"
+                ? "All Months"
+                : [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December",
+                  ][Number(selectedMonth)]}
 
-          <MonthSelect
-            id="month-filter"
-            value={selectedMonth}
-            onChange={(event) => setSelectedMonth(event.target.value)}
-          >
-            <option value="all">All Months</option>
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
-          </MonthSelect>
+              <ChevronDown size={16} />
+            </FilterDropdownButton>
+
+            {openFilter === "month" && (
+              <FilterDropdownMenu>
+                <FilterOption
+                  type="button"
+                  onClick={() => {
+                    setSelectedMonth("all");
+                    setOpenFilter(null);
+                  }}
+                >
+                  All Months
+                </FilterOption>
+
+                {[
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ].map((month, index) => (
+                  <FilterOption
+                    key={month}
+                    type="button"
+                    onClick={() => {
+                      setSelectedMonth(String(index));
+                      setOpenFilter(null);
+                    }}
+                  >
+                    {month}
+                  </FilterOption>
+                ))}
+              </FilterDropdownMenu>
+            )}
+          </FilterDropdownWrapper>
         </FilterGroup>
 
-        {/* ==================== TYPE ==================== */}
-        <FilterGroup>
-          <FilterLabel htmlFor="type-filter">
-            Type
-          </FilterLabel>
-
-          <FilterSelect
-            id="type-filter"
-            value={selectedType}
-            onChange={(event) => setSelectedType(event.target.value)}
-          >
-            <option value="all">All Types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </FilterSelect>
-        </FilterGroup>
-      </FilterRow>
-
+        
       {/* ==================== ROW 2: CATEGORY ==================== */}
-      <FilterRow>
-        <FilterGroup>
-          <FilterLabel htmlFor="category-filter">
-            Category
-          </FilterLabel>
-
-          <CategoryDropdown
-            value={selectedCategories[0] || ""}
-            categories={categories}
-            placeholder="All Categories"
-            onChange={(event) => {
-              const value = event.target.value;
-
-              setSelectedCategories(value ? [value] : []);
-            }}
-          />
+        <FilterGroup $order={4}>
+         <FilterDropdownWrapper>
+          <FilterDropdownButton
+              type="button"
+              onClick={() => setIsCategoryOpen((current) => !current)}
+            >
+              {selectedCategory?.category || "All Categories"}
+              <ChevronDown size={16} />
+            </FilterDropdownButton>
+              {isCategoryOpen && (
+                <FilterDropdownMenu>
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategories([]);
+                      setIsCategoryOpen(false);
+                    }}
+                  >
+                    All Categories
+                  </FilterOption>
+                    {categories.map((category) => (
+                      <FilterOption
+                        key={category._id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCategories([category._id]);
+                          setIsCategoryOpen(false);
+                        }}
+                      >
+                        {category.category}
+                      </FilterOption>
+                    ))}
+                  {/* {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.category}
+                    </option>
+                  ))} */} 
+                     <AddCategoryButton
+                    type="button"
+                    onClick={() => {
+                      setIsCategoryOpen(false);
+                      setIsAddCategoryOpen(true);
+                    }}
+                  >
+                    <Plus size={16} />
+                    Add Category
+                  </AddCategoryButton>
+                </FilterDropdownMenu>
+              )}
+            </FilterDropdownWrapper>
         </FilterGroup>
       </FilterRow>
 
     </FilterWrapper>
+    {isAddCategoryOpen && (
+        <AddCategoryOverlay>
+          <AddCategoryBox>
+            <h3>Add Category</h3>
+
+            <input
+              type="text"
+              value={newCategory}
+              onChange={(event) => {
+                setNewCategory(event.target.value);
+                setCategoryError("");
+              }}
+              placeholder="Category name"
+            />
+            <ButtonWrapper>
+              <CancelButton
+                type="button"
+                onClick={() => {
+                  setNewCategory("");
+                  setCategoryError("");
+                  setIsAddCategoryOpen(false);
+                }}
+              >
+                Cancel
+              </CancelButton>
+
+              <SubmitButton
+                type="button"
+                onClick={handleAddCategory}
+              >
+                Save
+              </SubmitButton>
+           </ButtonWrapper>
+
+            {categoryError && (
+              <p>{categoryError}</p>
+            )}
+
+            <CategoryManager
+                categories={categories}
+                mutateCategories={mutateCategories}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
+          </AddCategoryBox>
+        </AddCategoryOverlay>
+      )}
   </>
 );}

@@ -123,7 +123,7 @@ const ProfileMenu = styled.div`
   padding: 0.5rem;
 
   background: #000;
-  border: 2px solid transparent;
+  border: 2px solid lightgrey;
   border-radius: 0.75rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 
