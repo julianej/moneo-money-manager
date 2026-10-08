@@ -24,6 +24,7 @@ import TransactionSearch from "@/components/TransactionSearch/TransactionSearch"
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
 import TransactionPeriod from "@/components/TransactionCharts/TransactionPeriod";
 
+
 import ToastMessage from "@/components/ToastMessage/ToastMessage";
 import DialogPopup from "@/components/DialogPopup/DialogPopup";
 
@@ -90,9 +91,10 @@ const AddButtonWrapper = styled.div`
 `;
 
 const AddButton = styled.button`
-  background: white;
+  /* background: white; */
   width: 100%;
-  text-align: left;
+  /* text-align: left;   */
+  text-align: center;
   padding: 0.7rem 0.7rem 0.6rem;
   border-radius: 0.5rem;
   border: 1px solid lightgray;
@@ -102,10 +104,25 @@ const AddButton = styled.button`
   position: relative;
   margin-bottom: 2rem;
 
-  svg {
-    position: absolute;
-    right: 1rem;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const AddChartButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  width: 100%;
+  padding: 1rem;
+
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  cursor: pointer;
 `;
 
 const Title = styled.h1`
@@ -185,6 +202,8 @@ export default function Dashboard() {
   // STATE
   // ====================
   const [transactionView, setTransactionView] = useState("list");
+  const [chartSections, setChartSections] = useState([]);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -591,13 +610,47 @@ const filteredTransactions = transactions.filter(matchesFilter);
                 <span>{selectedAccountData?.name}</span>
               </Title>
 
-              {transactionView === "chart" && (
-                <TransactionPeriod
-                  selectedDate={selectedDate}
-                  transactions={transactions}
-                />
-              )}
+              {/*SWITCHING VIEWS*/}
+               {transactionView === "chart" && (
+                  <>
+                    <TransactionPeriod
+                      selectedDate={selectedDate}
+                      transactions={transactions}
+                    />
+                       <AccountBalance
+                            transactions={filteredTransactions}
+                          />
 
+                      {/* Previous-year charts */}
+                        {chartSections.map((section) => (
+                          <TransactionPeriod
+                            key={section}
+                            selectedDate={
+                              new Date(
+                                selectedDate.getFullYear() - 1,
+                                selectedDate.getMonth(),
+                                selectedDate.getDate()
+                              )
+                            }
+                            transactions={transactions}
+                          />
+                        ))}
+
+                      <AddChartButton
+                        type="button"
+                        onClick={() =>
+                          setChartSections((current) => [
+                            ...current,
+                            current.length,
+                          ])
+                        }
+                      >
+                        <Plus size={18} />
+                        Compare with last year
+                      </AddChartButton>
+                  </>
+                )}
+              {/*SWITCHING VIEWS add more here LATER... */}
               <AccountBalance
                 transactions={filteredTransactions}
               />
@@ -626,22 +679,18 @@ const filteredTransactions = transactions.filter(matchesFilter);
                 mutateCategories={mutateCategories}
               />
 
-              <AddButtonWrapper>
+               <AddButtonWrapper>
                 <AddButton
                   type="button"
                   onClick={() => setIsFormOpen((isOpen) => !isOpen)}
                 >
-                  {isFormOpen ? (
-                    <>
-                      Close Transaction Form
-                      <X size={18} />
-                    </>
-                  ) : (
-                    <>
-                      Add Transaction
-                      <Plus size={18} />
-                    </>
-                  )}
+                  <Plus size={18} />
+
+                  <span>
+                    {isFormOpen ? "Close Transaction Form" : "Add New Transaction"}
+                  </span>
+
+                  <Plus size={18} />
                 </AddButton>
               </AddButtonWrapper>
 
