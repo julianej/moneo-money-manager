@@ -1,17 +1,26 @@
+
 import styled from "styled-components";
+import { useEffect, useState } from "react";
+
 import DownloadButton from "../DownloadReport/DownloadButton";
 import CategoryManager from "../CategoryManager/CategoryManager";
+
 import {
   cleanCategory,
   isValidCategory,
   categoryExists,
 } from "../../utils/cleanCategory";
+
 import {
   Plus,
   ChevronDown,
 } from "lucide-react";
 
-import { useEffect, useState,} from "react";
+import {
+  SubmitButton,
+  CancelButton,
+} from "../../styles/ButtonStyles";
+
 
 const FilterWrapper = styled.div`
   display: flex;
@@ -205,6 +214,17 @@ const TypeOption = styled.button`
 
   &:hover {
     background: ${({ $active }) => ($active ? "#000" : "#f2f2f2")};
+  }
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+
+  ${CancelButton},
+  ${SubmitButton} {
+    flex: 1;
   }
 `;
 
@@ -658,8 +678,8 @@ const selectedCategory = categories?.find(
               }}
               placeholder="Category name"
             />
-            <div>
-              <button
+            <ButtonWrapper>
+              <CancelButton
                 type="button"
                 onClick={() => {
                   setNewCategory("");
@@ -668,15 +688,15 @@ const selectedCategory = categories?.find(
                 }}
               >
                 Cancel
-              </button>
+              </CancelButton>
 
-              <button
+              <SubmitButton
                 type="button"
                 onClick={handleAddCategory}
               >
-                Add
-              </button>
-            </div>
+                Save
+              </SubmitButton>
+           </ButtonWrapper>
 
             {categoryError && (
               <p>{categoryError}</p>
