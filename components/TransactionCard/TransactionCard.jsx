@@ -188,6 +188,7 @@ export default function TransactionCard({
         <ButtonWrapper>
           <InvoiceUpload
             transaction={transaction}
+            // ON INVOICE UPLOAD from PARENT
             onUploaded={onInvoiceUploaded}
           />
 

@@ -34,16 +34,26 @@ const transactionSchema = new mongoose.Schema({
     ref: "BankAccounts",
     required: true,
   },
-    user: {
+
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+
+  invoice: {
+    fileId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
     },
-    invoice: {
-      url: String,
-      filename: String,
-      uploadedAt: Date
-    }
+
+    filename: {
+      type: String,
+    },
+
+    uploadedAt: {
+      type: Date,
+    },
+  },
 });
 
 const Transactions =

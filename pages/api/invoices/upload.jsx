@@ -1,6 +1,14 @@
-import { v2 as cloudinary } from "cloudinary";
-import formidable from "formidable";
-import fs from "fs";
+import dbConnect from "@/db/connect";
+import mongoose from "mongoose";
+import multer from "multer";
+import { GridFSBucket } from "mongodb";
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+});
 
 export const config = {
   api: {
@@ -8,23 +16,19 @@ export const config = {
   },
 };
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+function runMiddleware(request, response, middleware) {
+  return new Promise((resolve, reject) => {
+    middleware(request, response, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+
+      resolve(result);
+    });
+  });
+}
 
 export default async function handler(request, response) {
-
-console.log("Cloudinary config:", {
-  cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-  apiKey: process.env.CLOUDINARY_API_KEY,
-  hasApiSecret: Boolean(
-    process.env.CLOUDINARY_API_SECRET
-  ),
-});
-
-
   if (request.method !== "POST") {
     return response.status(405).json({
       error: "Method not allowed",
@@ -32,47 +36,59 @@ console.log("Cloudinary config:", {
   }
 
   try {
-    const form = formidable({
-      keepExtensions: true,
-    });
+    await dbConnect();
 
-    const [fields, files] = await form.parse(request);
+    await runMiddleware(
+      request,
+      response,
+      upload.single("file")
+    );
 
-    const uploadedFile = Array.isArray(files.file)
-      ? files.file[0]
-      : files.file;
+    const file = request.file;
 
-    if (!uploadedFile) {
+    if (!file) {
       return response.status(400).json({
         error: "No PDF file uploaded",
       });
     }
 
-    if (uploadedFile.mimetype !== "application/pdf") {
+    if (file.mimetype !== "application/pdf") {
       return response.status(400).json({
         error: "Only PDF files are allowed",
       });
     }
 
-    const result = await cloudinary.uploader.upload(
-      uploadedFile.filepath,
+    const db = mongoose.connection.db;
+
+    const bucket = new GridFSBucket(db, {
+      bucketName: "invoices",
+    });
+
+    const uploadStream = bucket.openUploadStream(
+      file.originalname,
       {
-        resource_type: "raw",
-        folder: "money-manager/invoices",
-        use_filename: true,
-        unique_filename: true,
+        contentType: "application/pdf",
       }
     );
 
-    fs.unlinkSync(uploadedFile.filepath);
+    uploadStream.end(file.buffer);
 
-    return response.status(200).json({
-      url: result.secure_url,
-      publicId: result.public_id,
-      filename: uploadedFile.originalFilename,
+    uploadStream.on("finish", () => {
+      return response.status(200).json({
+        fileId: uploadStream.id,
+        filename: file.originalname,
+      });
+    });
+
+    uploadStream.on("error", (error) => {
+      console.error("GridFS upload error:", error);
+
+      return response.status(500).json({
+        error: "Could not upload invoice",
+      });
     });
   } catch (error) {
-    console.error("Cloudinary upload error:", error);
+    console.error("Invoice upload error:", error);
 
     return response.status(500).json({
       error: error.message || "Invoice upload failed",

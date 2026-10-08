@@ -267,6 +267,8 @@ return (
                 isHighlighted={highlightedId === transaction._id}
                 onDelete={() => handleDeleteClick(transaction)}
                 isDeleting={deletingId === transaction._id}
+                // you create the function here in the PARENT,
+                onInvoiceUploaded={() => mutate()}
               />
 
               {editingTransaction?._id === transaction._id && (

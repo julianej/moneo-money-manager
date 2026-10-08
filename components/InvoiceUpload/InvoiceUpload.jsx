@@ -54,7 +54,9 @@ export default function InvoiceUpload({
   onUploaded,
 }) {
   const [isUploading, setIsUploading] = useState(false);
+
   const invoiceInputId = `invoice-${transaction._id}`;
+
 
   async function handleInvoiceUpload(event) {
     const file = event.target.files?.[0];
@@ -70,82 +72,85 @@ export default function InvoiceUpload({
 
     setIsUploading(true);
 
-    try {
-      // ====================
-      // 1. PREPARE PDF
-      // ====================
+     try {
+    // ====================
+    // 2. PREPARE PDF
+    // ====================
 
-      const formData = new FormData();
-      formData.append("file", file);
+    const formData = new FormData();
 
-    //   console.log("PDF FORM :", formData.getAll())
+    formData.append("file", file);
 
-      // ====================
-      // 2. UPLOAD TO CLOUDINARY
-      // ====================
+    console.log("Selected PDF:", file);
+    console.log("FormData:", formData.get("file"));
 
-      const uploadResponse = await fetch(
-        "/api/invoices/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+    // ====================
+    // 3. UPLOAD TO MONGODB
+    // ====================
 
-      const uploadData = await uploadResponse.json();
-
-      if (!uploadResponse.ok) {
-        throw new Error(
-          uploadData.error ||
-            "Invoice upload failed"
-        );
+    const uploadResponse = await fetch(
+      "/api/invoices/upload",
+      {
+        method: "POST",
+        body: formData,
       }
+    );
 
-      console.log(
-        "Cloudinary upload:",
-        uploadData
-      );
+    const uploadData = await uploadResponse.json();
 
-      // ====================
-      // 3. SAVE INVOICE
-      // ====================
+    if (!uploadResponse.ok) {
+    throw new Error(
+        uploadData.error ||
+        "Invoice upload failed"
+    );
+    }
 
-      const transactionResponse = await fetch(
-        `/api/transactions/${transaction._id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            invoice: {
-              url: uploadData.url,
-              filename: uploadData.filename,
-              uploadedAt: new Date(),
-            },
-          }),
-        }
-      );
+    console.log(
+    "MongoDB invoice upload:",
+    uploadData
+    );
+    // ====================
+    // 3. SAVE INVOICE
+    // ====================
 
-      const transactionData =
-        await transactionResponse.json();
+    const transactionResponse = await fetch(
+    `/api/transactions/${transaction._id}`,
+    {
+        method: "PATCH",
+        headers: {
+        "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+        invoice: {
+            fileId: uploadData.fileId,
+            filename: uploadData.filename,
+            uploadedAt: new Date(),
+        },
+        }),
+    }
+    );
 
-      if (!transactionResponse.ok) {
-        throw new Error(
-          transactionData.error ||
-            "Could not save invoice to transaction"
-        );
-      }
+    const transactionData =
+    await transactionResponse.json();
 
-      console.log(
-        "Invoice attached to transaction:",
-        transactionData
-      );
+    if (!transactionResponse.ok) {
+    throw new Error(
+        transactionData.error ||
+        "Could not save invoice to transaction"
+    );
+    }
 
-      // Tell parent that the transaction was updated
-      if (onUploaded) {
-        onUploaded(transactionData);
-      }
+    console.log(
+    "Invoice attached to transaction:",
+    transactionData
+    );
+
+    // TAKE onUNPLOADED
+    if (onUploaded) {
+    onUploaded(transactionData);
+    }
+
+
     } catch (error) {
       console.error(
         "Invoice upload failed:",
@@ -161,30 +166,30 @@ export default function InvoiceUpload({
 
   return (
     <>
-      <InvoiceButton
+        <InvoiceButton
         type="button"
-        $hasInvoice={Boolean(transaction.invoice?.url)}
+        $hasInvoice={Boolean(transaction.invoice?.fileId)}
         disabled={isUploading}
         onClick={() =>
-          document
+            document
             .getElementById(invoiceInputId)
             ?.click()
         }
         aria-label={
-          transaction.invoice?.url
+            transaction.invoice?.fileId
             ? "Invoice attached"
             : "Attach invoice PDF"
         }
-      >
+        >
         <Paperclip size={16} />
-      </InvoiceButton>
+        </InvoiceButton>
 
-      <InvoiceInput
+        <InvoiceInput
         id={invoiceInputId}
         type="file"
         accept="application/pdf,.pdf"
         onChange={handleInvoiceUpload}
-      />
+        />
     </>
   );
 }
