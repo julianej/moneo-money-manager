@@ -50,7 +50,6 @@ const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  width: 100%;
   order: ${({ $order }) => $order};
 
   @media (min-width: 738px) {

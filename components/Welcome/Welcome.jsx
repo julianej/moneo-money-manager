@@ -53,6 +53,7 @@ const WelcomeWrapper = styled.section`
     $variant === "dashboard" && `
       h1 {
         font-size: 1rem;
+        margin-top: 1rem;
       }
       h2 {
        font-size: 1.7rem;
