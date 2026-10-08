@@ -1,8 +1,8 @@
 import useSWR from "swr";
 import { useState } from "react";
-import { useRouter } from "next/router"; // MENU LINK
+import { useRouter } from "next/router";
 
-import { X, Plus,LogOut, User } from "lucide-react";
+import { Plus, LogOut, User } from "lucide-react";
 import styled from "styled-components";
 import { Spinner } from "@/styles/LoadingStyles";
 
@@ -24,7 +24,6 @@ import TransactionSearch from "@/components/TransactionSearch/TransactionSearch"
 import TransactionFilter from "@/components/TransactionFilter/TransactionFilter";
 import TransactionPeriod from "@/components/TransactionCharts/TransactionPeriod";
 
-
 import ToastMessage from "@/components/ToastMessage/ToastMessage";
 import DialogPopup from "@/components/DialogPopup/DialogPopup";
 
@@ -32,13 +31,12 @@ import DialogPopup from "@/components/DialogPopup/DialogPopup";
 // STYLES
 // ====================
 
-
 const Main = styled.main`
   display: flex;
   flex-direction: column;
 
   @media (min-width: 740px) {
-   flex-direction: row;
+    flex-direction: row;
   }
 `;
 
@@ -46,26 +44,25 @@ const MainContent = styled.div`
   width: 100%;
   padding: 0 20px;
   margin: 0 auto;
-   @media (min-width: 740px) {
-   width: 70%;
+
+  @media (min-width: 740px) {
+    width: 70%;
   }
 `;
 
 const MenuProfileWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: 55px;
-    border-top: 1rem solid black;
-    /* border: 2px solid black; */
-    background-color: transparent;
-    margin-bottom: 2rem;
-    border-radius: 1rem;
-    /* position: fixed; */
-    margin-bottom: 2rem;
-    @media (min-width: 740px) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 55px;
+  border-top: 1rem solid black;
+  background-color: transparent;
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+
+  @media (min-width: 740px) {
     width: 100%;
     height: 63px;
     margin-top: 5rem;
@@ -76,8 +73,10 @@ const SidebarWrapper = styled.aside`
   padding: 1.5rem 1rem;
   width: 100%;
   border-right: 2px solid black;
-    @media (min-width: 740px) {
-     width: 25%;}
+
+  @media (min-width: 740px) {
+    width: 25%;
+  }
 `;
 
 const AddButtonWrapper = styled.div`
@@ -91,14 +90,12 @@ const AddButtonWrapper = styled.div`
 `;
 
 const AddButton = styled.button`
-  /* background: white; */
   width: 100%;
-  /* text-align: left;   */
   text-align: center;
   padding: 0.7rem 0.7rem 0.6rem;
   border-radius: 0.5rem;
   border: 1px solid lightgray;
-  color: #0d0d0d ;
+  color: #0d0d0d;
   cursor: pointer;
   font-size: 16px;
   position: relative;
@@ -107,7 +104,6 @@ const AddButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
 `;
 
 const AddChartButton = styled.button`
@@ -126,18 +122,18 @@ const AddChartButton = styled.button`
 `;
 
 const Title = styled.h1`
-    font-size: 40px;
-    text-transform: uppercase;
-    margin-bottom: 30px;
-    background-color: white;
-    padding: 3rem;
-    text-align: center; 
-    justify-content: center;
-    border-radius: 1rem;
-    display: flex;
-    flex-direction: row;
-    margin: 0;
-    gap: 1rem;
+  font-size: 40px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  background-color: white;
+  padding: 3rem;
+  text-align: center;
+  justify-content: center;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  gap: 1rem;
 
   span {
     font-size: 2rem;
@@ -146,10 +142,10 @@ const Title = styled.h1`
 
   @media (min-width: 740px) {
     span {
-    font-size: 4rem;}}
-
+      font-size: 4rem;
+    }
+  }
 `;
-
 
 const PrimaryButton = styled.button`
   padding: 10px 18px;
@@ -171,7 +167,6 @@ const PrimaryButton = styled.button`
   }
 `;
 
-
 const CardWrapper = styled.div`
   display: flex;
   gap: 1rem;
@@ -188,19 +183,17 @@ const CardWrapper = styled.div`
   }
 `;
 
-
 // ====================
 // COMPONENT
 // ====================
 
-
 export default function Dashboard() {
-
-    const router = useRouter();
+  const router = useRouter();
 
   // ====================
   // STATE
   // ====================
+
   const [transactionView, setTransactionView] = useState("list");
   const [chartSections, setChartSections] = useState([]);
 
@@ -208,27 +201,33 @@ export default function Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // DASHBOARD DEFAULT
-  const [activeSection, setActiveSection] = useState("home"); 
+  const [activeSection, setActiveSection] = useState("home");
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-  
+
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
   const today = new Date();
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
-  const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); 
-  // const [selectedYear, setSelectedYear] = useState("all");
-  // const [selectedMonth, setSelectedMonth] = useState("all");
+
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear().toString()
+  );
+
+  const [selectedMonth, setSelectedMonth] = useState(
+    today.getMonth()
+  );
+
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   // ADD ACCOUNT FORM STATE
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [accountLimitMessage, setAccountLimitMessage] = useState("");
-  const [showAccountOnboarding, setShowAccountOnboarding] = useState(false);
+  const [showAccountOnboarding, setShowAccountOnboarding] =
+    useState(false);
 
   // TOAST MESSAGE
   const [toastMessage, setToastMessage] = useState("");
@@ -236,33 +235,33 @@ export default function Dashboard() {
 
   const [isAddingAccount, setIsAddingAccount] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const [pdfLoading, setPdfLoading] = useState(false);
 
+  // ====================
+  // PROFILE MENU
+  // ====================
 
-      const profileItems = [
-        {
-          label: "Profile Settings",
-          icon: <User size={20} />,
-          onClick: () => {
-            setIsProfileOpen(true);
-            setIsMenuOpen(false);
-          },
-        // onClick: () => {
-        //     console.log("Profile Settings");
-        // },
-        },
-        {
-        label: "Log Out",
-        icon: <LogOut size={20} />,
-        onClick: () => {
-            router.push("/");
-        },
-        },
-    ];
-
+  const profileItems = [
+    {
+      label: "Profile Settings",
+      icon: <User size={20} />,
+      onClick: () => {
+        setIsProfileOpen(true);
+        setIsMenuOpen(false);
+      },
+    },
+    {
+      label: "Log Out",
+      icon: <LogOut size={20} />,
+      onClick: () => {
+        router.push("/");
+      },
+    },
+  ];
 
   // ====================
   // DATA
@@ -279,7 +278,7 @@ export default function Dashboard() {
     isLoading: userLoading,
   } = useSWR("/api/user");
 
-    const {
+  const {
     data: transactions = [],
     error: transactionsError,
     isLoading: transactionsLoading,
@@ -290,9 +289,9 @@ export default function Dashboard() {
       : null
   );
 
-  const { 
-    data: categories, 
-    error: categoriesError, 
+  const {
+    data: categories,
+    error: categoriesError,
     mutate: mutateCategories,
   } = useSWR(
     selectedAccount
@@ -300,81 +299,102 @@ export default function Dashboard() {
       : null
   );
 
-console.log("DASHBOARD selectedAccount:", selectedAccount);
-console.log("DASHBOARD categories:", categories);
-console.log("DASHBOARD categoriesError:", categoriesError);
+  console.log(
+    "DASHBOARD selectedAccount:",
+    selectedAccount
+  );
 
-const hasReachedAccountLimit = accounts?.length >= 1;
+  console.log(
+    "DASHBOARD categories:",
+    categories
+  );
 
-// ====================
-// FLOATING NAVIGATION
-// ====================
+  console.log(
+    "DASHBOARD categoriesError:",
+    categoriesError
+  );
 
+  const hasReachedAccountLimit =
+    accounts?.length >= 1;
 
-function onHome() {
-  setActiveSection("home");
-  setIsProfileOpen(false);
-  setSelectedAccount(null);
-  setIsSidebarCollapsed(true);
-  setShowAccountOnboarding(false);
-}
+  // ====================
+  // FLOATING NAVIGATION
+  // ====================
 
-function onAccounts() {
-  setActiveSection("accounts");
-  setIsProfileOpen(false);
-
-  if (accounts.length === 0) {
-    // No account → open onboarding
+  function onHome() {
+    setActiveSection("home");
+    setIsProfileOpen(false);
     setSelectedAccount(null);
-    setIsSidebarCollapsed(false);
-    setShowAccountOnboarding(true);
-    return;
+    setIsSidebarCollapsed(true);
+    setShowAccountOnboarding(false);
   }
 
-  // Account exists → directly open List View
-  setSelectedAccount(accounts[0]._id);
-  setTransactionView("list");
-  setIsSidebarCollapsed(true);
-  setShowAccountOnboarding(false);
-}
+  function onAccounts() {
+    setActiveSection("accounts");
+    setIsProfileOpen(false);
 
-function onTransactionViewChange(view) {
-  setTransactionView(view);
-  setIsProfileOpen(false);
-}
+    if (accounts.length === 0) {
+      setSelectedAccount(null);
+      setIsSidebarCollapsed(false);
+      setShowAccountOnboarding(true);
+      return;
+    }
+
+    setSelectedAccount(accounts[0]._id);
+    setTransactionView("list");
+    setIsSidebarCollapsed(true);
+    setShowAccountOnboarding(false);
+  }
+
+  function onTransactionViewChange(view) {
+    setTransactionView(view);
+    setIsProfileOpen(false);
+  }
 
   // ====================
   // TRANSACTION DELETE
   // ====================
 
-async function handleDeleteTransaction(transactionId) {
-  try {
-    const response = await fetch(
-      `/api/transactions/${transactionId}`,
-      {
-        method: "DELETE",
+  async function handleDeleteTransaction(transactionId) {
+    try {
+      const response = await fetch(
+        `/api/transactions/${transactionId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(data);
+        showToast(
+          "Failed to delete transaction.",
+          "error"
+        );
+        return;
       }
-    );
 
-    const data = await response.json();
+      await mutate();
 
-    if (!response.ok) {
-      console.error(data);
-      showToast("Failed to delete transaction.", "error");
-      return;
+      showToast(
+        "Transaction deleted successfully.",
+        "success"
+      );
+
+      setShowDeleteDialog(false);
+    } catch (error) {
+      console.error(
+        "DELETE TRANSACTION ERROR:",
+        error
+      );
+
+      showToast(
+        "Failed to delete transaction.",
+        "error"
+      );
     }
-
-    await mutate();
-
-    showToast("Transaction deleted successfully.", "success");
-
-    setShowDeleteDialog(false);
-
-  } catch (error) {
-    console.error("DELETE TRANSACTION ERROR:", error);
-    showToast("Failed to delete transaction.", "error");
   }
-}
 
   // ====================
   // ACCOUNT
@@ -387,382 +407,555 @@ async function handleDeleteTransaction(transactionId) {
     setIsBankFormOpen(false);
     setIsFormOpen(false);
     setIsSidebarCollapsed(true);
+  }
+
+  const handleAddAccount = () => {
+    if (
+      user?.plan === "free" &&
+      accounts.length >= 1
+    ) {
+      setAccountLimitMessage(
+        "Your free plan allows only one bank account."
+      );
+    } else {
+      setAccountLimitMessage("");
     }
 
-const handleAddAccount = () => {
-  if (user?.plan === "free" && accounts.length >= 1) {
-    setAccountLimitMessage(
-      "Your free plan allows only one bank account."
-    );
-  } else {
-    setAccountLimitMessage("");
-  }
-  setIsBankFormOpen(true);
-};
+    setIsBankFormOpen(true);
+  };
 
- async function handleDeleteAccount() {
-  console.log("DELETE ACCOUNT CLICKED");
-  console.log("selectedAccount:", selectedAccount);
-
-  if (!selectedAccount) {
-    console.log("NO SELECTED ACCOUNT");
-    return;
-  }
-
-  setIsDeletingAccount(true);
-
-  try {
-    const response = await fetch(
-      `/api/bankaccounts/${selectedAccount}`,
-      {
-        method: "DELETE",
-      }
+  async function handleDeleteAccount() {
+    console.log("DELETE ACCOUNT CLICKED");
+    console.log(
+      "selectedAccount:",
+      selectedAccount
     );
 
-    const data = await response.json();
-
-    console.log("DELETE RESPONSE:", response.status, data);
-
-    if (!response.ok) {
-      console.error("DELETE FAILED:", data);
+    if (!selectedAccount) {
+      console.log("NO SELECTED ACCOUNT");
       return;
     }
 
-    await mutateAccounts();
+    setIsDeletingAccount(true);
 
-    showToast("Bank Account deleted successfully.", "success");
+    try {
+      const response = await fetch(
+        `/api/bankaccounts/${selectedAccount}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-    setSelectedAccount(null);
-    setIsFormOpen(false);
+      const data = await response.json();
 
-  } catch (error) {
-    console.error("DELETE ERROR:", error);
-  } finally {
-    setIsDeletingAccount(false);
+      console.log(
+        "DELETE RESPONSE:",
+        response.status,
+        data
+      );
+
+      if (!response.ok) {
+        console.error(
+          "DELETE FAILED:",
+          data
+        );
+        return;
+      }
+
+      await mutateAccounts();
+
+      showToast(
+        "Bank Account deleted successfully.",
+        "success"
+      );
+
+      setSelectedAccount(null);
+      setIsFormOpen(false);
+    } catch (error) {
+      console.error(
+        "DELETE ERROR:",
+        error
+      );
+    } finally {
+      setIsDeletingAccount(false);
+    }
   }
-}
+
   // ====================
   // FILTER
   // ====================
 
-// ====================
-// FILTER
-// ====================
+  const matchesFilter = (transaction) => {
+    const transactionDate = new Date(
+      transaction.date
+    );
 
-const matchesFilter = (transaction) => {
-  const transactionDate = new Date(transaction.date);
+    const matchesSearch =
+      transaction.title
+        .toLowerCase()
+        .includes(
+          searchTerm.toLowerCase()
+        );
 
-  const matchesSearch =
-    transaction.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const matchesYear =
+      selectedYear === "all" ||
+      transactionDate
+        .getFullYear()
+        .toString() === selectedYear;
 
-  const matchesYear =
-    selectedYear === "all" ||
-    transactionDate.getFullYear().toString() === selectedYear;
+    const matchesMonth =
+      selectedMonth === "all" ||
+      transactionDate.getMonth() ===
+        Number(selectedMonth);
 
-  const matchesMonth =
-    selectedMonth === "all" ||
-    transactionDate.getMonth() === Number(selectedMonth);
+    const matchesType =
+      selectedType === "all" ||
+      transaction.type === selectedType;
 
-  const matchesType =
-    selectedType === "all" ||
-    transaction.type === selectedType;
-
-  const matchesCategory =
-    selectedCategories.length === 0 ||
-    selectedCategories.includes(transaction.category);
-
-  return (
-    matchesSearch &&
-    matchesYear &&
-    matchesMonth &&
-    matchesType &&
-    matchesCategory
-  );
-};
-
-const filteredTransactions = transactions.filter(matchesFilter);
-
-
-
-    if (transactionsLoading) {
-      return <p>Loading transactions...</p>;
-    }
-
-    if (transactionsError) {
-      return (
-        <div>
-          <p>Could not load transactions.</p>
-
-          <PrimaryButton
-            type="button"
-            onClick={() => mutate()}
-          >
-            Try again
-          </PrimaryButton>
-        </div>
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(
+        transaction.category
       );
-    }
 
+    return (
+      matchesSearch &&
+      matchesYear &&
+      matchesMonth &&
+      matchesType &&
+      matchesCategory
+    );
+  };
 
-  // TOAST MESSAGE 
- function showToast(toastMessage, toastType = "success") {
+  const filteredTransactions =
+    transactions.filter(matchesFilter);
+
+  // ====================
+  // LOADING / ERROR
+  // ====================
+
+  if (transactionsLoading) {
+    return <p>Loading transactions...</p>;
+  }
+
+  if (transactionsError) {
+    return (
+      <div>
+        <p>Could not load transactions.</p>
+
+        <PrimaryButton
+          type="button"
+          onClick={() => mutate()}
+        >
+          Try again
+        </PrimaryButton>
+      </div>
+    );
+  }
+
+  // ====================
+  // TOAST MESSAGE
+  // ====================
+
+  function showToast(
+    toastMessage,
+    toastType = "success"
+  ) {
     setToastMessage(toastMessage);
     setToastType(toastType);
 
     setTimeout(() => {
       setToastMessage("");
     }, 2000);
-}
+  }
 
-// ACCOUNT DATA OBJECT
-  const selectedAccountData = accounts.find(
-  (account) => String(account._id) === String(selectedAccount)
-);
+  // ====================
+  // ACCOUNT DATA OBJECT
+  // ====================
 
- return (
-  <Main>
+  const selectedAccountData =
+    accounts.find(
+      (account) =>
+        String(account._id) ===
+        String(selectedAccount)
+    );
 
-    {toastMessage && (
-      <ToastMessage
-        toastMessage={toastMessage}
-        toastType={toastType}
-        onClose={() => setToastMessage("")}
-      />
-    )}
+  // ====================
+  // RENDER
+  // ====================
 
-    <SidebarWrapper>
-      <BankSideBar
-        accounts={accounts}
-        selectedAccount={selectedAccount}
-        setSelectedAccount={handleAccountSelect}
-        onAddAccount={handleAddAccount}
-        isBankFormOpen={isBankFormOpen}
-        isMenuOpen={isMenuOpen}
-        showAccountOnboarding={showAccountOnboarding}
-        setShowAccountOnboarding={setShowAccountOnboarding}
-        isSidebarCollapsed={isSidebarCollapsed}
-        setIsSidebarCollapsed={setIsSidebarCollapsed}
-      />
-    </SidebarWrapper>
+  return (
+    <Main>
+      {toastMessage && (
+        <ToastMessage
+          toastMessage={toastMessage}
+          toastType={toastType}
+          onClose={() =>
+            setToastMessage("")
+          }
+        />
+      )}
 
-    <MainContent>
-
-      <MenuProfileWrapper>
-        <p>Hallo Juliane</p>
-
-        <MenuProfile
+      <SidebarWrapper>
+        <BankSideBar
+          accounts={accounts}
+          selectedAccount={selectedAccount}
+          setSelectedAccount={
+            handleAccountSelect
+          }
+          onAddAccount={handleAddAccount}
+          isBankFormOpen={isBankFormOpen}
           isMenuOpen={isMenuOpen}
-          onDelete={handleDeleteAccount}
-          isProfileOpen={isProfileOpen}
-          setIsProfileOpen={setIsProfileOpen}
-          setIsMenuOpen={setIsMenuOpen}
-          isLoggedIn={true}
-          listItems={profileItems}
+          showAccountOnboarding={
+            showAccountOnboarding
+          }
+          setShowAccountOnboarding={
+            setShowAccountOnboarding
+          }
+          isSidebarCollapsed={
+            isSidebarCollapsed
+          }
+          setIsSidebarCollapsed={
+            setIsSidebarCollapsed
+          }
         />
-      </MenuProfileWrapper>
+      </SidebarWrapper>
 
-      {/* FLOATING NAVIGATION — ALWAYS VISIBLE */}
+      <MainContent>
+        <MenuProfileWrapper>
+          <p>Hallo Juliane</p>
 
-      <FloatingNavigation
-        activeSection={activeSection}
-        selectedAccount={selectedAccount}
-        onHome={onHome}
-        onAccounts={onAccounts}
-        transactionView={transactionView}
-        onTransactionViewChange={onTransactionViewChange}
-        setIsSidebarCollapsed={setIsSidebarCollapsed}
-      />
+          <MenuProfile
+            isMenuOpen={isMenuOpen}
+            onDelete={handleDeleteAccount}
+            isProfileOpen={isProfileOpen}
+            setIsProfileOpen={
+              setIsProfileOpen
+            }
+            setIsMenuOpen={setIsMenuOpen}
+            isLoggedIn={true}
+            listItems={profileItems}
+          />
+        </MenuProfileWrapper>
 
-      {/* PROFILE OR DASHBOARD CONTENT */}
+        {/* FLOATING NAVIGATION — ALWAYS VISIBLE */}
 
-      {isProfileOpen ? (
-
-        <Profile
-          user={user}
-          userLoading={userLoading}
-          userError={userError}
-          onClose={() => setIsProfileOpen(false)}
+        <FloatingNavigation
+          activeSection={activeSection}
+          selectedAccount={selectedAccount}
+          onHome={onHome}
+          onAccounts={onAccounts}
+          transactionView={transactionView}
+          onTransactionViewChange={
+            onTransactionViewChange
+          }
+          setIsSidebarCollapsed={
+            setIsSidebarCollapsed
+          }
         />
 
-      ) : (
+        {/* PROFILE OR DASHBOARD CONTENT */}
 
-        <>
-          {/* BANK ACCOUNT SPINNER */}
+        {isProfileOpen ? (
+          <Profile
+            user={user}
+            userLoading={userLoading}
+            userError={userError}
+            onClose={() =>
+              setIsProfileOpen(false)
+            }
+          />
+        ) : (
+          <>
+            {/* BANK ACCOUNT SPINNER */}
 
-          {isAddingAccount || isDeletingAccount ? (
-            <div>
-              <p>
-                {isAddingAccount
-                  ? "Adding bank account..."
-                  : "Deleting bank account..."}
-              </p>
+            {isAddingAccount ||
+            isDeletingAccount ? (
+              <div>
+                <p>
+                  {isAddingAccount
+                    ? "Adding bank account..."
+                    : "Deleting bank account..."}
+                </p>
 
-              <Spinner />
-            </div>
+                <Spinner />
+              </div>
+            ) : selectedAccount ? (
+              <>
+                <Title>
+                  <span>
+                    {selectedAccountData?.bank}
+                  </span>
 
-          ) : selectedAccount ? (
+                  <span>
+                    {selectedAccountData?.name}
+                  </span>
+                </Title>
 
-            <>
-              <Title>
-                <span>{selectedAccountData?.bank}</span>
-                <span>{selectedAccountData?.name}</span>
-              </Title>
+                {/* ====================
+                    SWITCHING VIEWS
+                    ==================== */}
 
-              {/*SWITCHING VIEWS*/}
-               {transactionView === "chart" && (
+                {transactionView === "chart" ? (
                   <>
+                    {/* CHART VIEW */}
+
                     <TransactionPeriod
-                      selectedDate={selectedDate}
-                      transactions={transactions}
+                      selectedDate={
+                        selectedDate
+                      }
+                      transactions={
+                        transactions
+                      }
                     />
-                       <AccountBalance
-                            transactions={filteredTransactions}
-                          />
 
-                      {/* Previous-year charts */}
-                        {chartSections.map((section) => (
-                          <TransactionPeriod
-                            key={section}
-                            selectedDate={
-                              new Date(
-                                selectedDate.getFullYear() - 1,
-                                selectedDate.getMonth(),
-                                selectedDate.getDate()
-                              )
-                            }
-                            transactions={transactions}
-                          />
-                        ))}
+                    <AccountBalance
+                      transactions={
+                        filteredTransactions
+                      }
+                    />
 
-                      <AddChartButton
-                        type="button"
-                        onClick={() =>
-                          setChartSections((current) => [
+                    {/* PREVIOUS-YEAR CHARTS */}
+
+                    {chartSections.map(
+                      (section) => (
+                        <TransactionPeriod
+                          key={section}
+                          selectedDate={
+                            new Date(
+                              selectedDate.getFullYear() -
+                                1,
+                              selectedDate.getMonth(),
+                              selectedDate.getDate()
+                            )
+                          }
+                          transactions={
+                            transactions
+                          }
+                        />
+                      )
+                    )}
+
+                    <AddChartButton
+                      type="button"
+                      onClick={() =>
+                        setChartSections(
+                          (current) => [
                             ...current,
                             current.length,
-                          ])
+                          ]
+                        )
+                      }
+                    >
+                      <Plus size={18} />
+                      Compare with last year
+                    </AddChartButton>
+                  </>
+                ) : (
+                  <>
+                    {/* LIST VIEW */}
+
+                    <AccountBalance
+                      transactions={
+                        filteredTransactions
+                      }
+                    />
+
+                    <TransactionSearch
+                      searchTerm={searchTerm}
+                      setSearchTerm={
+                        setSearchTerm
+                      }
+                      hasSearch={
+                        searchTerm !== ""
+                      }
+                    />
+
+                    <TransactionFilter
+                      transactions={
+                        transactions
+                      }
+                      categories={
+                        categories
+                      }
+                      accounts={accounts}
+                      selectedAccountData={
+                        selectedAccountData
+                      }
+                      filteredTransactions={
+                        filteredTransactions
+                      }
+                      selectedYear={
+                        selectedYear
+                      }
+                      setSelectedYear={
+                        setSelectedYear
+                      }
+                      selectedMonth={
+                        selectedMonth
+                      }
+                      setSelectedMonth={
+                        setSelectedMonth
+                      }
+                      selectedType={
+                        selectedType
+                      }
+                      setSelectedType={
+                        setSelectedType
+                      }
+                      selectedCategories={
+                        selectedCategories
+                      }
+                      setSelectedCategories={
+                        setSelectedCategories
+                      }
+                      setPdfLoading={
+                        setPdfLoading
+                      }
+                      mutateCategories={
+                        mutateCategories
+                      }
+                    />
+
+                    <AddButtonWrapper>
+                      <AddButton
+                        type="button"
+                        onClick={() =>
+                          setIsFormOpen(
+                            (isOpen) =>
+                              !isOpen
+                          )
                         }
                       >
                         <Plus size={18} />
-                        Compare with last year
-                      </AddChartButton>
+
+                        <span>
+                          {isFormOpen
+                            ? "Close Transaction Form"
+                            : "Add New Transaction"}
+                        </span>
+
+                        <Plus size={18} />
+                      </AddButton>
+                    </AddButtonWrapper>
+
+                    {isFormOpen && (
+                      <TransactionForm
+                        categories={
+                          categories
+                        }
+                        selectedAccount={
+                          selectedAccount
+                        }
+                        onCancel={() =>
+                          setIsFormOpen(false)
+                        }
+                        showToast={
+                          showToast
+                        }
+                        mutate={mutate}
+                      />
+                    )}
+
+                    <TransactionList
+                      transactions={
+                        filteredTransactions
+                      }
+                      categories={
+                        categories
+                      }
+                      selectedAccount={
+                        selectedAccount
+                      }
+                      onDeleteAccount={
+                        handleDeleteAccount
+                      }
+                      mutate={mutate}
+                      showToast={
+                        showToast
+                      }
+                      pdfLoading={
+                        pdfLoading
+                      }
+                      onRequestDelete={(
+                        transaction
+                      ) => {
+                        setSelectedTransaction(
+                          transaction
+                        );
+
+                        setShowDeleteDialog(
+                          true
+                        );
+                      }}
+                    />
                   </>
                 )}
-              {/*SWITCHING VIEWS add more here LATER... */}
-              <AccountBalance
-                transactions={filteredTransactions}
-              />
+              </>
+            ) : (
+              <>
+                <Welcome variant="dashboard" />
 
-              <TransactionSearch
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                hasSearch={searchTerm !== ""}
-              />
+                <CardWrapper>
+                  <PricingPlanCard
+                    variant="current"
+                  />
 
-              <TransactionFilter
-                transactions={transactions}
-                categories={categories}
-                accounts={accounts}
-                selectedAccountData={selectedAccountData}
-                filteredTransactions={filteredTransactions}
-                selectedYear={selectedYear}
-                setSelectedYear={setSelectedYear}
-                selectedMonth={selectedMonth}
-                setSelectedMonth={setSelectedMonth}
-                selectedType={selectedType}
-                setSelectedType={setSelectedType}
-                selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories}
-                setPdfLoading={setPdfLoading}
-                mutateCategories={mutateCategories}
-              />
+                  <PricingPlanCard
+                    variant="upgrade"
+                  />
 
-               <AddButtonWrapper>
-                <AddButton
-                  type="button"
-                  onClick={() => setIsFormOpen((isOpen) => !isOpen)}
-                >
-                  <Plus size={18} />
+                  <PricingPlanCard
+                    variant="referral"
+                  />
+                </CardWrapper>
+              </>
+            )}
+          </>
+        )}
+      </MainContent>
 
-                  <span>
-                    {isFormOpen ? "Close Transaction Form" : "Add New Transaction"}
-                  </span>
+      {/* BANK ACCOUNT FORM */}
 
-                  <Plus size={18} />
-                </AddButton>
-              </AddButtonWrapper>
-
-              {isFormOpen && (
-                <TransactionForm
-                  categories={categories}
-                  selectedAccount={selectedAccount}
-                  onCancel={() => setIsFormOpen(false)}
-                  showToast={showToast}
-                  mutate={mutate}
-                />
-              )}
-
-              <TransactionList
-                transactions={filteredTransactions}
-                categories={categories}
-                selectedAccount={selectedAccount}
-                onDeleteAccount={handleDeleteAccount}
-                mutate={mutate}
-                showToast={showToast}
-                pdfLoading={pdfLoading}
-                onRequestDelete={(transaction) => {
-                  setSelectedTransaction(transaction);
-                  setShowDeleteDialog(true);
-                }}
-              />
-            </>
-
-          ) : (
-
-            <>
-              <Welcome variant="dashboard" />
-
-              <CardWrapper>
-                <PricingPlanCard variant="current" />
-                <PricingPlanCard variant="upgrade" />
-                <PricingPlanCard variant="referral" />
-              </CardWrapper>
-            </>
-
-          )}
-        </>
+      {isBankFormOpen && (
+        <BankAccountForm
+          onCancel={() =>
+            setIsBankFormOpen(false)
+          }
+          mutate={mutateAccounts}
+          isAddingAccount={
+            isAddingAccount
+          }
+          setIsAddingAccount={
+            setIsAddingAccount
+          }
+          accountLimitMessage={
+            accountLimitMessage
+          }
+        />
       )}
 
-    </MainContent>
+      {/* DELETE TRANSACTION DIALOG */}
 
-    {/* BANK ACCOUNT FORM */}
-
-    {isBankFormOpen && (
-      <BankAccountForm
-        onCancel={() => setIsBankFormOpen(false)}
-        mutate={mutateAccounts}
-        isAddingAccount={isAddingAccount}
-        setIsAddingAccount={setIsAddingAccount}
-        accountLimitMessage={accountLimitMessage}
-      />
-    )}
-
-    {/* DELETE TRANSACTION DIALOG */}
-
-    {showDeleteDialog && selectedTransaction && (
-      <DialogPopup
-        transaction={selectedTransaction}
-        onDelete={() =>
-          handleDeleteTransaction(selectedTransaction._id)
-        }
-        onCancel={() => {
-          setShowDeleteDialog(false);
-          setSelectedTransaction(null);
-        }}
-      />
-    )}
-
-  </Main>
-);}
+      {showDeleteDialog &&
+        selectedTransaction && (
+          <DialogPopup
+            transaction={
+              selectedTransaction
+            }
+            onDelete={() =>
+              handleDeleteTransaction(
+                selectedTransaction._id
+              )
+            }
+            onCancel={() => {
+              setShowDeleteDialog(false);
+              setSelectedTransaction(
+                null
+              );
+            }}
+          />
+        )}
+    </Main>
+  );
+}
