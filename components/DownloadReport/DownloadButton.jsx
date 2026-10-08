@@ -9,13 +9,16 @@ const PDFDownloadButton = styled.button`
   border: 1px solid grey;
   background-color: black;
   color: #fff;
-  padding: 0.25rem 1.25rem;
+  padding: 0rem 0.5rem;
   cursor: pointer;
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  @media (min-width: 740px) {
+    padding: 0.25rem 1.25rem;}
 `;
 
 const DownloadIcon = styled.span`

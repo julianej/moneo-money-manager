@@ -19,14 +19,28 @@ const FilterWrapper = styled.div`
 const FilterRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: nowrap;
+  gap: 0rem;
+  flex-wrap: wrap;
+
+
+  @media (min-width: 738px) {
+    gap: 1rem;
+      flex-wrap: nowrap;
+  }
 `;
+
 const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  width: 100%;
+  order: ${({ $order }) => $order};
+
+  @media (min-width: 738px) {
+    order: ${({ $desktopOrder }) => $desktopOrder};
+  }
 `;
+
 
 const AddCategoryButton = styled.button`
   display: flex;
@@ -81,22 +95,6 @@ const AddCategoryBox = styled.div`
   border: 2px solid #000;
 `;
 
-const AddCategoryInput = styled.input`
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin: 1rem 0;
-
-  border: 1px solid #000;
-  border-radius: 6px;
-
-  font: inherit;
-`;
-
-const AddCategoryActions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-`;
 
 const FilterDropdownWrapper = styled.div`
   position: relative;
@@ -111,7 +109,7 @@ const FilterDropdownButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0rem;
 
   width: 100%;
   padding: 0.75rem 1rem;
@@ -127,6 +125,11 @@ const FilterDropdownButton = styled.button`
 
   &:hover {
     background: #f5f5f5;
+  }
+    @media (min-width: 740px) {
+      padding: 0.75rem 1rem;
+        gap: 1rem;
+
   }
 `;
 
@@ -169,7 +172,34 @@ const FilterOption = styled.button`
   }
 `;
 
+const TypeToggle = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 8px;
+  overflow: hidden;
 
+  @media (min-width: 740px) {
+    width: 160px;
+  }
+`;
+
+const TypeOption = styled.button`
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+
+  border: ${({ $active }) => ($active ? "1px solid #000" : "1px solid #fff")};
+  background: ${({ $active }) => ($active ? "#000" : "#fff")};
+  color: ${({ $active }) => ($active ? "#fff" : "#000")};
+
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? "#000" : "#f2f2f2")};
+  }
+`;
 
 export default function TransactionFilter({
   transactions = [],
@@ -188,7 +218,7 @@ export default function TransactionFilter({
   setSelectedCategories,
 }) {
 
-  const [openFilter, setOpenFilter] = useState(null);
+const [openFilter, setOpenFilter] = useState(null);
 const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
 
@@ -242,19 +272,120 @@ const selectedCategory = categories?.find(
       </DownloadButton>
 
       <FilterRow>
+
+    {/* ==================== TYPE ==================== */}
+       <FilterGroup $order={1}>
+          <TypeToggle>
+              <TypeOption
+                type="button"
+                $active={
+                  selectedType === "income" ||
+                  selectedType === "all"
+                }
+                onClick={() => {
+                  if (selectedType === "all") {
+                    setSelectedType("income");
+                  } else if (selectedType === "income") {
+                    setSelectedType("all");
+                  } else if (selectedType === "expense") {
+                    setSelectedType("all");
+                  } else {
+                    setSelectedType("expense");
+                  }
+                }}
+              >
+                Income
+              </TypeOption>
+
+              <TypeOption
+                type="button"
+                $active={
+                  selectedType === "expense" ||
+                  selectedType === "all"
+                }
+                onClick={() => {
+                  if (selectedType === "all") {
+                    setSelectedType("expense");
+                  } else if (selectedType === "expense") {
+                    setSelectedType("all");
+                  } else if (selectedType === "income") {
+                    setSelectedType("all");
+                  } else {
+                    setSelectedType("income");
+                  }
+                }}
+              >
+              Expense
+              </TypeOption>
+            </TypeToggle>
+         {/* <FilterDropdownWrapper>
+              <FilterDropdownButton
+                type="button"
+                onClick={() =>
+                  setOpenFilter(
+                    openFilter === "type" ? null : "type"
+                  )
+                }
+              >
+                {selectedType === "all"
+                  ? "All Types"
+                  : selectedType === "income"
+                  ? "Income"
+                  : "Expense"}
+
+                <ChevronDown size={16} />
+              </FilterDropdownButton>
+
+              {openFilter === "type" && (
+                <FilterDropdownMenu>
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedType("all");
+                      setOpenFilter(null);
+                    }}
+                  >
+                    All Types
+                  </FilterOption>
+
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedType("income");
+                      setOpenFilter(null);
+                    }}
+                  >
+                    Income
+                  </FilterOption>
+
+                  <FilterOption
+                    type="button"
+                    onClick={() => {
+                      setSelectedType("expense");
+                      setOpenFilter(null);
+                    }}
+                  >
+                    Expense
+                  </FilterOption>
+                </FilterDropdownMenu>
+              )}
+            </FilterDropdownWrapper> */}
+        </FilterGroup>
+
+
         {/* ==================== YEAR ==================== */}
-        <FilterGroup>
+       <FilterGroup $order={2}>
           <FilterDropdownWrapper>
-  <FilterDropdownButton
-    type="button"
-    onClick={() =>
-      setOpenFilter(
-        openFilter === "year" ? null : "year"
-      )
-    }
-  >
-    {selectedYear === "all" ? "All Years" : selectedYear}
-    <ChevronDown size={16} />
+            <FilterDropdownButton
+              type="button"
+              onClick={() =>
+                setOpenFilter(
+                  openFilter === "year" ? null : "year"
+                )
+              }
+            >
+              {selectedYear === "all" ? "All Years" : selectedYear}
+              <ChevronDown size={16} />
           </FilterDropdownButton>
 
           {openFilter === "year" && (
@@ -287,136 +418,81 @@ const selectedCategory = categories?.find(
         </FilterGroup>
 
         {/* ==================== MONTH ==================== */}
-        <FilterGroup>
+       <FilterGroup $order={3}>
           <FilterDropdownWrapper>
-  <FilterDropdownButton
-    type="button"
-    onClick={() =>
-      setOpenFilter(
-        openFilter === "month" ? null : "month"
-      )
-    }
-  >
-    {selectedMonth === "all"
-      ? "All Months"
-      : [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ][Number(selectedMonth)]}
+            <FilterDropdownButton
+              type="button"
+              onClick={() =>
+                setOpenFilter(
+                  openFilter === "month" ? null : "month"
+                )
+              }
+            >
+              {selectedMonth === "all"
+                ? "All Months"
+                : [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December",
+                  ][Number(selectedMonth)]}
 
-    <ChevronDown size={16} />
-  </FilterDropdownButton>
+              <ChevronDown size={16} />
+            </FilterDropdownButton>
 
-  {openFilter === "month" && (
-    <FilterDropdownMenu>
-      <FilterOption
-        type="button"
-        onClick={() => {
-          setSelectedMonth("all");
-          setOpenFilter(null);
-        }}
-      >
-        All Months
-      </FilterOption>
+            {openFilter === "month" && (
+              <FilterDropdownMenu>
+                <FilterOption
+                  type="button"
+                  onClick={() => {
+                    setSelectedMonth("all");
+                    setOpenFilter(null);
+                  }}
+                >
+                  All Months
+                </FilterOption>
 
-      {[
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ].map((month, index) => (
-        <FilterOption
-          key={month}
-          type="button"
-          onClick={() => {
-            setSelectedMonth(String(index));
-            setOpenFilter(null);
-          }}
-        >
-          {month}
-        </FilterOption>
-      ))}
-    </FilterDropdownMenu>
-  )}
-</FilterDropdownWrapper>
+                {[
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ].map((month, index) => (
+                  <FilterOption
+                    key={month}
+                    type="button"
+                    onClick={() => {
+                      setSelectedMonth(String(index));
+                      setOpenFilter(null);
+                    }}
+                  >
+                    {month}
+                  </FilterOption>
+                ))}
+              </FilterDropdownMenu>
+            )}
+          </FilterDropdownWrapper>
         </FilterGroup>
 
-        {/* ==================== TYPE ==================== */}
-        <FilterGroup>
-         <FilterDropdownWrapper>
-  <FilterDropdownButton
-    type="button"
-    onClick={() =>
-      setOpenFilter(
-        openFilter === "type" ? null : "type"
-      )
-    }
-  >
-    {selectedType === "all"
-      ? "All Types"
-      : selectedType === "income"
-      ? "Income"
-      : "Expense"}
-
-    <ChevronDown size={16} />
-  </FilterDropdownButton>
-
-  {openFilter === "type" && (
-    <FilterDropdownMenu>
-      <FilterOption
-        type="button"
-        onClick={() => {
-          setSelectedType("all");
-          setOpenFilter(null);
-        }}
-      >
-        All Types
-      </FilterOption>
-
-      <FilterOption
-        type="button"
-        onClick={() => {
-          setSelectedType("income");
-          setOpenFilter(null);
-        }}
-      >
-        Income
-      </FilterOption>
-
-      <FilterOption
-        type="button"
-        onClick={() => {
-          setSelectedType("expense");
-          setOpenFilter(null);
-        }}
-      >
-        Expense
-      </FilterOption>
-    </FilterDropdownMenu>
-  )}
-</FilterDropdownWrapper>
-        </FilterGroup>
-
+        
       {/* ==================== ROW 2: CATEGORY ==================== */}
-        <FilterGroup>
+        <FilterGroup $order={4}>
          <FilterDropdownWrapper>
           <FilterDropdownButton
               type="button"

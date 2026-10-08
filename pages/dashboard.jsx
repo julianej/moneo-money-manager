@@ -188,8 +188,11 @@ export default function Dashboard() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [selectedYear, setSelectedYear] = useState("all");
-  const [selectedMonth, setSelectedMonth] = useState("all");
+  const today = new Date();
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); 
+  // const [selectedYear, setSelectedYear] = useState("all");
+  // const [selectedMonth, setSelectedMonth] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -412,7 +415,6 @@ const handleAddAccount = () => {
   // FILTER
   // ====================
 
-
     const matchesFilter = (transaction) => {
     const transactionDate = new Date(transaction.date);
 
@@ -446,8 +448,17 @@ const handleAddAccount = () => {
     );
   };
 
-  const filteredTransactions =
-      transactions?.filter(matchesFilter) ?? [];
+const filteredTransactions = transactions.filter((transaction) => {
+  const date = new Date(transaction.date);
+
+  const transactionYear = date.getFullYear();
+  const transactionMonth = date.getMonth() + 1;
+
+  return (
+    transactionYear === selectedYear &&
+    transactionMonth === selectedMonth
+  );
+});
 
 
     if (transactionsLoading) {
