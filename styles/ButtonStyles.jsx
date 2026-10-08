@@ -136,7 +136,6 @@ export const DeleteAccountButton = styled.button`
     cursor: pointer;
     text-align: left;
     display: flex;
-    margin: 4rem auto 7rem; 
   cursor: pointer;
   text-align: left;
 

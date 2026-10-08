@@ -8,8 +8,8 @@ import {CloseButton, DeleteAccountButton} from "@/styles/ButtonStyles";
 const ProfileWrapper = styled.div`
   padding: 24px;
   /* background: #000; */
-  width: 68%;
-  position: fixed;
+  /* width: 68%; */
+  /* position: fixed; */
   border: 0.2rem solid black;
   border-radius: 2rem;
 `;
@@ -60,7 +60,8 @@ const Value = styled.span`
 
 const ButtonWrapper = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 4px;
+  margin: 4rem auto 7rem;
 `;
 
 
@@ -140,12 +141,12 @@ export default function Profile({
           </Value>
         </ProfileItem>
 
-          <ButtonWrapper>
+        <ButtonWrapper>
           <SubmitButton type="button">
             Save Changes
           </SubmitButton>
 
-        <DeleteAccountButton
+         <DeleteAccountButton
              type="button"
              onClick={() => setShowDeleteProfilePopup(true)}
              aria-label="Delete bank account"
@@ -154,7 +155,7 @@ export default function Profile({
              <Trash2 size={18} />
        
              <span>
-               Delete the full Account Profile Data
+               Delete Account Profile Data
              </span>
            </DeleteAccountButton>
       </ButtonWrapper>
