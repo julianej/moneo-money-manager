@@ -10,6 +10,8 @@ import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
 import Welcome from "@/components/Welcome/Welcome";
+import Profile from "@/components/MenuProfile/MenuProfileSettings";
+
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
 import BankAccountForm from "@/components/BankSideBar/BankAccountForm";
 import PricingPlanCard from "@/components/PricingPlanCard/PricingPlanCard";
@@ -168,32 +170,13 @@ const CardWrapper = styled.div`
 export default function Dashboard() {
 
     const router = useRouter();
-    const profileItems = [
-        {
-        label: "Profile Settings",
-        icon: <User size={20} />,
-        onClick: () => {
-            router.push("/profile.jsx");
-        },
-        // onClick: () => {
-        //     console.log("Profile Settings");
-        // },
-        },
-        {
-        label: "Log Out",
-        icon: <LogOut size={20} />,
-        onClick: () => {
-            router.push("/");
-        },
-        },
-    ];
-
 
   // ====================
   // STATE
   // ====================
   const [transactionView, setTransactionView] = useState("list");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // DASHBOARD DEFAULT
   const [activeSection, setActiveSection] = useState("home"); 
@@ -227,6 +210,28 @@ export default function Dashboard() {
   const [pdfLoading, setPdfLoading] = useState(false);
 
 
+      const profileItems = [
+        {
+          label: "Profile Settings",
+          icon: <User size={20} />,
+          onClick: () => {
+            setIsProfileOpen(true);
+            setIsMenuOpen(false);
+          },
+        // onClick: () => {
+        //     console.log("Profile Settings");
+        // },
+        },
+        {
+        label: "Log Out",
+        icon: <LogOut size={20} />,
+        onClick: () => {
+            router.push("/");
+        },
+        },
+    ];
+
+
   // ====================
   // DATA
   // ====================
@@ -236,13 +241,27 @@ export default function Dashboard() {
     mutate: mutateAccounts,
   } = useSWR("/api/bankaccounts");
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const {
+    data: user,
+    error: userError,
+    isLoading: userLoading,
+  } = useSWR("/api/user");
+
+    const {
+    data: transactions = [],
+    error: transactionsError,
+    isLoading: transactionsLoading,
+    mutate,
+  } = useSWR(
     selectedAccount
       ? `/api/transactions?account=${selectedAccount}`
       : null
   );
 
-  const { data: categories, error: categoriesError, } = useSWR(
+  const { 
+    data: categories, 
+    error: categoriesError, 
+  } = useSWR(
     selectedAccount
       ? `/api/categories?account=${selectedAccount}`
       : null
@@ -261,6 +280,7 @@ const hasReachedAccountLimit = accounts?.length >= 1;
 
 function onHome() {
   setActiveSection("home");
+  setIsProfileOpen(false);
   setSelectedAccount(null);
   setIsSidebarCollapsed(true);
   setShowAccountOnboarding(false);
@@ -268,6 +288,7 @@ function onHome() {
 
 function onAccounts() {
   setActiveSection("accounts");
+  setIsProfileOpen(false);
 
   if (accounts.length === 0) {
     // No account → open onboarding
@@ -286,6 +307,7 @@ function onAccounts() {
 
 function onTransactionViewChange(view) {
   setTransactionView(view);
+  setIsProfileOpen(false);
 }
 
   // ====================
@@ -334,18 +356,16 @@ async function handleDeleteTransaction(transactionId) {
     setIsSidebarCollapsed(true);
     }
 
-function handleAddAccount() {
-  setAccountLimitMessage("");
-
-  if (accounts.length >= 1) {
+const handleAddAccount = () => {
+  if (user?.plan === "free" && accounts.length >= 1) {
     setAccountLimitMessage(
-      "Free plan allows only 1 bank account."
+      "Your free plan allows only one bank account."
     );
-    return;
+  } else {
+    setAccountLimitMessage("");
   }
-
-  setIsFormOpen(true);
-}
+  setIsBankFormOpen(true);
+};
 
  async function handleDeleteAccount() {
   console.log("DELETE ACCOUNT CLICKED");
@@ -427,27 +447,28 @@ function handleAddAccount() {
   };
 
   const filteredTransactions =
-    data?.filter(matchesFilter) ?? [];
+      transactions?.filter(matchesFilter) ?? [];
 
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+    if (transactionsLoading) {
+      return <p>Loading transactions...</p>;
+    }
 
-  if (error) {
-    return (
-      <div>
-        <p>Failed to load transactions.</p>
+    if (transactionsError) {
+      return (
+        <div>
+          <p>Could not load transactions.</p>
 
-        <PrimaryButton
-          type="button"
-          onClick={() => mutate()}
-        >
-          Try again
-        </PrimaryButton>
-      </div>
-    );
-  }
+          <PrimaryButton
+            type="button"
+            onClick={() => mutate()}
+          >
+            Try again
+          </PrimaryButton>
+        </div>
+      );
+    }
+
 
   // TOAST MESSAGE 
  function showToast(toastMessage, toastType = "success") {
@@ -464,36 +485,51 @@ function handleAddAccount() {
   (account) => String(account._id) === String(selectedAccount)
 );
 
-  return (
-    <Main>
+ return (
+  <Main>
 
-      {toastMessage && (
-       <ToastMessage
-          toastMessage={toastMessage}
-          toastType={toastType}
-          onClose={() => setToastMessage("")}
+    {toastMessage && (
+      <ToastMessage
+        toastMessage={toastMessage}
+        toastType={toastType}
+        onClose={() => setToastMessage("")}
+      />
+    )}
+
+    <SidebarWrapper>
+      <BankSideBar
+        accounts={accounts}
+        selectedAccount={selectedAccount}
+        setSelectedAccount={handleAccountSelect}
+        onAddAccount={handleAddAccount}
+        isBankFormOpen={isBankFormOpen}
+        isMenuOpen={isMenuOpen}
+        showAccountOnboarding={showAccountOnboarding}
+        setShowAccountOnboarding={setShowAccountOnboarding}
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
+      />
+    </SidebarWrapper>
+
+    <MainContent>
+
+      <MenuProfileWrapper>
+        <p>Hallo Juliane</p>
+
+        <MenuProfile
+          isMenuOpen={isMenuOpen}
+          onDelete={handleDeleteAccount}
+          isProfileOpen={isProfileOpen}
+          setIsProfileOpen={setIsProfileOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          isLoggedIn={true}
+          listItems={profileItems}
         />
-      )}
+      </MenuProfileWrapper>
 
-      <SidebarWrapper>
-        <BankSideBar
-            accounts={accounts}
-            selectedAccount={selectedAccount}
-            setSelectedAccount={handleAccountSelect}
-            onAddAccount={handleAddAccount}
-            // BANK FORM OPEN STATE
-            isBankFormOpen={isBankFormOpen}
-            isMenuOpen={isMenuOpen}
-            showAccountOnboarding={showAccountOnboarding}
-            setShowAccountOnboarding={setShowAccountOnboarding}
-            isSidebarCollapsed={isSidebarCollapsed}
-            setIsSidebarCollapsed={setIsSidebarCollapsed}
-          />
-      </SidebarWrapper>
+      {/* FLOATING NAVIGATION — ALWAYS VISIBLE */}
 
-
-   <MainContent>
-    <FloatingNavigation
+      <FloatingNavigation
         activeSection={activeSection}
         selectedAccount={selectedAccount}
         onHome={onHome}
@@ -503,146 +539,160 @@ function handleAddAccount() {
         setIsSidebarCollapsed={setIsSidebarCollapsed}
       />
 
-      <MenuProfileWrapper>
-        <p>Hallo Juliane</p>
-         <MenuProfile
-            isMenuOpen={isMenuOpen}
-            setIsMenuOpen={setIsMenuOpen}
-            isLoggedIn={true}
-            listItems={profileItems}
-            />
-        </MenuProfileWrapper>
+      {/* PROFILE OR DASHBOARD CONTENT */}
 
-      {/* BANK ACCOUNT SPINNER */}
-      {isAddingAccount || isDeletingAccount ? (
-          <div>
-            <p>
-              {isAddingAccount
-                ? "Adding bank account..."
-                : "Deleting bank account..."}
-            </p>
+      {isProfileOpen ? (
 
-            <Spinner />
-          </div>
-        ) : 
-      
-    selectedAccount ? (
-    <>
-      <Title>
-          <span> {selectedAccountData?.bank} </span>
-         <span> {selectedAccountData?.name}</span>
-      </Title>
-
-
-      {transactionView === "chart" && (
-          <TransactionPeriod
-          selectedDate={selectedDate}
-          transactions={data ?? []}
-        />
-       )} 
-
-      <AccountBalance
-        transactions={filteredTransactions}
-      />
-      <TransactionSearch
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        hasSearch={searchTerm !== ""} // SET RESET BUTTON
-      />
-
-      <TransactionFilter
-          transactions={data ?? []}
-          categories={categories}
-          accounts={accounts}
-          // selectedAccount={selectedAccount}
-            selectedAccountData={selectedAccountData}
-
-          filteredTransactions={filteredTransactions}
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-          selectedMonth={selectedMonth}
-          setSelectedMonth={setSelectedMonth}
-          selectedType={selectedType}
-          setSelectedType={setSelectedType}
-          selectedCategories={selectedCategories}
-          setSelectedCategories={setSelectedCategories}
-          setPdfLoading={setPdfLoading}
-
+        <Profile
+          user={user}
+          userLoading={userLoading}
+          userError={userError}
+          onClose={() => setIsProfileOpen(false)}
         />
 
-      <AddButton
-        onClick={() => setIsFormOpen((isOpen) => !isOpen)}
-      >
-        {isFormOpen ? (
-          <>
-            Close Transaction Form
-            <X />
-          </>
-        ) : (
-          <>
-            Add Transaction
-            <Plus />
-          </>
-        )}
-      </AddButton>
+      ) : (
 
-      {isFormOpen && (
-        <TransactionForm
-          categories={categories}
-          selectedAccount={selectedAccount}
-          onCancel={() => setIsFormOpen(false)}
-          showToast={showToast}
-          mutate={mutate}
-        />
+        <>
+          {/* BANK ACCOUNT SPINNER */}
+
+          {isAddingAccount || isDeletingAccount ? (
+            <div>
+              <p>
+                {isAddingAccount
+                  ? "Adding bank account..."
+                  : "Deleting bank account..."}
+              </p>
+
+              <Spinner />
+            </div>
+
+          ) : selectedAccount ? (
+
+            <>
+              <Title>
+                <span>{selectedAccountData?.bank}</span>
+                <span>{selectedAccountData?.name}</span>
+              </Title>
+
+              {transactionView === "chart" && (
+                <TransactionPeriod
+                  selectedDate={selectedDate}
+                  transactions={transactions}
+                />
+              )}
+
+              <AccountBalance
+                transactions={filteredTransactions}
+              />
+
+              <TransactionSearch
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                hasSearch={searchTerm !== ""}
+              />
+
+              <TransactionFilter
+                transactions={transactions}
+                categories={categories}
+                accounts={accounts}
+                selectedAccountData={selectedAccountData}
+                filteredTransactions={filteredTransactions}
+                selectedYear={selectedYear}
+                setSelectedYear={setSelectedYear}
+                selectedMonth={selectedMonth}
+                setSelectedMonth={setSelectedMonth}
+                selectedType={selectedType}
+                setSelectedType={setSelectedType}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+                setPdfLoading={setPdfLoading}
+              />
+
+              <AddButton
+                onClick={() => setIsFormOpen((isOpen) => !isOpen)}
+              >
+                {isFormOpen ? (
+                  <>
+                    Close Transaction Form
+                    <X />
+                  </>
+                ) : (
+                  <>
+                    Add Transaction
+                    <Plus />
+                  </>
+                )}
+              </AddButton>
+
+              {isFormOpen && (
+                <TransactionForm
+                  categories={categories}
+                  selectedAccount={selectedAccount}
+                  onCancel={() => setIsFormOpen(false)}
+                  showToast={showToast}
+                  mutate={mutate}
+                />
+              )}
+
+              <TransactionList
+                transactions={filteredTransactions}
+                categories={categories}
+                selectedAccount={selectedAccount}
+                onDeleteAccount={handleDeleteAccount}
+                mutate={mutate}
+                showToast={showToast}
+                pdfLoading={pdfLoading}
+                onRequestDelete={(transaction) => {
+                  setSelectedTransaction(transaction);
+                  setShowDeleteDialog(true);
+                }}
+              />
+            </>
+
+          ) : (
+
+            <>
+              <Welcome variant="dashboard" />
+
+              <CardWrapper>
+                <PricingPlanCard variant="current" />
+                <PricingPlanCard variant="upgrade" />
+                <PricingPlanCard variant="referral" />
+              </CardWrapper>
+            </>
+
+          )}
+        </>
       )}
 
-      <TransactionList
-        transactions={filteredTransactions}
-        categories={categories}
-        selectedAccount={selectedAccount}
-        onDeleteAccount={handleDeleteAccount}
-        mutate={mutate}
-        showToast={showToast}
-        pdfLoading={pdfLoading}
-        onRequestDelete={(transaction) => {
-          setSelectedTransaction(transaction);
-          setShowDeleteDialog(true);
+    </MainContent>
+
+    {/* BANK ACCOUNT FORM */}
+
+    {isBankFormOpen && (
+      <BankAccountForm
+        onCancel={() => setIsBankFormOpen(false)}
+        mutate={mutateAccounts}
+        isAddingAccount={isAddingAccount}
+        setIsAddingAccount={setIsAddingAccount}
+        accountLimitMessage={accountLimitMessage}
+      />
+    )}
+
+    {/* DELETE TRANSACTION DIALOG */}
+
+    {showDeleteDialog && selectedTransaction && (
+      <DialogPopup
+        transaction={selectedTransaction}
+        onDelete={() =>
+          handleDeleteTransaction(selectedTransaction._id)
+        }
+        onCancel={() => {
+          setShowDeleteDialog(false);
+          setSelectedTransaction(null);
         }}
       />
-    </>
-  ) : ( <>
-       <Welcome variant="dashboard" />
-       <CardWrapper>
-         <PricingPlanCard variant="current" />
-          <PricingPlanCard variant="upgrade" />
-           <PricingPlanCard variant="referral" />
-          </CardWrapper>
-      </>
     )}
-  </MainContent>
-      {/* BANK ACCOUNT FORM */}
-      {isFormOpen && (
-        <BankAccountForm
-          onCancel={() => setIsFormOpen(false)}
-          mutate={mutateAccounts}
-          isAddingAccount={isAddingAccount}
-          setIsAddingAccount={setIsAddingAccount}
-          accountLimitMessage={accountLimitMessage}
-        />
-      )}
 
-        {showDeleteDialog && selectedTransaction && (
-          <DialogPopup
-            transaction={selectedTransaction}
-            onDelete={() =>
-              handleDeleteTransaction(selectedTransaction._id)
-            }
-            onCancel={() => {
-              setShowDeleteDialog(false);
-              setSelectedTransaction(null);
-            }}
-          />
-        )}
-    </Main>
-  );
-}
+  </Main>
+);}

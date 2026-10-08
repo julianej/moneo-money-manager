@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { X, } from "lucide-react";
-import {SubmitButton,CancelButton,} from "@/styles/ButtonStyles";
+import {SubmitButton,CancelButton,CloseButton} from "@/styles/ButtonStyles";
 import {cleanCategory, isValidCategory,categoryExists,} from "../../utils/cleanCategory";
 
 const Form = styled.form`
@@ -46,25 +46,6 @@ const FormSubTitle = styled.h2`
   font-weight: 600;
   text-transform: uppercase;
 `;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 40px;
-  height: 40px;
-  padding: 0;
-
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-`;
-
 
 const CategorySection = styled.div`
   display: flex;
