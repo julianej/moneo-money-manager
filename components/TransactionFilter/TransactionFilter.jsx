@@ -195,6 +195,12 @@ const FilterOption = styled.button`
     background: #f2f2f2;
     color: #000;
   }
+
+  @media (min-width: 740px) {
+      background: #fff;
+      color: #000;
+      border: 1px solid transparent;
+  }
 `;
 
 const TypeToggle = styled.div`
