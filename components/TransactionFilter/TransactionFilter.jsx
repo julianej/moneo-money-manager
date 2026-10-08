@@ -50,11 +50,20 @@ const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  width: 100%;
   order: ${({ $order }) => $order};
 
+  &:nth-child(1) {
+    flex-basis: 100%;
+  }
+
   @media (min-width: 738px) {
+    flex-basis: 100%;
+    width: 100%;
+    min-width: 175px;
     order: ${({ $desktopOrder }) => $desktopOrder};
+    &:nth-child(1) {
+      flex-basis: auto;
+    }
   }
 `;
 
@@ -231,6 +240,20 @@ const TypeOption = styled.button`
   &:hover {
     background: ${({ $active }) => ($active ? "#000" : "#f2f2f2")};
     color: ${({ $active }) => ($active ? "#ffffff" : "#000000")};
+  }
+
+  @media (min-width: 740px) {
+  /* border: ${({ $active }) => ($active ? "1px solid #ffffff" : "1px solid #fff")};
+  background: ${({ $active }) => ($active ? "#fefcfc" : "transparent")};
+  color: ${({ $active }) => ($active ? "#000000" : "#000000")}; */
+
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? "#000" : "#000000")};
+    color: ${({ $active }) => ($active ? "#ffffff" : "#fffefe")};
+  }
   }
 `;
 

@@ -79,6 +79,16 @@ const SidebarWrapper = styled.aside`
      width: 25%;}
 `;
 
+const AddButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: 2px solid #000;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+`;
+
 const AddButton = styled.button`
   background: white;
   width: 100%;
@@ -616,21 +626,24 @@ const filteredTransactions = transactions.filter(matchesFilter);
                 mutateCategories={mutateCategories}
               />
 
-              <AddButton
-                onClick={() => setIsFormOpen((isOpen) => !isOpen)}
-              >
-                {isFormOpen ? (
-                  <>
-                    Close Transaction Form
-                    <X />
-                  </>
-                ) : (
-                  <>
-                    Add Transaction
-                    <Plus />
-                  </>
-                )}
-              </AddButton>
+              <AddButtonWrapper>
+                <AddButton
+                  type="button"
+                  onClick={() => setIsFormOpen((isOpen) => !isOpen)}
+                >
+                  {isFormOpen ? (
+                    <>
+                      Close Transaction Form
+                      <X size={18} />
+                    </>
+                  ) : (
+                    <>
+                      Add Transaction
+                      <Plus size={18} />
+                    </>
+                  )}
+                </AddButton>
+              </AddButtonWrapper>
 
               {isFormOpen && (
                 <TransactionForm
