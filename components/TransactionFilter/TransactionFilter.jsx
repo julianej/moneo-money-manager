@@ -82,7 +82,7 @@ const AddCategoryButton = styled.button`
   border-top: 1px solid #ddd;
 
   background: transparent;
-  color: #000;
+  color: #fffdfd;
 
   text-align: left;
   font: inherit;
@@ -91,6 +91,10 @@ const AddCategoryButton = styled.button`
 
   &:hover {
     background: #f2f2f2;
+  }
+
+  @media (min-width: 738px) {
+      color: #000;
   }
 `;
 
