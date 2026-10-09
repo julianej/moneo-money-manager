@@ -121,8 +121,7 @@ const AddChartButton = styled.button`
 
   width: 100%;
   padding: 1rem;
-
-  border: 1px solid #000;
+  border-radius: 1px solid #000;
   background: #fff;
   color: #000;
   cursor: pointer;

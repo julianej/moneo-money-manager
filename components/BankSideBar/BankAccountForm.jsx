@@ -1,21 +1,55 @@
+
 import { useState } from "react";
-import styled from "styled-components";
-import { X, } from "lucide-react";
-import {SubmitButton,CancelButton,CloseButton} from "@/styles/ButtonStyles";
-import {cleanCategory, isValidCategory,categoryExists,} from "../../utils/cleanCategory";
+import {styled} from "styled-components";
+import { X } from "lucide-react";
+
+import {
+  SubmitButton,
+  CancelButton,
+  CloseButton,
+} from "@/styles/ButtonStyles";
+
+import {
+  cleanCategory,
+  isValidCategory,
+  categoryExists,
+} from "../../utils/cleanCategory";
+
+import GenerateCategories from "../CategoryManager/GenerateCategories";
+import { HiddenLabel } from "@/styles/GlobalStyles";
+
+// ====================
+// STYLES
+// ====================
+
+
+
+const FormScrollWrapper = styled.div`
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Hide scrollbar in Chrome and Safari */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar in Firefox and other browsers */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+`;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-
   padding: 3rem;
   border: 2px solid #000;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 1);
   margin-bottom: 2rem;
-
   width: 100%;
+  overflow-y: scroll;
   height: auto;
   position: fixed;
   z-index: 7777;
@@ -25,8 +59,8 @@ const Form = styled.form`
     left: 25%;
     height: 100vh;
     padding: 5rem;
-    overflow: scroll;
-    position: absolute;
+    overflow-y: auto;
+    position: fixed;
     z-index: 77777;
   }
 `;
@@ -40,7 +74,7 @@ const FormTitle = styled.h1`
 `;
 
 const FormSubTitle = styled.h2`
-  margin: 0 0 1rem;
+  margin: 1rem 0 1rem;
   font-size: 1rem;
   line-height: 1.1;
   font-weight: 600;
@@ -51,6 +85,7 @@ const CategorySection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding-top: 2rem;
 `;
 
 const CategoryTitle = styled.h2`
@@ -61,7 +96,7 @@ const CategoryTitle = styled.h2`
 
 const CategoryListWrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   gap: 0.5rem;
 `;
 
@@ -69,19 +104,35 @@ const CategoryItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   width: 135px;
   padding: 0.6rem 0.75rem;
-
   border: 1px solid #000;
   border-radius: 8px;
+  overflow-wrap: anywhere;
+
+  button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.1rem;
+  }
+
+  button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
 `;
 
 const CategoryInputWrapper = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  margin-bottom: 2rem;
 
   input {
     flex: 1;
+    min-width: 140px;
   }
 
   button {
@@ -97,11 +148,13 @@ const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-`;
 
-const Button = styled.button`
-  background: ${({ $variant }) =>
-    $variant === "primary" ? "black" : "white"};
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #000;
+    border-radius: 8px;
+  }
 `;
 
 const ErrorMessage = styled.span`
@@ -109,6 +162,9 @@ const ErrorMessage = styled.span`
   color: #d00;
 `;
 
+// ====================
+// COMPONENT
+// ====================
 
 export default function BankAccountForm({
   onCancel,
@@ -117,22 +173,30 @@ export default function BankAccountForm({
   setIsAddingAccount,
   accountLimitMessage,
 }) {
+  // Bank account state
   const [name, setName] = useState("");
   const [bank, setBank] = useState("");
   const [iban, setIban] = useState("");
   const [bic, setBic] = useState("");
-  // const [balance, setBalance] = useState("");
+
+  // Validation state
   const [errors, setErrors] = useState({});
-  const [categoryError, setCategoryError] = useState("");
   const [submitError, setSubmitError] = useState("");
 
+  // Category state
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
+  const [categoryError, setCategoryError] = useState("");
+
+  const minimumCategories = 5;
+
+  // ====================
+  // VALIDATE FORM
+  // ====================
 
   function validateForm() {
     const newErrors = {};
 
-    // Account name
     if (!name.trim()) {
       newErrors.name = "Account name is required.";
     } else if (name.trim().length < 2) {
@@ -140,62 +204,42 @@ export default function BankAccountForm({
         "Account name must contain at least 2 characters.";
     }
 
-    // Bank
     if (!bank.trim()) {
       newErrors.bank = "Bank is required.";
     }
 
-    // IBAN
-    if (!iban.trim()) {
+    const cleanIBAN = iban.replace(/\s/g, "").toUpperCase();
+
+    if (!cleanIBAN) {
       newErrors.iban = "IBAN is required.";
-    } else {
-      const cleanIBAN = iban
-        .replace(/\s/g, "")
-        .toUpperCase();
-
-      if (
-        !/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(cleanIBAN)
-      ) {
-        newErrors.iban = "Please enter a valid IBAN.";
-      }
+    } else if (
+      !/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(cleanIBAN)
+    ) {
+      newErrors.iban = "Please enter a valid IBAN.";
     }
 
-    // BIC
-    if (!bic.trim()) {
+    const cleanBIC = bic.replace(/\s/g, "").toUpperCase();
+
+    if (!cleanBIC) {
       newErrors.bic = "BIC is required.";
-    } else {
-      const cleanBIC = bic
-        .replace(/\s/g, "")
-        .toUpperCase();
-
-      if (
-        !/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(
-          cleanBIC
-        )
-      ) {
-        newErrors.bic =
-          "BIC must contain 8 or 11 characters.";
-      }
+    } else if (
+      !/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(
+        cleanBIC
+      )
+    ) {
+      newErrors.bic = "BIC must contain 8 or 11 characters.";
     }
-
-
-  // add Balance MAYBE LATER
-  //   if (balance === "") {
-  //     newErrors.balance = "Balance is required.";
-  //   } else if (isNaN(Number(balance))) {
-  //     newErrors.balance = "Balance must be a number.";
-  //   }
-
-
 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   }
 
+  // ====================
+  // ADD CATEGORY
+  // ====================
 
-    // Add Categories
-   function handleAddCategory() {
+  function handleAddCategory() {
     const categoryName = cleanCategory(newCategory);
 
     if (!categoryName) {
@@ -223,110 +267,158 @@ export default function BankAccountForm({
     setNewCategory("");
     setCategoryError("");
   }
+  // ====================
+  // REMOVE CATEGORY
+  // ====================
+  function handleRemoveCategory(categoryToRemove) {
+    setCategories((currentCategories) =>
+      currentCategories.filter(
+        (category) => category !== categoryToRemove
+      )
+    );
 
-    // Remove Categories
-    function handleRemoveCategory(categoryToRemove) {
-      setCategories((currentCategories) =>
-        currentCategories.filter(
-          (category) => category !== categoryToRemove
-        )
-      );
-    }
-
-
-async function handleSubmit(event) {
-  event.preventDefault();
-
-  setSubmitError("");
-
-  // 01. Validate Form
-  if (!validateForm()) {
-    return;
+    setCategoryError("");
   }
 
-  // 02. Add Account
-  setIsAddingAccount(true);
+  // ====================
+  // GENERATE CATEGORIES
+  // ====================
 
-  try {
-    // 1. Create bank account
-    const response = await fetch("/api/bankaccounts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name.trim(),
-        bank: bank.trim(),
-        iban: iban.replace(/\s/g, "").toUpperCase(),
-        bic: bic.replace(/\s/g, "").toUpperCase(),
-      }),
-    });
-
-    const data = await response.json();
-
-    // Free plan / other API errors
-    if (!response.ok) {
-      console.error("BANK ACCOUNT ERROR:", data);
-
-      setSubmitError(
-        data.error || "Failed to create bank account."
-      );
-
+  function handleGeneratedCategories(suggestions) {
+    if (!Array.isArray(suggestions)) {
+      setCategoryError("The AI returned an invalid category list.");
       return;
     }
 
-    console.log("BANK ACCOUNT CREATED:", data);
+    setCategories((currentCategories) => {
+      const combined = [...currentCategories];
 
-    if (categories.length > 0) {
-  await Promise.all(
-    categories.map(async (category) => {
-      const categoryResponse = await fetch(
-        "/api/categories",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            category,
-            account: data._id,
-          }),
+      suggestions.forEach((suggestion) => {
+        if (typeof suggestion !== "string") return;
+
+        const cleaned = cleanCategory(suggestion);
+
+        if (
+          cleaned &&
+          isValidCategory(cleaned) &&
+          !categoryExists(combined, cleaned)
+        ) {
+          combined.push(cleaned);
         }
+      });
+
+      return combined;
+    });
+
+    setCategoryError("");
+  }
+
+  // ====================
+  // SUBMIT FORM
+  // ====================
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    setSubmitError("");
+    setCategoryError("");
+
+    if (accountLimitMessage) {
+      setSubmitError(accountLimitMessage);
+      return;
+    }
+
+    if (categories.length < minimumCategories) {
+      setCategoryError(
+        `Please add at least ${minimumCategories} categories.`
+      );
+      return;
+    }
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsAddingAccount(true);
+
+    try {
+      // 1. Create the bank account
+      const response = await fetch("/api/bankaccounts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          bank: bank.trim(),
+          iban: iban.replace(/\s/g, "").toUpperCase(),
+          bic: bic.replace(/\s/g, "").toUpperCase(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Failed to create bank account."
+        );
+      }
+
+      // Support either an account object or a direct ID,
+      // depending on the API response shape.
+      const accountId = data._id || data.account?._id;
+
+      if (!accountId) {
+        throw new Error(
+          "The account was created, but its ID was not returned by the API."
+        );
+      }
+
+      // 2. Create the categories for this account
+      await Promise.all(
+        categories.map(async (category) => {
+          const categoryResponse = await fetch("/api/categories", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              category,
+              account: accountId,
+            }),
+          });
+
+          const categoryData = await categoryResponse.json();
+
+          if (!categoryResponse.ok) {
+            throw new Error(
+              categoryData.error ||
+                `Failed to create category "${category}".`
+            );
+          }
+        })
       );
 
-        const categoryData = await categoryResponse.json();
+      // 3. Refresh the account data
+      await mutate();
 
-        console.log("CATEGORY:", category);
-        console.log("STATUS:", categoryResponse.status);
-        console.log("RESPONSE:", categoryData);
+      // 4. Close the form after successful creation
+      onCancel();
+    } catch (error) {
+      console.error("CREATE ACCOUNT ERROR:", error);
 
-        if (!categoryResponse.ok) {
-          throw new Error(
-            categoryData.error ||
-              `Category creation failed (${categoryResponse.status})`
-          );
-        }
-      })
-    );
+      setSubmitError(
+        error.message ||
+          "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsAddingAccount(false);
+    }
   }
 
-    // 3. Refresh accounts
-    await mutate();
-
-    // 4. Close form
-    onCancel();
-
-  } catch (error) {
-    console.error("CREATE ACCOUNT ERROR:", error);
-
-    setSubmitError(
-      error.message || "Something went wrong. Please try again."
-    );
-
-  } finally {
-    setIsAddingAccount(false);
-  }
-}
+  // ====================
+  // RENDER
+  // ====================
 
   return (
     <Form onSubmit={handleSubmit} noValidate>
@@ -337,159 +429,140 @@ async function handleSubmit(event) {
       >
         <X size={20} />
       </CloseButton>
-
+      <FormScrollWrapper>
       <FormTitle>
         Add New Bank
         <br />
         Account Details
       </FormTitle>
 
-        {accountLimitMessage && (
-          <ErrorMessage>
-            {accountLimitMessage}
-          </ErrorMessage>
-        )}
+      {accountLimitMessage && (
+        <ErrorMessage>{accountLimitMessage}</ErrorMessage>
+      )}
 
       <FormSubTitle>Bank Account Info</FormSubTitle>
 
       <Field>
-         <label htmlFor="account-name">Account Wallet</label>
+       <HiddenLabel htmlFor="account-name">Account Wallet Name</HiddenLabel>
         <input
+          id="account-name"
           type="text"
-          placeholder="Account name"
+          placeholder="Wallet Name: Private / Business"
           value={name}
-          onChange={(event) =>
-            setName(event.target.value)
-          }
+          onChange={(event) => setName(event.target.value)}
         />
-
         {errors.name && (
           <ErrorMessage>{errors.name}</ErrorMessage>
         )}
       </Field>
 
       <Field>
-        <label htmlFor="bank-name">Bank Name</label>
+          <HiddenLabel htmlFor="bank-name">Bank Name</HiddenLabel>
         <input
+          id="bank-name"
           type="text"
           placeholder="Bank"
           value={bank}
-          onChange={(event) =>
-            setBank(event.target.value)
-          }
+          onChange={(event) => setBank(event.target.value)}
         />
-
         {errors.bank && (
           <ErrorMessage>{errors.bank}</ErrorMessage>
         )}
       </Field>
 
       <Field>
-          <label htmlFor="account-iban">IBAN</label>
-
+          <HiddenLabel htmlFor="account-iban">IBAN-</HiddenLabel>
         <input
+          id="account-iban"
           type="text"
           placeholder="IBAN"
           value={iban}
-          onChange={(event) =>
-            setIban(event.target.value)
-          }
+          onChange={(event) => setIban(event.target.value)}
         />
-
         {errors.iban && (
           <ErrorMessage>{errors.iban}</ErrorMessage>
         )}
       </Field>
 
       <Field>
-        <label htmlFor="account-bic">BIC</label>
-
+          <HiddenLabel htmlFor="account-name">BIC</HiddenLabel>
         <input
+          id="account-bic"
           type="text"
           placeholder="BIC"
           value={bic}
-          onChange={(event) =>
-            setBic(event.target.value)
-          }
+          onChange={(event) => setBic(event.target.value)}
         />
-
         {errors.bic && (
           <ErrorMessage>{errors.bic}</ErrorMessage>
         )}
       </Field>
+      <CategorySection>
+        <CategoryTitle>
+          Categories ({categories.length}/{minimumCategories} minimum)
+        </CategoryTitle>
 
-      {/* <Field>
-          <label htmlFor="account-balance">Balance</label>
-
-        <input
-          type="number"
-          placeholder="Balance"
-          value={balance}
-          onChange={(event) =>
-            setBalance(event.target.value)
-          }
+        <GenerateCategories
+        accountName={name}
+        onGenerate={handleGeneratedCategories}
         />
 
-        {errors.balance && (
-          <ErrorMessage>
-            {errors.balance}
+        <CategoryListWrapper>
+          {categories.map((category) => (
+            <CategoryItem key={category}>
+              <span>{category}</span>
+
+            <button
+              type="button"
+              onClick={() => handleRemoveCategory(category)}
+              aria-label={`Remove ${category}`}
+            >
+              ×
+            </button>
+            </CategoryItem>
+          ))}
+        </CategoryListWrapper>
+
+        <CategoryInputWrapper>
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(event) => setNewCategory(event.target.value)}
+            placeholder="Category name"
+            aria-label="New category name"
+          />
+
+          <button type="button" onClick={handleAddCategory}>
+            + Add Category
+          </button>
+        </CategoryInputWrapper>
+
+        {categoryError && (
+          <ErrorMessage role="alert">
+            {categoryError}
           </ErrorMessage>
         )}
-      </Field> */}
-      <CategorySection>
-        <CategoryTitle>Categories</CategoryTitle>
-        <CategoryListWrapper>
-           {categories.map((category) => (
-              <CategoryItem key={category}>
-                <span>{category}</span>
+      </CategorySection>
 
-                <button
-                  type="button"
-                  onClick={() => handleRemoveCategory(category)}
-                >
-                  ×
-                </button>
-              </CategoryItem>
-            ))}
-            </CategoryListWrapper>
-            <CategoryInputWrapper>
-              <input
-                type="text"
-                value={newCategory}
-                onChange={(event) => setNewCategory(event.target.value)}
-                placeholder="Category name"
-              />
+      {submitError && (
+        <ErrorMessage role="alert">
+          {submitError}
+        </ErrorMessage>
+      )}
 
-              <button
-                type="button"
-                onClick={handleAddCategory}
-              >
-                + Add category
-              </button>
-            </CategoryInputWrapper>
-            {categoryError && (
-                <ErrorMessage>{categoryError}</ErrorMessage>
-              )}
-            </CategorySection>
+      <SubmitButton
+        type="submit"
+        disabled={isAddingAccount || Boolean(accountLimitMessage)}
+      >
+        {isAddingAccount ? "Adding account..." : "Add Bank Account"}
+      </SubmitButton>
 
-        
-           <SubmitButton
-              type="submit"
-              disabled={
-                isAddingAccount || Boolean(accountLimitMessage)
-              }
-            >
-              {isAddingAccount
-                ? "Adding account..."
-                : "Add Bank Account"}
-            </SubmitButton>
-
-          <CancelButton
-            type="button"
-            onClick={onCancel}
-          >
-            Cancel
+      <CancelButton type="button" onClick={onCancel}>
+        Cancel
       </CancelButton>
+      </FormScrollWrapper>
     </Form>
+
   );
 }
+

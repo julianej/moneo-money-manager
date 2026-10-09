@@ -10,6 +10,7 @@
     "test": "jest --watchAll"
   },
   "dependencies": {
+    "@google/genai": "^2.28.0",
     "@react-pdf/renderer": "^4.9.0",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",
