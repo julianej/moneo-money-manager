@@ -40,10 +40,10 @@ Integrated during Capstone Sprints:
 
 
 ## Project Sprint Board 
-https://github.com/users/julianej/projects/4
+
 <img width="2944" height="1644" alt="Bildschirmfoto 2026-10-09 um 12 13 26" src="https://github.com/user-attachments/assets/7765599d-55db-4fed-ba55-4025f7f3f610" />
 
-
+https://github.com/users/julianej/projects/4
 - You can find some example data in the [assets folder](./assets/) to get you started.
 
 ## Download this Project Info
