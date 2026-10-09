@@ -30,7 +30,7 @@ Integrated during Capstone Sprints:
 - **Recurring Expenses:** Set up recurring entries for regular payments like subscriptions, rent, or utility bills.
 - **Savings Goals:** Set and track savings goals to help allocate funds towards specific objectives.
 - **Currency Converter:** Automatically convert and display expenses in different currencies for international users.
-- **Shared Account:** Invite a Friend to track expenses together.
+- **Shared Account:** Invite a Friend to track expenses together. SECURITY FEATURES
 - **Smart transaction** categorization npm install @google/genai GEMINI_API_KEY=your_api_key_here
 
 ### Mobile Screenshots
