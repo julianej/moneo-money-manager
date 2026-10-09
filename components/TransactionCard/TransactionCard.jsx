@@ -49,13 +49,18 @@ const Transaction = styled.article`
   align-items: center;
   margin: 0;
 
+  &:hover {
+    background: #ffffff;
+    color: black;
+  }
+
   border: ${({ $isSelected }) =>
     $isSelected
       ? "0.1rem solid black"
       : "0.1rem solid #ccc"};
 
   background-color: ${({ $isSelected }) =>
-    $isSelected ? "#e0e0e0" : "white"};
+    $isSelected ? "#e0e0e0" : "transparent"};
 
   ${({ $isHighlighted }) =>
     $isHighlighted &&
