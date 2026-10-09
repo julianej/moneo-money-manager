@@ -104,7 +104,7 @@ const Transaction = styled.article`
 const TransactionTitle = styled.h2`
   margin: 0;
 
-  font-size: 0.8rem;
+  font-size: 1.4rem;
 
   @media (min-width: 739px) {
     font-size: 2rem;
