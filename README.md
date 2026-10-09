@@ -16,10 +16,7 @@ Money Manager empowers users to track, manage, and analyse their expenses and sa
 - **Account Balance:** See the total balance of transactions.
 - **Income/Expense View:** View transactions separated by income and expenses.
 
-### Additional Features Inspiration
-
-These features are optional and should serve as a conversation starter for upcoming features of the app.
-Integrated during Capstone Sprints:
+### Additional Features 
 
 - **Filter Transactions:** Filter transactions based on various criteria.
 - **Customisable Categories:** Create and manage custom expense categories to better fit individual needs.
