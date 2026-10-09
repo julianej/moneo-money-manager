@@ -16,6 +16,15 @@ export const GlobalStyle = createGlobalStyle`
     font-style: normal;
   }
 
+  @font-face {
+    font-family: "Silkscreen";
+    src: url("/lib/fonts/Silkscreen-Regular.ttf")
+      format("truetype");
+    font-weight: 400;
+    font-style: normal;
+  }
+
+
   body {
     margin: 0;
     background-color: #f2f2f2;
