@@ -31,6 +31,7 @@ Integrated during Capstone Sprints:
 - **Savings Goals:** Set and track savings goals to help allocate funds towards specific objectives.
 - **Currency Converter:** Automatically convert and display expenses in different currencies for international users.
 - **Shared Account:** Invite a Friend to track expenses together.
+- **Smart transaction** categorization npm install @google/genai
 
 ### Mobile Screenshots
 <img width="2250" height="1500" alt="MoneyManager-MONEO-JulianeJeske-Mobile" src="https://github.com/user-attachments/assets/21345981-c183-4d61-964f-0445450a304f" />
