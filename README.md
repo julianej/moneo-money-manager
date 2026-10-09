@@ -38,7 +38,8 @@ Integrated during Capstone Sprints:
 <img width="1728" height="1117" alt="MoneyManager-MONEO-JulianeJeske-Screenshots" src="https://github.com/user-attachments/assets/ec902187-3e65-497a-906b-0aed2b708488" />
 
 
-## Project Sprint Board https://github.com/users/julianej/projects/4
+## Project Sprint Board 
+https://github.com/users/julianej/projects/4
 <img width="2944" height="1644" alt="Bildschirmfoto 2026-10-09 um 12 13 26" src="https://github.com/user-attachments/assets/7765599d-55db-4fed-ba55-4025f7f3f610" />
 
 
