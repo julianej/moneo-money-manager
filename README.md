@@ -39,7 +39,7 @@ Integrated during Capstone Sprints:
 
 
 ## Project Sprint Board
-<img width="2694" height="1508" alt="Bildschirmfoto 2026-10-09 um 12 10 09" src="https://github.com/user-attachments/assets/d1a57a36-3654-486b-a22c-3e97553c1b97" />
+<img width="2944" height="1644" alt="Bildschirmfoto 2026-10-09 um 12 13 26" src="https://github.com/user-attachments/assets/7765599d-55db-4fed-ba55-4025f7f3f610" />
 
 
 - You can find some example data in the [assets folder](./assets/) to get you started.
