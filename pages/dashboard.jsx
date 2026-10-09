@@ -95,7 +95,8 @@ const AddButton = styled.button`
   padding: 0.7rem 0.7rem 0.6rem;
   border-radius: 0.5rem;
   border: 1px solid lightgray;
-  color: #0d0d0d;
+  color: #ffffff;
+  background: #000000;
   cursor: pointer;
   font-size: 16px;
   position: relative;
@@ -104,6 +105,11 @@ const AddButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  &:hover {
+    background: #ffffff;
+    color: black;
+  }
 `;
 
 const AddChartButton = styled.button`
@@ -111,6 +117,7 @@ const AddChartButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  margin-bottom: 15rem;
 
   width: 100%;
   padding: 1rem;
