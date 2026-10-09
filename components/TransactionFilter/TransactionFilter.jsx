@@ -27,47 +27,67 @@ const FilterWrapper = styled.div`
   flex-direction: row;
   gap: 1rem;
   padding: 2rem 0;
+  width: 90vw;
+
 
   @media (min-width: 739px) {
-        flex-direction: row;
+      flex-direction: row;
+      width: auto;
   }
 `;
 
 const FilterRow = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0rem;
+  align-items: flex-end;
   flex-wrap: wrap;
-
-
-  @media (min-width: 738px) {
-    gap: 1rem;
-      flex-wrap: nowrap;
+  gap: 0rem;
+  width: 100%;
+  @media (min-width: 600px) and (max-width: 1023px) {
+    gap: 0.2rem;
+    width: 85vw;
   }
 `;
 
 const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0;
   order: ${({ $order }) => $order};
+  box-sizing: border-box;
+  min-width: 0;
+
+  /* Mobile: every filter takes a full row */
+  flex: 0 0 100%;
   width: 100%;
 
-  &:nth-child(1) {
-    flex-basis: 100%;
+  @media (min-width: 600px) and (max-width: 1023px) {
+    /* Tablet: three equal filters after the first */
+    flex: 1 1 0;
+    width: auto;
+    gap: 0.4rem;
+
+    &:first-child {
+      flex: 0 0 100%;
+      width: 100%;
+    }
   }
 
-  @media (min-width: 738px) {
-    flex-basis: 100%;
-    width: 100%;
-    min-width: 175px;
+  /* Desktop */
+  @media (min-width: 1024px) {
+    flex: 0 1 ${({ $width }) => $width || "30%"};
+    width: ${({ $width }) => $width || "30%"};
+    min-width: 30%;
     order: ${({ $desktopOrder }) => $desktopOrder};
-    &:nth-child(1) {
-      flex-basis: auto;
+
+    &:nth-child(2),
+    &:nth-child(3), 
+    &:nth-child(4) {
+      flex: 0 1 ${({ $width }) => $width || "23%"};
+      width: 23%;
+      min-width: 23%;
     }
   }
 `;
-
 
 const AddCategoryButton = styled.button`
   display: flex;
@@ -131,7 +151,7 @@ const FilterDropdownWrapper = styled.div`
   width: 100%;
 
   @media (min-width: 740px) {
-    width: 175px;
+    gap: 1rem;
   }
 `;
 
@@ -139,29 +159,30 @@ const FilterDropdownButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0rem;
+  gap: 0.5rem;
 
   width: 100%;
-  padding: 0.75rem 1rem;
+  min-width: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
 
+  padding: 0.75rem 1rem;
   background: #080808;
   color: #ffffff;
-
   border: 1px solid #000;
   border-radius: 8px;
-
   font: inherit;
   cursor: pointer;
 
   &:hover {
     background: #f5f5f5;
-    color:#000;
+    color: #000;
   }
-    @media (min-width: 740px) {
-      padding: 0.75rem 1rem;
-        gap: 1rem;
-        background: #fff;
-        color: #000;
+
+  @media (min-width: 1024px) {
+    gap: 1rem;
+    background: #fff;
+    color: #000;
   }
 `;
 
@@ -172,22 +193,32 @@ const FilterDropdownMenu = styled.div`
   z-index: 1000;
 
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
   max-height: 250px;
   overflow-y: auto;
-
   padding: 0.5rem;
-  background: #000000;
-  color: #fafafa;
 
+  background: #000;
+  color: #fafafa;
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 
-  @media (min-width: 740px) {
-  background: #fff;
-  color: #000;
-  border: 1px solid #000;
+  @media (min-width: 1024px) {
+    background: #fff;
+    color: #000;
+    border: 1px solid #000;
   }
+`;
 
+const FilterButtonText = styled.span`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
 `;
 
 const FilterOption = styled.button`
@@ -220,17 +251,17 @@ const FilterOption = styled.button`
 const TypeToggle = styled.div`
   display: flex;
   align-items: center;
-  font-family: 'IBM PLEX MONO';
+  font-family: "IBM Plex Mono", monospace;
   width: 100%;
-  border: 1px solid #000;
+  box-sizing: border-box;
+  /* border: 1px solid #000; */
   background-color: transparent;
   border-radius: 8px;
   overflow: hidden;
-  font-size: 1.5rem;
+  font-size: 1rem;
 
   @media (min-width: 740px) {
-    width: 160px;
-    font-size: 1rem;
+    width: 100%;
   }
 `;
 
@@ -674,7 +705,9 @@ const selectedCategory = categories?.find(
                     setOpenFilter(null);
                   }}
                 >
-                  All Categories
+                   <FilterButtonText>
+                    {selectedCategory?.category || "All Categories"}
+                  </FilterButtonText>
                 </FilterOption>
 
                 {categories.map((category) => (

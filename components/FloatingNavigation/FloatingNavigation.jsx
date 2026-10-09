@@ -5,34 +5,32 @@ import {
   ChartColumnBig,
   List,
 } from "lucide-react";
-
 const FloatingNavigationWrapper = styled.nav`
   position: fixed;
-
   left: 50%;
   bottom: -1rem;
-
   transform: translateX(-50%);
-
   z-index: 1000;
-  width: auto;
-  margin: 0 auto 2rem;
 
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
 
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  min-width: 0;
+  box-sizing: border-box;
+
   height: 50px;
   padding: 0.5rem;
+  gap: 0;
 
   background: #000;
   border: 2px solid #000;
   border-radius: 999px;
-  gap: 0rem;
 
   @media (min-width: 740px) {
-    gap: 0rem;
     left: 13%;
     bottom: 1rem;
   }
@@ -44,16 +42,17 @@ const MenuItem = styled.button`
   justify-content: center;
   gap: 0.4rem;
 
+  flex: 0 1 auto;
+  min-width: 0;
   width: auto;
   height: 43px;
   padding: 0 1rem;
+  box-sizing: border-box;
 
   border: 0;
   border-radius: 3rem;
-
   background: transparent;
   color: #fff;
-
   cursor: pointer;
 
   svg {
@@ -62,6 +61,10 @@ const MenuItem = styled.button`
   }
 
   span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: 1rem;
     line-height: 1;
   }
