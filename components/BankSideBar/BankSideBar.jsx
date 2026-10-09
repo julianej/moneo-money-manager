@@ -12,16 +12,30 @@ const SidebarTitle = styled.h2`
 
 const Title = styled.h1`
   font-family: "Silkscreen", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 3.5rem;
-  text-transform: uppercase;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 4rem;
+    text-transform: uppercase;
+    margin: 0 0 2rem;
+    line-height: 2rem;
 
-  margin: 0 0 2rem;
-  line-height: 3rem;
-
+    /* Mobile */
   @media (min-width: 740px) {
-      font-size: 3.5rem;
+    font-size: 2.5rem;
+    line-height: 2.5rem;
+  }
+
+  /* Tablet */
+  @media (min-width: 1040px) {
+    font-size: 2.5rem;
+    line-height: 2.5rem;
+  }
+
+  /* Desktop */
+  @media (min-width: 1124px) {
+    font-size: 4rem;
+    line-height: 2rem;
+    padding-top: 3rem;
   }
 `;
 

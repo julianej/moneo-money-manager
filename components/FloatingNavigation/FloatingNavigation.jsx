@@ -8,7 +8,7 @@ import {
 const FloatingNavigationWrapper = styled.nav`
   position: fixed;
   left: 50%;
-  bottom: -1rem;
+  bottom: 1rem;
   transform: translateX(-50%);
   z-index: 1000;
 
