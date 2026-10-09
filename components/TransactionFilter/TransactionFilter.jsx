@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 
 import DownloadButton from "../DownloadReport/DownloadButton";
-import CategoryManager from "../CategoryManager/CategoryManager";
+import CategoryManager from "../CategoryManager/CategoryExistingList";
 
 import {
   cleanCategory,
@@ -13,13 +13,19 @@ import {
 
 import {
   Plus,
+  X,
   ChevronDown,
 } from "lucide-react";
 
 import {
   SubmitButton,
   CancelButton,
+  CloseButton,
 } from "../../styles/ButtonStyles";
+
+import {
+  LoadingSpinner,
+} from "../../styles/LoadingStyles";
 
 
 const FilterWrapper = styled.div`
@@ -134,16 +140,18 @@ const AddCategoryOverlay = styled.div`
 `;
 
 const AddCategoryBox = styled.div`
-  width: 100%;
-  max-width: 400px;
-
+  position: relative;
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 2rem;
+  border-radius: 1rem;
+  scrollbar-width: none;
+  background: rgba(255, 253, 253, 0.907);
 
-  background: #fff;
-  color: #000;
-
-  border-radius: 12px;
-  border: 2px solid #000;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const FilterDropdownWrapper = styled.div`
@@ -334,8 +342,16 @@ const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
 const [newCategory, setNewCategory] = useState("");
 const [categoryError, setCategoryError] = useState("");
 
+const [isAddingCategory, setIsAddingCategory] = useState(false);
+const [categoryAdded, setCategoryAdded] = useState(false);
+
 async function handleAddCategory() {
   const categoryName = cleanCategory(newCategory);
+
+  if (!newCategory.trim()) {
+    setCategoryError("Please enter a category name.");
+    return;
+  }
 
   if (!categoryName) {
     setCategoryError("Category name is required.");
@@ -359,6 +375,11 @@ async function handleAddCategory() {
     return;
   }
 
+  // LOADING
+  setIsAddingCategory(true);
+  setCategoryAdded(false);
+  setCategoryError("");
+
   try {
     const response = await fetch("/api/categories", {
       method: "POST",
@@ -373,6 +394,7 @@ async function handleAddCategory() {
 
     const data = await response.json();
 
+    // RESPONSE
     if (!response.ok) {
       setCategoryError(
         data.error || "Could not add category."
@@ -382,15 +404,18 @@ async function handleAddCategory() {
 
     console.log("Category created:", data);
 
+    // AWAIT
     await mutateCategories();
 
+    // NEW RESET
     setNewCategory("");
-    setCategoryError("");
-    setIsAddCategoryOpen(false);
+    setCategoryAdded(true);
 
   } catch (error) {
-    console.error("Add category error:", error);
-    setCategoryError("Something went wrong.");
+    console.error("Error adding category:", error);
+    setCategoryError("Could not add category. Please try again.");
+  } finally {
+    setIsAddingCategory(false);
   }
 }
 
@@ -743,6 +768,17 @@ const selectedCategory = categories?.find(
     {isAddCategoryOpen && (
         <AddCategoryOverlay>
           <AddCategoryBox>
+             <CloseButton
+                type="button"
+                onClick={() => {
+                  setNewCategory("");
+                  setCategoryError("");
+                  setIsAddCategoryOpen(false);
+                }}
+                aria-label="Close"
+              >
+                <X size={20} />
+              </CloseButton>
             <h3>Add Category</h3>
 
             <input
@@ -762,15 +798,23 @@ const selectedCategory = categories?.find(
                   setCategoryError("");
                   setIsAddCategoryOpen(false);
                 }}
-              >
+              >            
                 Cancel
               </CancelButton>
 
-              <SubmitButton
+             <SubmitButton
                 type="button"
                 onClick={handleAddCategory}
+                disabled={isAddingCategory || !newCategory.trim()}
               >
-                Save
+                {isAddingCategory ? (
+                  <>
+                    <LoadingSpinner />
+                    Adding...
+                  </>
+                ) : (
+                  "Save"
+                )}
               </SubmitButton>
            </ButtonWrapper>
 

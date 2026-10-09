@@ -45,7 +45,8 @@ export const SubmitButton = styled.button`
   border: 2px solid #000;
   border-radius: 8px;
 
-  background: #000;
+  background: ${({ variant }) =>
+  variant === "primary" ? "#000" : "#060606"};
   color: #fff;
 
   font-family: inherit;
