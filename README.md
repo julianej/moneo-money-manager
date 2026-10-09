@@ -35,7 +35,6 @@ Integrated during Capstone Sprints:
 
 ### Mobile Screenshots
 <img width="2250" height="1500" alt="MoneyManager-MONEO-JulianeJeske-Mobile" src="https://github.com/user-attachments/assets/21345981-c183-4d61-964f-0445450a304f" />
-
 <img width="1728" height="1117" alt="MoneyManager-MONEO-JulianeJeske-Screenshots" src="https://github.com/user-attachments/assets/ec902187-3e65-497a-906b-0aed2b708488" />
 
 
