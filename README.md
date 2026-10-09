@@ -2,7 +2,7 @@
 
 ## Description
 
-Money Manager empowers users to track, manage, and analyse their expenses and savings with ease, fostering better financial habits and decision-making. The app offers tools for recording, editing, deleting, and filtering transactions, as well as viewing detailed transaction information and budget summaries.
+Money Manager empowers users to track, manage, and analyse their expenses and savings with ease, fostering better financial habits and decision-making. The app offers tools for recording, editing, deleting, and filtering transactions, as well as viewing detailed transaction information and budget summaries. It provides individual categorisation through KI.
 
 <img width="4000" height="3000" alt="MoneyManager-MONEO-JulianeJeske-Desktop" src="https://github.com/user-attachments/assets/f7fa184b-fccc-4516-bca5-782383a0b704" />
 
