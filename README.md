@@ -38,7 +38,9 @@ Integrated during Capstone Sprints:
 <img width="1728" height="1117" alt="MoneyManager-MONEO-JulianeJeske-Screenshots" src="https://github.com/user-attachments/assets/ec902187-3e65-497a-906b-0aed2b708488" />
 
 
-## Notes
+## Project Sprint Board
+<img width="2694" height="1508" alt="Bildschirmfoto 2026-10-09 um 12 10 09" src="https://github.com/user-attachments/assets/d1a57a36-3654-486b-a22c-3e97553c1b97" />
+
 
 - You can find some example data in the [assets folder](./assets/) to get you started.
 
