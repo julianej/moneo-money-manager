@@ -31,7 +31,7 @@ Integrated during Capstone Sprints:
 - **Savings Goals:** Set and track savings goals to help allocate funds towards specific objectives.
 - **Currency Converter:** Automatically convert and display expenses in different currencies for international users.
 
-
+### Mobile Screenshots
 <img width="1728" height="1117" alt="MoneyManager-MONEO-JulianeJeske-Screenshots" src="https://github.com/user-attachments/assets/ec902187-3e65-497a-906b-0aed2b708488" />
 
 
