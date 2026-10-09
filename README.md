@@ -26,7 +26,7 @@ Integrated during Capstone Sprints:
 - **Expense Reports:** Visualise spending patterns with basic visualisations, such as pie charts or bar graphs.
 - **Receipt Upload:** Attach receipt images to respective expense entries for record-keeping and possible tax documentation.
 
-- FOR THE FUTURE
+### For the Future
 - **Recurring Expenses:** Set up recurring entries for regular payments like subscriptions, rent, or utility bills.
 - **Savings Goals:** Set and track savings goals to help allocate funds towards specific objectives.
 - **Currency Converter:** Automatically convert and display expenses in different currencies for international users.
