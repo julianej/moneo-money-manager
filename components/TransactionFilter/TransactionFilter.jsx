@@ -270,6 +270,26 @@ const CategoryCheckbox = styled.input.attrs({
   accent-color: #000;
 `;
 
+const SelectedCategoryCount = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000000;
+  font-size: 12px;
+  font-weight: 600;
+
+  @media (min-width: 740px) {
+    color: #fff;
+    background: #020202;
+  }
+`;
+
 const TypeToggle = styled.div`
   display: flex;
   align-items: center;
@@ -733,9 +753,21 @@ const selectedCategory = categories?.find(
               }
             >
               {/* TEXT FELD AUSGABE: Xx Items Selected */}
-             {selectedCategories.length === 0 ? "All Categories" 
-             : `${selectedCategories.length} Categories Selected`} 
-             <ChevronDown size={16} />
+           {selectedCategories.length === 0 ? (
+                "All Categories"
+              ) : (
+                <>
+                  <SelectedCategoryCount>
+                    {selectedCategories.length}
+                  </SelectedCategoryCount>
+
+                  {selectedCategories.length === 1
+                    ? "Category Selected"
+                    : "Categories Selected"}
+                </>
+              )}
+
+              <ChevronDown size={16} />
 
             </FilterDropdownButton>
 
