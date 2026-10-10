@@ -11,13 +11,13 @@ const SidebarTitle = styled.h2`
 `;
 
 const Title = styled.h1`
-  font-family: "Silkscreen", sans-serif;
+    font-family: "Silkscreen", sans-serif;
     font-weight: 400;
     font-style: normal;
     font-size: 4rem;
     text-transform: uppercase;
     margin: 0 0 2rem;
-    line-height: 2rem;
+    line-height: 3rem;
 
     /* Mobile */
   @media (min-width: 740px) {

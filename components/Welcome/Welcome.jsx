@@ -56,7 +56,7 @@ const WelcomeWrapper = styled.section`
         margin-top: 1rem;
       }
       h2 {
-       font-size: 1.7rem;
+       font-size: 1rem;
        }
 
     @media (min-width: 740px) {
