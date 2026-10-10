@@ -230,8 +230,10 @@ const FilterButtonText = styled.span`
 `;
 
 const FilterOption = styled.button`
-  display: block;
-
+  display: flex;
+  align-items: center;
+    gap: 0.5rem;
+  text-align: left;
   width: 100%;
   padding: 0.65rem 0.75rem;
 
@@ -239,7 +241,6 @@ const FilterOption = styled.button`
   background: transparent;
 
   color: #fdfcfc;
-  text-align: left;
   font: inherit;
 
   cursor: pointer;
@@ -254,6 +255,19 @@ const FilterOption = styled.button`
       color: #000;
       border: 1px solid transparent;
   }
+`;
+
+const CategoryCheckbox = styled.input.attrs({
+  type: "checkbox",
+})`
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+
+  accent-color: #000;
 `;
 
 const TypeToggle = styled.div`
@@ -475,6 +489,7 @@ useEffect(() => {
   setSelectedCategories,
 ]);
 
+// SELECTED CATEGORY
 const selectedCategory = categories?.find(
   (category) => category._id === selectedCategories[0]
 );
@@ -717,36 +732,41 @@ const selectedCategory = categories?.find(
                 )
               }
             >
-              {selectedCategory?.category || "All Categories"}
-              <ChevronDown size={16} />
+              {/* TEXT FELD AUSGABE: Xx Items Selected */}
+             {selectedCategories.length === 0 ? "All Categories" 
+             : `${selectedCategories.length} Categories Selected`} 
+             <ChevronDown size={16} />
+
             </FilterDropdownButton>
 
             {openFilter === "category" && (
               <FilterDropdownMenu>
-                <FilterOption
-                  type="button"
-                  onClick={() => {
-                    setSelectedCategories([]);
-                    setOpenFilter(null);
-                  }}
-                >
-                   <FilterButtonText>
-                    {selectedCategory?.category || "All Categories"}
-                  </FilterButtonText>
-                </FilterOption>
+                  {/* Select individual categories */}
 
-                {categories.map((category) => (
-                  <FilterOption
-                    key={category._id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedCategories([category._id]);
-                      setOpenFilter(null);
-                    }}
-                  >
-                    {category.category}
-                  </FilterOption>
-                ))}
+                {categories.map((category) => {
+                    const categoryId = String(category._id);
+
+                    return (
+                      <FilterOption
+                        key={categoryId}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCategories((previous) =>
+                            previous.includes(categoryId)
+                              ? previous.filter((id) => id !== categoryId)
+                              : [...previous, categoryId]
+                          );
+                        }}
+                      >
+                        <CategoryCheckbox
+                          checked={selectedCategories.includes(categoryId)}
+                          readOnly
+                        />
+
+                        <span>{category.category}</span>
+                      </FilterOption>
+                    );
+                  })}
 
                 <AddCategoryButton
                   type="button"
