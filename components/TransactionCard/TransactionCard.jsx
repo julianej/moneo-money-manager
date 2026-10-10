@@ -190,6 +190,7 @@ export default function TransactionCard({
   isHighlighted,
   isDeleting,
   onInvoiceUploaded,
+    onTransactionClick,
 }) {
   const date = new Date(transaction.date);
 

@@ -753,7 +753,7 @@ const selectedCategory = categories?.find(
               }
             >
               {/* TEXT FELD AUSGABE: Xx Items Selected */}
-           {selectedCategories.length === 0 ? (
+              {selectedCategories.length === 0 ? (
                 "All Categories"
               ) : (
                 <>

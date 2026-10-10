@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { LoaderCircle } from "lucide-react";
 import styled from "styled-components";
 import TransactionCard from "../TransactionCard/TransactionCard";
 import TransactionForm from "../TransactionForm/TransactionForm";
+import formatDate from "@/helpers/dateFormating";
 
 // new IMPORTS
 import CsvUpload from "../CsvUpload/CsvUpload";
@@ -14,6 +15,14 @@ import DialogPopup from "../DialogPopup/DialogPopup";
 // ====================
 // STYLES
 // ====================
+
+const TransactionListWrapper = styled.section`
+  position: relative;
+  min-width: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+`;
+
 
 const CardWrapper = styled.div`
   display: flex;
@@ -90,6 +99,29 @@ const DeleteAccountButton = styled.button`
 `;
 
 
+const SlideInContainer = styled.aside`
+  position: relative;
+  inset: 0;
+  z-index: 11;
+
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: 1.5rem;
+
+  background: white;
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 10%);
+
+  transform: translateY(${({ $isOpen }) =>
+    $isOpen ? "0" : "100%"});
+
+  visibility: ${({ $isOpen }) =>
+    $isOpen ? "visible" : "hidden"};
+
+  transition:
+    transform 0.35s ease,
+    visibility 0.35s ease;
+`;
+
 const LoadingOverlay = styled.div`
   position: absolute;
   inset: 0;
@@ -145,9 +177,23 @@ export default function TransactionList({
   const [deletingId, setDeletingId] = useState(null);
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
 
+const [isSlideInOpen, setIsSlideInOpen] = useState(false);
+const [selectedTransaction, setSelectedTransaction] = useState(null);
+
   // new USESTATE 
   const [importedTransactions, setImportedTransactions] = useState([]);
 
+const transactionListRef = useRef(null);
+
+function handleTransactionClick(transaction) {
+  setSelectedTransaction(transaction);
+  setIsSlideInOpen(true);
+
+  transactionListRef.current?.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
 
   function handleEdit(transaction) {
     setEditingTransaction(transaction);
@@ -203,6 +249,7 @@ export default function TransactionList({
 
 return (
   <>
+<TransactionListWrapper ref={transactionListRef}>
     <ListWrapper>
       <List>
         <h2>Your Transaction List</h2>
@@ -258,6 +305,7 @@ return (
             <CardWrapper
               key={transaction._id}
               $isEditing={editingTransaction?._id === transaction._id}
+              onClick={() => handleTransactionClick(transaction)}
             >
               <TransactionCard
                 transaction={transaction}
@@ -267,8 +315,10 @@ return (
                 isHighlighted={highlightedId === transaction._id}
                 onDelete={() => handleDeleteClick(transaction)}
                 isDeleting={deletingId === transaction._id}
-                // you create the function here in the PARENT,
+                // for INVOICE UPLOAD, you create the function here in the PARENT,
                 onInvoiceUploaded={() => mutate()}
+               // HERE for SLIDE INFOS
+              //  onTransactionClick={() => handleTransactionClick(transaction)}
               />
 
               {editingTransaction?._id === transaction._id && (
@@ -283,6 +333,35 @@ return (
                   showToast={showToast}
                 />
               )}
+                {/* Slide-in panel inside TransactionList */}
+              <SlideInContainer $isOpen={isSlideInOpen}>
+                <button
+                  type="button"
+                  onClick={() => setIsSlideInOpen(false)}
+                  aria-label="Close transaction details"
+                >
+                  ×
+                </button>
+
+                {selectedTransaction && (
+                  <>
+                        <p>
+                          <strong>Buchungsdatum:</strong>{" "}
+                          {formatDate(selectedTransaction.date)}
+                        </p>
+
+                        <p>
+                          <strong>Rechnungsdatum:</strong>{" "}
+                          {formatDate(selectedTransaction.invoiceDate)}
+                        </p>
+
+                        <p>
+                          <strong>Rechnungsnummer:</strong>{" "}
+                          {formatDate(selectedTransaction.invoiceTitle)}
+                        </p>
+                  </>
+                )}
+              </SlideInContainer>
             </CardWrapper>
           ))
         )}
@@ -315,7 +394,7 @@ return (
         Delete the Bank Account
       </span>
     </DeleteAccountButton>
-
+    </TransactionListWrapper>
     {showDeleteAccountPopup && (
       <DialogPopup
         title="Delete bank account?"

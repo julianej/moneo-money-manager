@@ -5,6 +5,8 @@ import {
   ChartColumnBig,
   List,
 } from "lucide-react";
+
+
 const FloatingNavigationWrapper = styled.nav`
   position: fixed;
   left: 50%;
