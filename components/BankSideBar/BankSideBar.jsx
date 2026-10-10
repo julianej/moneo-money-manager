@@ -195,7 +195,7 @@ const SidebarSection = styled.section`
   top: 0;
   align-self: start;
 
-  padding: 2rem;
+  padding: 1.5rem;
 
   background: #000;
   color: #fff;

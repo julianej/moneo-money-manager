@@ -41,13 +41,9 @@ const Main = styled.main`
 `;
 
 const MainContent = styled.div`
-  width: 100%;
-  padding: 0 20px;
-  margin: 0 auto;
-
-  @media (min-width: 740px) {
-    width: 70%;
-  }
+  flex: 1;
+  min-width: 0;
+    padding: 0.75rem 1rem;
 `;
 
 const MenuProfileWrapper = styled.div`
@@ -189,6 +185,22 @@ const CardWrapper = styled.div`
   }
 `;
 
+const DashboardOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+
+  background: rgba(0, 0, 0, 0.4);
+
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+  visibility: ${({ $isOpen }) =>
+    $isOpen ? "visible" : "hidden"};
+
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+`;
+
 // ====================
 // COMPONENT
 // ====================
@@ -243,13 +255,14 @@ export default function Dashboard() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const [pdfLoading, setPdfLoading] = useState(false);
+
 
   // ====================
   // PROFILE MENU
   // ====================
+
 
   const profileItems = [
     {
