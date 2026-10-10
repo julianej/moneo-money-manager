@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import { LoaderCircle } from "lucide-react";
 import styled from "styled-components";
 import TransactionCard from "../TransactionCard/TransactionCard";
@@ -11,6 +11,7 @@ import CsvUpload from "../CsvUpload/CsvUpload";
 import CsvPreview from "../CsvUpload/CsvPreview";
 
 import DialogPopup from "../DialogPopup/DialogPopup";
+import { CloseButton } from "@/styles/ButtonStyles";
 
 // ====================
 // STYLES
@@ -27,7 +28,6 @@ const TransactionListWrapper = styled.section`
 const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
 
   ${({ $isEditing }) =>
     $isEditing &&
@@ -101,25 +101,39 @@ const DeleteAccountButton = styled.button`
 
 const SlideInContainer = styled.aside`
   position: relative;
-  inset: 0;
   z-index: 11;
 
   box-sizing: border-box;
-  overflow-y: auto;
-  padding: 1.5rem;
+  overflow: hidden;
+  padding: ${({ $isOpen }) =>
+    $isOpen ? "1rem 1.5rem 1.5rem" : "0 1.5rem"};
+
+  max-height: ${({ $isOpen }) => ($isOpen ? "400px" : "0")};
 
   background: white;
-  box-shadow: 0 -8px 24px rgb(0 0 0 / 10%);
-
-  transform: translateY(${({ $isOpen }) =>
-    $isOpen ? "0" : "100%"});
 
   visibility: ${({ $isOpen }) =>
     $isOpen ? "visible" : "hidden"};
 
   transition:
-    transform 0.35s ease,
+    max-height 0.35s ease,
+    padding 0.35s ease,
     visibility 0.35s ease;
+`;
+
+const InfoWrapper = styled.div`
+  display: flex;
+
+  flex-direction: column;
+  gap: 0rem;
+  font-family: 'IBM Plex Mono';
+
+  > p {
+    flex: 1 1 0;
+  }
+
+  @media (min-width: 740px) {
+    flex-direction: row;}
 `;
 
 const LoadingOverlay = styled.div`
@@ -171,18 +185,19 @@ export default function TransactionList({
   pdfLoading,
 }) {
 
+    // new USESTATE 
+  const [importedTransactions, setImportedTransactions] = useState([]);
+
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [highlightedId, setHighlightedId] = useState(null);
   const [deletingTransactionPopup, setDeletingTransactionPopup] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
 
-const [isSlideInOpen, setIsSlideInOpen] = useState(false);
-const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isSlideInOpen, setIsSlideInOpen] = useState(false);
 
-  // new USESTATE 
-  const [importedTransactions, setImportedTransactions] = useState([]);
-
+  // FOR FANCY SCROLL
 const transactionListRef = useRef(null);
 
 function handleTransactionClick(transaction) {
@@ -317,8 +332,6 @@ return (
                 isDeleting={deletingId === transaction._id}
                 // for INVOICE UPLOAD, you create the function here in the PARENT,
                 onInvoiceUploaded={() => mutate()}
-               // HERE for SLIDE INFOS
-              //  onTransactionClick={() => handleTransactionClick(transaction)}
               />
 
               {editingTransaction?._id === transaction._id && (
@@ -333,35 +346,41 @@ return (
                   showToast={showToast}
                 />
               )}
-                {/* Slide-in panel inside TransactionList */}
-              <SlideInContainer $isOpen={isSlideInOpen}>
-                <button
-                  type="button"
-                  onClick={() => setIsSlideInOpen(false)}
-                  aria-label="Close transaction details"
-                >
-                  ×
-                </button>
+              {/* Slide-in panel inside TransactionList */}
+               {selectedTransaction?._id === transaction._id && (
+                  <SlideInContainer $isOpen={isSlideInOpen}>
+                    <CloseButton
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setIsSlideInOpen(false);
+                      }}
+                      aria-label="Close transaction details"
+                    >
+                    <X size={20} />
+                    </CloseButton>
+                {/* <div className="InfoWrapper"> */}
+                  <InfoWrapper>
+                    <p>
+                      <strong>Buchungsdatum:</strong>{" "}
+                      {selectedTransaction?.date
+                        ? formatDate(selectedTransaction.date)
+                        : "—"}
+                    </p>
 
-                {selectedTransaction && (
-                  <>
-                        <p>
-                          <strong>Buchungsdatum:</strong>{" "}
-                          {formatDate(selectedTransaction.date)}
-                        </p>
-
-                        <p>
-                          <strong>Rechnungsdatum:</strong>{" "}
-                          {formatDate(selectedTransaction.invoiceDate)}
-                        </p>
-
-                        <p>
-                          <strong>Rechnungsnummer:</strong>{" "}
-                          {formatDate(selectedTransaction.invoiceTitle)}
-                        </p>
-                  </>
+                    <p>
+                      <strong>Rechnungsdatum:</strong>{" "}
+                      {selectedTransaction?.invoiceDate
+                        ? formatDate(selectedTransaction.invoiceDate)
+                        : "—"}
+                    </p>
+                    <p>
+                      <strong>Rechnungsnummer:</strong>{" "}
+                      {selectedTransaction?.invoiceTitle || "—"}
+                    </p>
+                   </InfoWrapper>
+                  </SlideInContainer>
                 )}
-              </SlideInContainer>
             </CardWrapper>
           ))
         )}

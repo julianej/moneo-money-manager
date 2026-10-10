@@ -39,9 +39,11 @@ const Main = styled.main`
     flex-direction: row;
   }
 `;
+
 const MainContent = styled.div`
   flex: 1;
   min-width: 0;
+    padding: 0.75rem 1rem;
 `;
 
 const MenuProfileWrapper = styled.div`
@@ -256,14 +258,6 @@ export default function Dashboard() {
 
   const [pdfLoading, setPdfLoading] = useState(false);
 
-  const [isSlideInOpen, setIsSlideInOpen] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-
-
-  function handleTransactionClick(transaction) {
-    setSelectedTransaction(transaction);
-    setIsSlideInOpen(true);
-  }
 
   // ====================
   // PROFILE MENU
@@ -892,10 +886,6 @@ export default function Dashboard() {
                       selectedAccount={
                         selectedAccount
                       }
-                       onTransactionClick={
-                        handleTransactionClick
-                      }
-
                       onDeleteAccount={
                         handleDeleteAccount
                       }
@@ -943,10 +933,6 @@ export default function Dashboard() {
           </>
         )}
       </MainContent>
-        <DashboardOverlay
-          $isOpen={isSlideInOpen}
-          onClick={() => setIsSlideInOpen(false)}
-        />
 
       {/* BANK ACCOUNT FORM */}
 
