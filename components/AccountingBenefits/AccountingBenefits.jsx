@@ -1,19 +1,20 @@
 
 import styled from "styled-components";
-import {
-  ChartNoAxesColumnIncreasing,
-  ShieldCheck,
-  Clock3,
-  Smartphone,
-  Target,
-  Leaf,
-} from "lucide-react";
 
 const BenefitsSection = styled.section`
   padding: 6rem 5.5%;
   background: #fff;
   color: #111;
   scroll-margin-top: 5rem;
+`;
+
+
+const BenefitNumber = styled.span`
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
 `;
 
 const SectionLabel = styled.p`
@@ -103,44 +104,46 @@ const SectionFooter = styled.p`
   text-transform: uppercase;
 `;
 
+
 const benefits = [
   {
-    icon: ChartNoAxesColumnIncreasing,
+    number: "01",
     title: "Clear Overview",
     description:
       "See your income, expenses and balance at a glance. Always up to date, always in control.",
   },
   {
-    icon: ShieldCheck,
+    number: "02",
     title: "Secure & Private",
     description:
       "Keep your financial information organized in one place with privacy in mind.",
   },
   {
-    icon: Clock3,
+    number: "03",
     title: "Save Time",
     description:
       "Organize transactions and generate reports with less manual work.",
   },
   {
-    icon: Smartphone,
+    number: "04",
     title: "Access Anywhere",
     description:
       "Access your financial overview on your devices, wherever you manage your money.",
   },
   {
-    icon: Target,
+    number: "05",
     title: "Reach Your Goals",
     description:
       "Understand your spending habits and make informed decisions for your financial future.",
   },
   {
-    icon: Leaf,
+    number: "06",
     title: "Minimal & Focused",
     description:
       "No unnecessary complexity. Just the tools you need to manage your everyday finances.",
   },
 ];
+
 
 export default function Benefits() {
   return (
@@ -160,19 +163,13 @@ export default function Benefits() {
       </Intro>
 
       <BenefitsGrid>
-        {benefits.map((benefit) => {
-          const Icon = benefit.icon;
-
-          return (
-            <BenefitCard key={benefit.title}>
-              <Icon aria-hidden="true" />
-
-              <h3>{benefit.title}</h3>
-
-              <p>{benefit.description}</p>
+       {benefits.map(({ number, title, description }) => (
+            <BenefitCard key={number}>
+                <BenefitNumber>{number}</BenefitNumber>
+                <h3>{title}</h3>
+                <p>{description}</p>
             </BenefitCard>
-          );
-        })}
+        ))}
       </BenefitsGrid>
 
       <SectionFooter>
