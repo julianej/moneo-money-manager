@@ -55,6 +55,7 @@ const StartButton = styled.button`
 
 const Sections = styled.section`
   scroll-margin-top: 2rem;
+
 `;
 
 export default function HomePage() {
@@ -80,8 +81,8 @@ export default function HomePage() {
       onClick: scrollToBenefits,
     },
     {
-      label: "Prices",
-      href: "#projects",
+      label: "Analytics",
+      href: "#analytics",
     },
     {
       label: "Contact",
@@ -104,7 +105,7 @@ export default function HomePage() {
         <Sections id="benefits">
           <Benefits />
         </Sections>
-        <Sections id="heatmap">
+        <Sections id="analytics">
             <CategoryHeatmap />
           </Sections>
       <AsciiBackground />
