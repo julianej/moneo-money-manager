@@ -8,6 +8,8 @@ import Benefits from "@/components/AccountingBenefits/AccountingBenefits";
 import { useState } from "react";
 import GraphSection from "@/components/GraphChartSection/GraphChartSection";
 import FounderSection from "@/components/FounderIntro/FounderIntro";
+import FeedbackSection from "@/components/FeedbackSection/FeedbackSection";
+import SecuritySection from "@/components/SecuritySection/SecuritySection";
 // import { useRouter } from "next/router";
 
 
@@ -54,9 +56,8 @@ const StartButton = styled.button`
   }
 `;
 
-const Sections = styled.section`
-  scroll-margin-top: 2rem;
-
+const Section = styled.section`
+  scroll-margin-top: 5rem;
 `;
 
 export default function HomePage() {
@@ -72,24 +73,28 @@ export default function HomePage() {
     });
   };
 
-  const listMenuItems = [
-    {
-      label: "About",
-      href: "#about",
-    },
-    {
-      label: "Benefits",
-      onClick: scrollToBenefits,
-    },
-    {
-      label: "Analytics",
-      href: "#analytics",
-    },
-    {
-      label: "Contact",
-      href: "#contact",
-    },
-  ];
+const listMenuItems = [
+  {
+    label: "About",
+    href: "#about",
+  },
+  {
+    label: "Benefits",
+    href: "#benefits",
+  },
+  {
+    label: "Analytics",
+    href: "#graphs",
+  },
+  {
+    label: "Founder",
+    href: "#founder",
+  },
+  {
+    label: "Contact",
+    href: "#feedback",
+  },
+];
 
 
   function onLogIn() {
@@ -103,13 +108,21 @@ export default function HomePage() {
       <StartButton onClick={onLogIn}>
           Start with a Free Account
         </StartButton>
-        <Sections id="benefits">
+        <Section id="benefits">
           <Benefits />
-        </Sections>
+        </Section>
+      <Section id="founder">
        <FounderSection />
-        <Sections id="analytics">
+       </Section>
+        <Section id="analytics">
             <GraphSection />
-          </Sections>
+          </Section>
+     <Section id="contact">
+          <FeedbackSection />
+       </Section>
+      <Section id="security">
+         <SecuritySection />
+       </Section>
       <AsciiBackground />
 
        <MenuProfile 
