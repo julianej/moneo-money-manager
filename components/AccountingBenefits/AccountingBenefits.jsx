@@ -173,7 +173,7 @@ export default function Benefits() {
       </BenefitsGrid>
 
       <SectionFooter>
-        Better money. A brighter future.
+        MONEO. For a brighter future.
       </SectionFooter>
     </BenefitsSection>
   );
