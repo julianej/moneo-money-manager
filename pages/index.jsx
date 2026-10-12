@@ -52,12 +52,22 @@ const StartButton = styled.button`
   }
 `;
 
+const BenefitsSection = styled.section`
+  scroll-margin-top: 2rem;
+`;
 
 export default function HomePage() {
   // const router = useRouter();
 
   const [isLoginFormOpen, setIsLoginFormOpen] = useState(false); // HERE SET LOGIN-FORM LATERs
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const scrollToBenefits = () => {
+    document.getElementById("benefits")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const listMenuItems = [
     {
@@ -66,7 +76,7 @@ export default function HomePage() {
     },
     {
       label: "Benefits",
-      href: "#projects",
+      onClick: scrollToBenefits,
     },
     {
       label: "Prices",
@@ -77,6 +87,7 @@ export default function HomePage() {
       href: "#contact",
     },
   ];
+
 
   function onLogIn() {
         setIsLoginFormOpen(true);
@@ -89,7 +100,9 @@ export default function HomePage() {
       <StartButton onClick={onLogIn}>
           Start with a Free Account
         </StartButton>
-        <Benefits />
+        <section id="benefits">
+          <Benefits />
+        </section>
       <AsciiBackground />
 
        <MenuProfile 
@@ -97,6 +110,7 @@ export default function HomePage() {
           setIsMenuOpen={setIsMenuOpen} 
           isLoggedIn={false} 
           onLogIn={onLogIn}
+          onScrollToBenefits={scrollToBenefits}
           listItems={listMenuItems} />
 
     {/* LOGIN FORM */} 
