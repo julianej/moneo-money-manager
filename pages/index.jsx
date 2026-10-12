@@ -7,6 +7,7 @@ import Benefits from "@/components/AccountingBenefits/AccountingBenefits";
 
 import { useState } from "react";
 import GraphSection from "@/components/GraphChartSection/GraphChartSection";
+import FounderSection from "@/components/FounderIntro/FounderIntro";
 // import { useRouter } from "next/router";
 
 
@@ -105,6 +106,7 @@ export default function HomePage() {
         <Sections id="benefits">
           <Benefits />
         </Sections>
+       <FounderSection />
         <Sections id="analytics">
             <GraphSection />
           </Sections>

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import styled from "styled-components";
-import CategoryHeatmap from "@/components/CategoryHeatmap/CategoryHeatmap";
+import CategoryHeatmap from "@/components/GraphChartSection/GraphHeatmap";
 
 const tabs = [
   { id: "overview", label: "Overview" },
@@ -90,6 +90,7 @@ export default function GraphSection() {
 const Section = styled.section`
   margin: 0 auto;
   padding: 5rem 5rem;
+  background-color: #fff;
   @media (max-width: 740px) {
     padding: 3rem 1rem;
   }
