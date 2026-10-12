@@ -4,6 +4,7 @@ import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import AsciiBackground from "@/components/AsciiBackground/AsciiBackground";
 import AuthForm from "@/components/Authentification/AuthForm";
 import Benefits from "@/components/AccountingBenefits/AccountingBenefits";
+import CategoryHeatmap from "@/components/CategoryHeatmap/CategoryHeatmap";
 
 import { useState } from "react";
 // import { useRouter } from "next/router";
@@ -52,8 +53,9 @@ const StartButton = styled.button`
   }
 `;
 
-const BenefitsSection = styled.section`
+const Sections = styled.section`
   scroll-margin-top: 2rem;
+
 `;
 
 export default function HomePage() {
@@ -79,8 +81,8 @@ export default function HomePage() {
       onClick: scrollToBenefits,
     },
     {
-      label: "Prices",
-      href: "#projects",
+      label: "Analytics",
+      href: "#analytics",
     },
     {
       label: "Contact",
@@ -100,9 +102,12 @@ export default function HomePage() {
       <StartButton onClick={onLogIn}>
           Start with a Free Account
         </StartButton>
-        <section id="benefits">
+        <Sections id="benefits">
           <Benefits />
-        </section>
+        </Sections>
+        <Sections id="analytics">
+            <CategoryHeatmap />
+          </Sections>
       <AsciiBackground />
 
        <MenuProfile 
