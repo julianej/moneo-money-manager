@@ -4,9 +4,9 @@ import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import AsciiBackground from "@/components/AsciiBackground/AsciiBackground";
 import AuthForm from "@/components/Authentification/AuthForm";
 import Benefits from "@/components/AccountingBenefits/AccountingBenefits";
-import CategoryHeatmap from "@/components/CategoryHeatmap/CategoryHeatmap";
 
 import { useState } from "react";
+import GraphSection from "@/components/GraphChartSection/GraphChartSection";
 // import { useRouter } from "next/router";
 
 
@@ -106,7 +106,7 @@ export default function HomePage() {
           <Benefits />
         </Sections>
         <Sections id="analytics">
-            <CategoryHeatmap />
+            <GraphSection />
           </Sections>
       <AsciiBackground />
 

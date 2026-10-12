@@ -38,7 +38,7 @@ const WelcomeWrapper = styled.section`
 
    @media (min-width: 740px) {
    width: 100%;
-   padding-right: 40%;
+   padding: 4rem;
    font-size: 3rem; }
 
     @media (min-width:1024px) {
