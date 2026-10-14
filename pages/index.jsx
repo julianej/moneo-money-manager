@@ -108,26 +108,32 @@ const listMenuItems = [
       <StartButton onClick={onLogIn}>
           Start with a Free Account
         </StartButton>
+
         <Section id="benefits">
           <Benefits />
         </Section>
-      <Section id="founder">
-       <FounderSection />
-       </Section>
+
+        <Section id="founder">
+          <FounderSection />
+        </Section>
+
         <Section id="analytics">
-            <GraphSection />
-          </Section>
-     <Section id="contact">
+          <GraphSection />
+        </Section>
+
+        <Section id="contact">
           <FeedbackSection />
-       </Section>
-      <Section id="security">
-         <SecuritySection />
-       </Section>
-      <AsciiBackground />
+        </Section>
+
+        <Section id="security">
+          <SecuritySection />
+        </Section>
+
+       <AsciiBackground />
 
       <MenuProfile
         isMenuOpen={isMenuOpen}
-        onDelete={handleDeleteAccount}
+        // onDelete={handleDeleteAccount}
         isProfileOpen={isProfileOpen}
         setIsProfileOpen={setIsProfileOpen}
         setIsMenuOpen={setIsMenuOpen}
