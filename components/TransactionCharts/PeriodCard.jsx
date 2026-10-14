@@ -15,6 +15,8 @@ const Card = styled.div`
     ` padding: 1rem;
       grid-column: 1 / -1;
       @media (min-width: 740px) {
+      background-color: #000;
+      color: #fff;
       padding: 2rem 2rem 2rem 3rem;}` 
     }
 `;
@@ -90,10 +92,10 @@ const FlexWrapperSum = styled.div`
    @media (min-width: 740px) {
      font-size: 1rem;
      gap: 2rem;
-      color: black;
+     color: #fefbfb;
 
     strong {
-    font-size: 0.8rem;
+    font-size: 1rem;
     }
    }
 `;
@@ -125,8 +127,9 @@ const YearSum = styled.div`
 
   @media (min-width: 740px) {
      margin: 0 2rem 0 0;
-     flex-direction: row;
-      gap: 2rem;
+     flex-direction: column;
+      gap: 0rem;
+      color: #fff;
      }
 `;
 
