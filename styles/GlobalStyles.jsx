@@ -8,6 +8,10 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  :root {
+      --input-radius: 0.5rem;
+    }
+
   @font-face {
     font-family: "IBM Plex Mono";
     src: url("/lib/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf")
@@ -51,7 +55,8 @@ export const GlobalStyle = createGlobalStyle`
     padding: 1rem;
 
     border: 1px solid #000;
-    border-radius: 8px;
+    border-radius: var(--input-radius);
+
 
     background: #fff;
     color: #000;
@@ -100,4 +105,81 @@ export const HiddenLabel = styled.label`
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.9rem 1rem;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background: #fff;
+  color: #111;
+  font: inherit;
+
+  &::placeholder {
+    color: #777;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 2px;
+  }
+`;
+
+export const Message = styled.textarea`
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 10rem;
+  padding: 0.9rem 1rem;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background: #fff;
+  color: #111;
+  font: inherit;
+  line-height: 1.6;
+
+  resize: vertical;
+
+  &::placeholder {
+    color: #777;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 2px;
+  }
+`;
+
+export const Select = styled.select`
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.9rem 1rem;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background: #fff;
+  color: #111;
+  font: inherit;
+
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: #777;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
