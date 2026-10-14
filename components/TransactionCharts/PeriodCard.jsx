@@ -9,14 +9,15 @@ const Card = styled.div`
   padding: 1rem;
   border: 2px solid black;
   border-radius: 20px;
+  color: #000;
 
   ${({ $variant }) =>
     $variant === "year" &&
     ` padding: 1rem;
       grid-column: 1 / -1;
-      @media (min-width: 740px) {
-      background-color: #000;
       color: #fff;
+      background-color: #000;
+      @media (min-width: 740px) {
       padding: 2rem 2rem 2rem 3rem;}` 
     }
 `;
@@ -28,6 +29,7 @@ const CardHeader = styled.button`
   background: none;
   text-align: left;
   cursor: pointer;
+  color: ${({ $variant }) => ($variant === "year" ? "#050505" : "#000000")};
 
   display: flex;
   justify-content: space-between;
@@ -40,17 +42,19 @@ const CardHeader = styled.button`
 
 const CardHeaderRight = styled.div`
   display: flex;
-  color: #000;
   align-items: center;
   gap: 8px;
 `;
 
 const CardTitle = styled.h2`
   margin: 0 0 4px;
-  color: #000;
+  color: ${({ $variant }) =>
+    $variant === "year" ? "#fffdfd" : "#000"};
   font-size: 2rem;
+
   @media (min-width: 740px) {
-      font-size: 4rem;;}
+    font-size: 4rem;
+  }
 `;
 
 const CardDate = styled.p`
@@ -176,9 +180,9 @@ export default function PeriodCard({
       {isYear ? (
         <>
           <YearHeader>
-            <CardTitle>
-              {title} {date}
-            </CardTitle>
+              <CardTitle $variant={variant}>
+                {title} {date}
+              </CardTitle>
 
             <YearSum>
               <FlexWrapperSum>
