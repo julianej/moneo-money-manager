@@ -125,14 +125,16 @@ const listMenuItems = [
        </Section>
       <AsciiBackground />
 
-       <MenuProfile 
-          isMenuOpen={isMenuOpen} 
-          setIsMenuOpen={setIsMenuOpen} 
-          isLoggedIn={false} 
-          onLogIn={onLogIn}
-          onScrollToBenefits={scrollToBenefits}
-          listItems={listMenuItems} />
-
+      <MenuProfile
+        isMenuOpen={isMenuOpen}
+        onDelete={handleDeleteAccount}
+        isProfileOpen={isProfileOpen}
+        setIsProfileOpen={setIsProfileOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        isLoggedIn={true}
+        userName={user?.name}
+        listItems={profileItems}
+      />
     {/* LOGIN FORM */} 
          {isLoginFormOpen && ( 
           <LoginOverlay>

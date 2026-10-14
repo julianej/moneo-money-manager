@@ -52,16 +52,16 @@ const MenuProfileWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 55px;
-  border-top: 1rem solid black;
+  /* border-top: 1rem solid black; */
   background-color: transparent;
-  margin-bottom: 2rem;
   border-radius: 1rem;
+  /* display: none; */
 
   @media (min-width: 740px) {
-    width: 100%;
-    height: 63px;
-    margin-top: 5rem;
+    /* width: 100%; */
+    /* height: 63px; */
+    /* margin-top: 5rem; */
+    margin-bottom: 2rem;
   }
 `;
 
@@ -642,17 +642,14 @@ export default function Dashboard() {
 
       <MainContent>
         <MenuProfileWrapper>
-          <p>Hallo Juliane</p>
-
-          <MenuProfile
+         <MenuProfile
             isMenuOpen={isMenuOpen}
             onDelete={handleDeleteAccount}
             isProfileOpen={isProfileOpen}
-            setIsProfileOpen={
-              setIsProfileOpen
-            }
+            setIsProfileOpen={setIsProfileOpen}
             setIsMenuOpen={setIsMenuOpen}
             isLoggedIn={true}
+            userName={user?.name}
             listItems={profileItems}
           />
         </MenuProfileWrapper>
