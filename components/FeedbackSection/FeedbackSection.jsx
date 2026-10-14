@@ -1,5 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { HiddenLabel, Input, Message, Select } from "@/styles/GlobalStyles";
+
+
+import {
+  SubmitButton,
+} from "@/styles/ButtonStyles";
 
 const FEEDBACK_EMAIL = "mail@julianejeske.com";
 
@@ -46,22 +52,26 @@ export default function FeedbackSection() {
         </Intro>
 
         <FeedbackForm onSubmit={handleSubmit}>
-          <label htmlFor="feedback-type">
-            What would you like to share?
-          </label>
+         <HiddenLabel htmlFor="feedback-type">
+            Feedback type
+          </HiddenLabel>
 
-          <Select
-            id="feedback-type"
-            value={type}
-            onChange={(event) => setType(event.target.value)}
-          >
-            <option>Feedback</option>
-            <option>Feature request</option>
-            <option>Bug report</option>
-            <option>Other enquiry</option>
-          </Select>
+              <Select
+                id="feedback-type"
+                value={type}
+                onChange={(event) => setType(event.target.value)}
+                required
+              >
+                <option value="" disabled>
+                  Select your feedback
+                </option>
+                <option value="Feedback">Claim your Feedback</option>
+                <option value="Feature request">Feature request</option>
+                <option value="Bug report">Bug report</option>
+                <option value="Other enquiry">Other enquiry</option>
+              </Select>
 
-          <label htmlFor="feedback-message">Your message</label>
+          <HiddenLabel htmlFor="feedback-message">Your message</HiddenLabel>
 
           <Message
             id="feedback-message"
@@ -72,18 +82,18 @@ export default function FeedbackSection() {
             rows={5}
           />
 
-          <label htmlFor="feedback-email">Email (optional)</label>
+          <HiddenLabel htmlFor="feedback-email">Email</HiddenLabel>
 
           <Input
             id="feedback-email"
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="you@example.com"
+            placeholder="your-email@example.com"
           />
 
           <SubmitButton type="submit">
-            Send feedback ↗
+            Submit
           </SubmitButton>
 
           <SmallText>
@@ -160,57 +170,6 @@ const FeedbackForm = styled.form`
   }
 `;
 
-const fieldStyles = `
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.9rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 0;
-  background: #fff;
-  color: #111;
-  font: inherit;
-
-  &:focus-visible {
-    outline: 2px solid #111;
-    outline-offset: 2px;
-  }
-`;
-
-const Select = styled.select`
-  ${fieldStyles}
-`;
-
-const Message = styled.textarea`
-  ${fieldStyles}
-  resize: vertical;
-  line-height: 1.6;
-`;
-
-const Input = styled.input`
-  ${fieldStyles}
-`;
-
-const SubmitButton = styled.button`
-  margin-top: 0.75rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid #111;
-  border-radius: 0;
-  background: #111;
-  color: #fff;
-  font: inherit;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
-
-  &:hover {
-    background: #fff;
-    color: #111;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #555;
-    outline-offset: 3px;
-  }
-`;
 
 const SmallText = styled.p`
   margin: 0.25rem 0 0;
