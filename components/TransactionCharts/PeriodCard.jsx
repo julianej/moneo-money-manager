@@ -73,13 +73,14 @@ const FlexWrapperSum = styled.div`
   /* align-items: center; */
   justify-content: space-between;
   gap: 0rem;
-  padding: 0rem 0rem 0 3rem;
-  font-size: 0.8rem;
-  color: black;
+  padding: 0.5rem 0rem 0 3rem;
+  font-size: 1rem;
   border: 1px solid grey;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   padding: 0.5rem;
   font-family: 'IBM Plex Mono';
+  background-color: #000;
+  color: #ffffff;
 
   p,
   strong {
@@ -89,6 +90,7 @@ const FlexWrapperSum = styled.div`
    @media (min-width: 740px) {
      font-size: 1rem;
      gap: 2rem;
+      color: black;
 
     strong {
     font-size: 0.8rem;
@@ -104,10 +106,9 @@ const SumWrapper = styled.div`
 
 const YearHeader = styled.div`
   display: grid;
-  grid-template-columns: 1fr 2fr 0fr;
+  grid-template-columns: 1fr;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
   @media (min-width: 740px) {
       grid-template-columns: 2.5fr 4fr 0.5fr;
       gap: 2rem;
@@ -118,7 +119,7 @@ const YearSum = styled.div`
   display: flex;
   flex-direction: column;
   grid-template-columns: auto auto;
-  gap: 1rem;
+  gap: 0rem;
   margin: 0;
   font-size: 1rem;
 
