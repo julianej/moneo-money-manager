@@ -17,9 +17,7 @@ const ProfileName = styled.div`
 
 export default function MenuProfile({
   isMenuOpen,
-  onDelete,
-  isProfileOpen,
-  setIsProfileOpen,
+  onLogIn,
   setIsMenuOpen,
   isLoggedIn,
   userName,
