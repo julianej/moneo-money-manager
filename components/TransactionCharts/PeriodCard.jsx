@@ -75,6 +75,11 @@ const FlexWrapperSum = styled.div`
   gap: 0rem;
   padding: 0rem 0rem 0 3rem;
   font-size: 0.8rem;
+  color: black;
+  border: 1px solid grey;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  font-family: 'IBM Plex Mono';
 
   p,
   strong {

@@ -2,12 +2,26 @@ import { Menu, X, User, LogIn } from "lucide-react";
 import styled from "styled-components";
 import { IconButton } from "@/styles/ButtonStyles";
 
+const ProfileName = styled.div`
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+
+  color: #fff;
+  font-weight: 600;
+  font-family: "IBM Plex Mono", monospace;
+
+  border-bottom: 1px solid #444;
+
+  overflow-wrap: anywhere;
+`;
+
 export default function MenuProfile({
   isMenuOpen,
+  onLogIn,
   setIsMenuOpen,
   isLoggedIn,
-  onLogIn,
-  listItems = [],
+  userName,
+  listItems,
 }) {
   function toggleMenu() {
     setIsMenuOpen((open) => !open);
@@ -56,9 +70,14 @@ export default function MenuProfile({
         </IconButton>
       )}
 
-      {isMenuOpen && listItems.length > 0 && (
-        <ProfileMenu>
-          {listItems.map((item) => {
+      {isMenuOpen && (
+          <ProfileMenu>
+            {isLoggedIn && userName && (
+              <ProfileName>
+                {userName}
+              </ProfileName>
+            )}
+           {listItems.map((item) => {
             if (item.href) {
               return (
                 <MenuLink

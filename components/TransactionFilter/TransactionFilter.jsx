@@ -1,10 +1,10 @@
 
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { Download} from "lucide-react";
 
 import DownloadButton from "../DownloadReport/DownloadButton";
 import CategoryManager from "../CategoryManager/CategoryExistingList";
+import { Spinner } from "../../styles/LoadingStyles";
 
 import {
   cleanCategory,
@@ -24,9 +24,6 @@ import {
   CloseButton,
 } from "../../styles/ButtonStyles";
 
-import {
-  LoadingSpinner,
-} from "../../styles/LoadingStyles";
 
 
 const FilterWrapper = styled.div`
@@ -851,7 +848,7 @@ const selectedCategory = categories?.find(
               >
                 {isAddingCategory ? (
                   <>
-                    <LoadingSpinner />
+                    <Spinner />
                     Adding...
                   </>
                 ) : (

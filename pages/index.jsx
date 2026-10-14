@@ -108,30 +108,37 @@ const listMenuItems = [
       <StartButton onClick={onLogIn}>
           Start with a Free Account
         </StartButton>
+
         <Section id="benefits">
           <Benefits />
         </Section>
-      <Section id="founder">
-       <FounderSection />
-       </Section>
-        <Section id="analytics">
-            <GraphSection />
-          </Section>
-     <Section id="contact">
-          <FeedbackSection />
-       </Section>
-      <Section id="security">
-         <SecuritySection />
-       </Section>
-      <AsciiBackground />
 
-       <MenuProfile 
-          isMenuOpen={isMenuOpen} 
-          setIsMenuOpen={setIsMenuOpen} 
-          isLoggedIn={false} 
+        <Section id="founder">
+          <FounderSection />
+        </Section>
+
+        <Section id="analytics">
+          <GraphSection />
+        </Section>
+
+        <Section id="contact">
+          <FeedbackSection />
+        </Section>
+
+        <Section id="security">
+          <SecuritySection />
+        </Section>
+
+       <AsciiBackground />
+
+      <MenuProfile
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          isLoggedIn={false}
           onLogIn={onLogIn}
-          onScrollToBenefits={scrollToBenefits}
-          listItems={listMenuItems} />
+          listItems={listMenuItems}
+        // onDelete={handleDeleteAccount}
+      />
 
     {/* LOGIN FORM */} 
          {isLoginFormOpen && ( 
