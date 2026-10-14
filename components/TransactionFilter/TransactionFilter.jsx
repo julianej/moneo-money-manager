@@ -1,6 +1,7 @@
 
 import styled from "styled-components";
 import { useEffect, useState } from "react";
+import { Download} from "lucide-react";
 
 import DownloadButton from "../DownloadReport/DownloadButton";
 import CategoryManager from "../CategoryManager/CategoryExistingList";
@@ -220,15 +221,6 @@ const FilterDropdownMenu = styled.div`
   }
 `;
 
-const FilterButtonText = styled.span`
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  text-align: left;
-`;
-
 const FilterOption = styled.button`
   display: flex;
   align-items: center;
@@ -353,7 +345,6 @@ const ButtonWrapper = styled.div`
 `;
 
 
-
 export default function TransactionFilter({
   transactions = [],
   categories = [],
@@ -378,6 +369,7 @@ const [categoryError, setCategoryError] = useState("");
 
 const [isAddingCategory, setIsAddingCategory] = useState(false);
 const [categoryAdded, setCategoryAdded] = useState(false);
+
 
 async function handleAddCategory() {
   const categoryName = cleanCategory(newCategory);
@@ -519,15 +511,13 @@ const selectedCategory = categories?.find(
     <FilterWrapper>
 
       {/* PDF DOWNLOAD */}
-      <DownloadButton
+     <DownloadButton
         transactions={filteredTransactions}
         categories={categories}
         account={selectedAccountData}
         setPdfLoading={setPdfLoading}
         selectedType={selectedType}
-      >
-        Download PDF
-      </DownloadButton>
+      />
 
       <FilterRow>
 
