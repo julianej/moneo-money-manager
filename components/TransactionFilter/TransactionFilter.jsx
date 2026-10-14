@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import DownloadButton from "../DownloadReport/DownloadButton";
 import CategoryManager from "../CategoryManager/CategoryExistingList";
+import { Spinner } from "../../styles/LoadingStyles";
 
 import {
   cleanCategory,
@@ -847,7 +848,7 @@ const selectedCategory = categories?.find(
               >
                 {isAddingCategory ? (
                   <>
-                    <LoadingSpinner />
+                    <Spinner />
                     Adding...
                   </>
                 ) : (

@@ -133,14 +133,14 @@ const listMenuItems = [
 
       <MenuProfile
         isMenuOpen={isMenuOpen}
-        // onDelete={handleDeleteAccount}
-        isProfileOpen={isProfileOpen}
-        setIsProfileOpen={setIsProfileOpen}
         setIsMenuOpen={setIsMenuOpen}
-        isLoggedIn={true}
+        isLoggedIn={false}
+        onLogIn={onLogIn}
+        listItems={listMenuItems}
         userName={user?.name}
-        listItems={profileItems}
+        // onDelete={handleDeleteAccount}
       />
+
     {/* LOGIN FORM */} 
          {isLoginFormOpen && ( 
           <LoginOverlay>

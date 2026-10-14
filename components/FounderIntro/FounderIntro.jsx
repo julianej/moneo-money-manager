@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import Image from "next/image";
+
 
 export default function FounderSection() {
   return (
@@ -6,7 +8,7 @@ export default function FounderSection() {
       <FounderLayout>
         <FounderImage>
           {/* Add your own portrait here */}
-          <img
+          <Image
             src="/images/head-shot-julianejeske.jpg"
             alt="Juliane Jeske, founder of MONEO"
           />
