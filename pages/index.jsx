@@ -132,12 +132,11 @@ const listMenuItems = [
        <AsciiBackground />
 
       <MenuProfile
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        isLoggedIn={false}
-        onLogIn={onLogIn}
-        listItems={listMenuItems}
-        userName={user?.name}
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          isLoggedIn={false}
+          onLogIn={onLogIn}
+          listItems={listMenuItems}
         // onDelete={handleDeleteAccount}
       />
 
