@@ -9,7 +9,7 @@ import { Spinner } from "@/styles/LoadingStyles";
 import MenuProfile from "@/components/MenuProfile/MenuProfile";
 import FloatingNavigation from "@/components/FloatingNavigation/FloatingNavigation";
 
-import Welcome from "@/components/Welcome/Welcome";
+import OnboardingCockpit from "@/components/OnboardingCockpit/OnboardingCockpit";
 import Profile from "@/components/MenuProfile/MenuProfileSettings";
 
 import BankSideBar from "@/components/BankSideBar/BankSideBar";
@@ -178,30 +178,16 @@ const CardWrapper = styled.div`
   overflow-x: auto;
   flex-direction: column;
   text-align: center;
-  margin-bottom: 15rem;
+  margin-bottom: 5rem;
 
   @media (min-width: 740px) {
     overflow-x: visible;
     flex-direction: row;
     text-align: left;
+    flex-wrap: balance;
   }
 `;
 
-const DashboardOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-
-  background: rgba(0, 0, 0, 0.4);
-
-  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
-  visibility: ${({ $isOpen }) =>
-    $isOpen ? "visible" : "hidden"};
-
-  transition:
-    opacity 0.35s ease,
-    visibility 0.35s ease;
-`;
 
 // ====================
 // COMPONENT
@@ -416,6 +402,14 @@ export default function Dashboard() {
       );
     }
   }
+
+  // ====================
+  // ACCOUNT
+  // ====================
+
+  const hasOrganizedFinances = transactions?.some(
+      (transaction) => Boolean(transaction.category)
+    ) ?? false;
 
   // ====================
   // ACCOUNT
@@ -952,8 +946,7 @@ const filteredTransactions = transactions.filter(matchesFilter);
               </>
             ) : (
               <>
-                <Welcome variant="dashboard" />
-
+              {/* CARD PLANS */}
                 <CardWrapper>
                   <PricingPlanCard
                     variant="current"
@@ -967,6 +960,15 @@ const filteredTransactions = transactions.filter(matchesFilter);
                     variant="referral"
                   />
                 </CardWrapper>
+
+               {/* ONBOARDING */}
+                 <OnboardingCockpit
+                    hasAccount={Boolean(accounts?.length)}
+                    hasTransaction={Boolean(transactions?.length)}
+                    hasOrganizedFinances={hasOrganizedFinances}
+                    onAddAccount={handleAddAccount}
+                    // onOrganizeFinances={handleOrganizeFinances}
+                  />
               </>
             )}
           </>

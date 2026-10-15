@@ -145,44 +145,6 @@ const AddBankAccountButton = styled.button`
     `}
 `;
 
-const OnboardingPulse = styled.span`
-    position: absolute;
-    top: 50%;
-    right: -30px;
-    width: 95px;
-    height: 95px;
-    border-radius: 50%;
-    background: transparent;
-    transform: translateY(-50%);
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: -5px;
-
-    border: 1px solid #000;
-    border-radius: 50%;
-
-    animation: pulse 1.5s ease-out infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(0.7);
-      opacity: 1;
-    }
-
-    70% {
-      transform: scale(1.8);
-      opacity: 0;
-    }
-
-    100% {
-      transform: scale(1.8);
-      opacity: 0;
-    }
-  }
-`;
 
 const SidebarSection = styled.section`
   display: flex;
@@ -325,7 +287,7 @@ export default function BankSideBar({
           <span>Add Bank Account</span>
           <Plus size={18} />
 
-      {showAccountOnboarding && <OnboardingPulse />}
+      {showAccountOnboarding}
         </AddBankAccountButton>
 
       <SyncSection>
