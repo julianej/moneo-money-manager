@@ -35,7 +35,7 @@ const Title = styled.h1`
   @media (min-width: 1124px) {
     font-size: 4rem;
     line-height: 2rem;
-    padding-top: 3rem;
+    padding-top: 2rem;
   }
 `;
 

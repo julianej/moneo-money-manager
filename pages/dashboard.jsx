@@ -503,53 +503,88 @@ export default function Dashboard() {
   }
 
   // ====================
-  // FILTER
-  // ====================
+// PERIOD FILTER STATE
+// ====================
 
-  const matchesFilter = (transaction) => {
-    const transactionDate = new Date(
-      transaction.date
-    );
+const getCurrentMonthPeriod = () => {
+  const now = new Date();
 
-    const matchesSearch =
-      transaction.title
-        .toLowerCase()
-        .includes(
-          searchTerm.toLowerCase()
-        );
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-    const matchesYear =
-      selectedYear === "all" ||
-      transactionDate
-        .getFullYear()
-        .toString() === selectedYear;
-
-    const matchesMonth =
-      selectedMonth === "all" ||
-      transactionDate.getMonth() ===
-        Number(selectedMonth);
-
-    const matchesType =
-      selectedType === "all" ||
-      transaction.type === selectedType;
-
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(
-        transaction.category
-      );
-
-    return (
-      matchesSearch &&
-      matchesYear &&
-      matchesMonth &&
-      matchesType &&
-      matchesCategory
-    );
+    return `${year}-${month}-${day}`;
   };
 
-  const filteredTransactions =
-    transactions.filter(matchesFilter);
+  return {
+    startDate: formatDate(
+      new Date(now.getFullYear(), now.getMonth(), 1)
+    ),
+    endDate: formatDate(
+      new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    ),
+  };
+};
+
+const [startDate, setStartDate] = useState(
+  () => getCurrentMonthPeriod().startDate
+);
+
+const [endDate, setEndDate] = useState(
+  () => getCurrentMonthPeriod().endDate
+);
+  
+// ====================
+// FILTER
+// ====================
+
+const matchesFilter = (transaction) => {
+  const transactionDate = new Date(transaction.date);
+
+  // Period filter
+  const isWithinPeriod =
+    (!startDate ||
+      transactionDate >= new Date(`${startDate}T00:00:00`)) &&
+    (!endDate ||
+      transactionDate <= new Date(`${endDate}T23:59:59.999`));
+
+  // Search filter
+  const matchesSearch = transaction.title
+    .toLowerCase()
+    .includes(searchTerm.toLowerCase());
+
+  // Year filter
+  const matchesYear =
+    selectedYear === "all" ||
+    transactionDate.getFullYear().toString() === selectedYear;
+
+  // Month filter
+  const matchesMonth =
+    selectedMonth === "all" ||
+    transactionDate.getMonth() === Number(selectedMonth);
+
+  // Transaction type filter
+  const matchesType =
+    selectedType === "all" ||
+    transaction.type === selectedType;
+
+  // Category filter
+  const matchesCategory =
+    selectedCategories.length === 0 ||
+    selectedCategories.includes(transaction.category);
+
+  return (
+    isWithinPeriod &&
+    matchesSearch &&
+    matchesYear &&
+    matchesMonth &&
+    matchesType &&
+    matchesCategory
+  );
+};
+
+const filteredTransactions = transactions.filter(matchesFilter);
 
   // ====================
   // LOADING / ERROR
@@ -773,23 +808,7 @@ export default function Dashboard() {
                   <>
                     {/* LIST VIEW */}
 
-                    <AccountBalance
-                      transactions={
-                        filteredTransactions
-                      }
-                    />
-
-                    <TransactionSearch
-                      searchTerm={searchTerm}
-                      setSearchTerm={
-                        setSearchTerm
-                      }
-                      hasSearch={
-                        searchTerm !== ""
-                      }
-                    />
-
-                    <TransactionFilter
+                     <TransactionFilter
                       transactions={
                         transactions
                       }
@@ -833,7 +852,28 @@ export default function Dashboard() {
                       mutateCategories={
                         mutateCategories
                       }
+                      startDate={startDate}
+                      setStartDate={setStartDate}
+                      endDate={endDate}
+                      setEndDate={setEndDate}
                     />
+
+                    <AccountBalance
+                      transactions={
+                        filteredTransactions
+                      }
+                    />
+
+                    <TransactionSearch
+                      searchTerm={searchTerm}
+                      setSearchTerm={
+                        setSearchTerm
+                      }
+                      hasSearch={
+                        searchTerm !== ""
+                      }
+                    />
+
 
                     <AddButtonWrapper>
                       <AddButton

@@ -29,7 +29,7 @@ const Label = styled.p`
 
 const AccountCount = styled.p`
   margin: 0;
-  font-size: 2rem;
+  font-size: 8rem;
   font-weight: 600;
 `;
 
