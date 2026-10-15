@@ -49,7 +49,7 @@ const WelcomeWrapper = styled.section`
 
 
   /* DASHBOARD */
-  ${({ $variant }) =>
+  /* ${({ $variant }) =>
     $variant === "dashboard" && `
       h1 {
         font-size: 1rem;
@@ -65,6 +65,6 @@ const WelcomeWrapper = styled.section`
         padding-right: 0;
         }
 
-    `}
+    `} */
 
 `;
