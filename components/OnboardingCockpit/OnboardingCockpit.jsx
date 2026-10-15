@@ -178,20 +178,21 @@ export default function OnboardingCockpit({
   onAddTransaction,
   onOrganizeFinances,
 }) {
-  const [isDismissed, setIsDismissed] = useState(false);
-  const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    try {
-      setIsDismissed(
-        localStorage.getItem("moneo-onboarding-dismissed") === "true"
-      );
-    } catch {
-      // Keep the cockpit available if browser storage is unavailable.
-    }
+//   const [isDismissed, setIsDismissed] = useState(false);
+//   const [isReady, setIsReady] = useState(false);
 
-    setIsReady(true);
-  }, []);
+//   useEffect(() => {
+//     try {
+//       setIsDismissed(
+//         localStorage.getItem("moneo-onboarding-dismissed") === "true"
+//       );
+//     } catch {
+//       // Keep the cockpit available if browser storage is unavailable.
+//     }
+
+//     setIsReady(true);
+//   }, []);
 
   const tasks = [
     {
@@ -228,19 +229,19 @@ export default function OnboardingCockpit({
   const progress = (completedTasks / tasks.length) * 100;
 
   // DISSMISED TASK
-  function dismissCockpit() {
-    setIsDismissed(true);
+//   function dismissCockpit() {
+//     setIsDismissed(true);
 
-    try {
-      localStorage.setItem("moneo-onboarding-dismissed", "true");
-    } catch {
-      // Dismiss for the current session if storage is unavailable.
-    }
-  }
+//     try {
+//       localStorage.setItem("moneo-onboarding-dismissed", "true");
+//     } catch {
+//       // Dismiss for the current session if storage is unavailable.
+//     }
+//   }
 
-  if (!isReady || isDismissed) {
-    return null;
-  }
+//   if (!isReady || isDismissed) {
+//     return null;
+//   }
 
   return (
     <CockpitWrapper aria-label="MONEO onboarding checklist">
@@ -261,14 +262,14 @@ export default function OnboardingCockpit({
           </Description>
         </div>
 
-        <IconButton
+        {/* <IconButton
           type="button"
           onClick={dismissCockpit}
           aria-label="Dismiss onboarding"
           title="Dismiss onboarding"
         >
           <X size={18} />
-        </IconButton>
+        </IconButton> */}
       </CockpitHeader>
 
       <ProgressHeader>
