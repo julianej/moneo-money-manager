@@ -232,8 +232,7 @@ export default function Dashboard() {
   // ADD ACCOUNT FORM STATE
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [accountLimitMessage, setAccountLimitMessage] = useState("");
-  const [showAccountOnboarding, setShowAccountOnboarding] =
-    useState(false);
+  const [showAccountOnboarding, setShowAccountOnboarding] = useState(false);
 
   // TOAST MESSAGE
   const [toastMessage, setToastMessage] = useState("");
@@ -404,12 +403,21 @@ export default function Dashboard() {
   }
 
   // ====================
-  // ACCOUNT
+  // ONBOARDING
   // ====================
+
+  const handleGetStarted = () => {
+    document.getElementById("onboarding")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const hasOrganizedFinances = transactions?.some(
       (transaction) => Boolean(transaction.category)
     ) ?? false;
+
+
 
   // ====================
   // ACCOUNT
@@ -948,7 +956,8 @@ const filteredTransactions = transactions.filter(matchesFilter);
               <>
               {/* CARD PLANS */}
                 <CardWrapper>
-                  <PricingPlanCard
+                  <PricingPlanCard 
+                   onGetStarted={handleGetStarted} 
                     variant="current"
                   />
 
