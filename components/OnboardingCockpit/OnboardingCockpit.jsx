@@ -244,7 +244,8 @@ export default function OnboardingCockpit({
 //   }
 
   return (
-    <CockpitWrapper aria-label="MONEO onboarding checklist">
+<CockpitWrapper
+  id="onboarding" aria-label="MONEO onboarding checklist">
       <CockpitHeader>
         <div>
           <Eyebrow>MONEO / GETTING STARTED</Eyebrow>

@@ -168,7 +168,11 @@ const SidebarSection = styled.section`
     background: transparent;
     min-height:90vh;
     color: #000;
-    padding: 2rem 0rem;
+    background: #fff;
+    min-height: 83vh;
+    color: #000;
+    padding: 2rem 2rem;
+    max-width: 400px;
     max-width: 400px;
   }
 `;

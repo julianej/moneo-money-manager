@@ -55,23 +55,51 @@ const UpgradeButton = styled.button`
   }
 `;
 
+const GetStartedButton = styled.button`
+  display: none;
+
+  @media (max-width: 600px) {
+    display: block;
+    width: 40%;
+    padding: 0.875rem 1rem;
+    margin: 1.5rem auto;
+
+    background: black;
+    color: grey;
+    border: 1px solid grey;
+    border-radius: 2rem;
+
+    font: inherit;
+    font-weight: 100;
+    cursor: pointer;
+
+    &:hover {
+      background: white;
+      color: black;
+    }
+  }
+`;
+
 export default function PricingPlanCard({
   variant = "current",
-  onUpgrade,
+  onUpgrade, 
+  onGetStarted
 }) {
+
   return (
 <>
       {variant === "current" && (
         <Card variant="current">
           <Label>Bank Accounts</Label>
-
           <AccountCount>
             1 / 1
           </AccountCount>
-
           <PlanName>
             Free Plan
           </PlanName>
+            <GetStartedButton onClick={onGetStarted}>
+              Get Started
+            </GetStartedButton>
         </Card>
       )}
 
