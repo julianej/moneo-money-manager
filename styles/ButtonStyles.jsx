@@ -1,26 +1,30 @@
 
 import styled, { css } from "styled-components";
 
-const buttonBase = css`
-  display: flex;
+// Base button
+export const BaseButton = styled.button`
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
 
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border: none;
 
+  font: inherit;
+  font-weight: 500;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    opacity 0.2s ease;
 
-  &:focus-visible {
-    outline: 2px solid #000;
-    outline-offset: 3px;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
   }
 
   &:disabled {
@@ -29,8 +33,57 @@ const buttonBase = css`
   }
 `;
 
+// Sync bank button
+export const SyncBankButton = styled(BaseButton)`
+  width: 100%;
+  background: transparent;
+  color: #ddd;
+
+  @media (min-width: 740px) {
+    color: #0b0b0b;
+  }
+`;
+
+// Add bank account button
+export const AddButton = styled(BaseButton)`
+  width: 100%;
+  justify-content: space-between;
+
+  padding: 0.75rem;
+  border: 2px solid #555454;
+  border-radius: 8px;
+
+  background: ${({ $selected }) =>
+    $selected ? "#000" : "transparent"};
+
+  color: ${({ $selected }) =>
+    $selected ? "#fff" : "#555454"};
+
+  @media (min-width: 740px) {
+    border-color: #000;
+    color: ${({ $selected }) =>
+      $selected ? "#fff" : "#000"};
+  }
+`;
+
+// Primary action button
+export const PrimaryButton = styled(BaseButton)`
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+`;
+
+// Secondary action button
+export const SecondaryButton = styled(BaseButton)`
+  background: transparent;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 8px;
+`;
+
 const fullWidthButton = css`
-  ${buttonBase}
+  ${BaseButton}
 
   width: 100%;
   padding: 1rem;
@@ -40,7 +93,7 @@ const fullWidthButton = css`
 `;
 
 export const MenuButton = styled.button`
-  ${buttonBase}
+  ${BaseButton}
 
   position: absolute;
   top: 3rem;
@@ -90,7 +143,7 @@ export const CancelButton = styled.button`
 `;
 
 export const CloseButton = styled.button`
-  ${buttonBase}
+  ${BaseButton}
 
   position: absolute;
   top: 1rem;
@@ -121,7 +174,7 @@ export const DeleteButton = styled.button`
 `;
 
 export const DeleteAccountButton = styled.button`
-  ${buttonBase}
+  ${BaseButton}
 
   position: relative;
   bottom: 0;
@@ -150,7 +203,7 @@ export const DeleteAccountButton = styled.button`
 `;
 
 export const IconButton = styled.button`
-  ${buttonBase}
+  ${BaseButton}
 
   width: 48px;
   height: 48px;
@@ -173,7 +226,7 @@ export const IconButton = styled.button`
 `;
 
 export const UploadButton = styled.button`
-  ${buttonBase}
+  ${BaseButton}
 
   padding: 0.7rem 1rem;
 
@@ -187,4 +240,5 @@ export const UploadButton = styled.button`
     background: #0d0d0d;
     color: #fff;
   }
-`;
+  `;
+

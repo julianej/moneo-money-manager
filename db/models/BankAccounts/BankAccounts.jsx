@@ -43,6 +43,40 @@ const bankAccountSchema = new Schema(
       type: Date,
       default: null,
     },
+    // Add these fields inside bankAccountSchema in
+    // db/models/BankAccounts/BankAccounts.js
+
+    provider: {
+      type: String,
+      enum: ["manual", "gocardless"],
+      default: "manual",
+    },
+
+    providerAccountId: {
+      type: String,
+      default: null,
+    },
+
+    providerRequisitionId: {
+      type: String,
+      default: null,
+    },
+
+    connectionStatus: {
+      type: String,
+      enum: ["not_connected", "pending", "connected", "expired", "error"],
+      default: "not_connected",
+    },
+
+    consentExpiresAt: {
+      type: Date,
+      default: null,
+    },
+
+    syncError: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -53,7 +87,6 @@ export default mongoose.models.BankAccounts ||
   mongoose.model("BankAccounts", bankAccountSchema);
 
 // existing model || create new model
-
 
 // const BankAccounts =
 //   mongoose.models.BankAccounts ||

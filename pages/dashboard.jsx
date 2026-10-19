@@ -194,6 +194,8 @@ const CardWrapper = styled.div`
 // ====================
 
 export default function Dashboard() {
+  console.log("DASHBOARD COMPONENT RENDERED");
+
   const router = useRouter();
 
   // ====================
@@ -305,23 +307,16 @@ export default function Dashboard() {
       : null
   );
 
-  console.log(
-    "DASHBOARD selectedAccount:",
-    selectedAccount
-  );
-
-  console.log(
-    "DASHBOARD categories:",
-    categories
-  );
-
-  console.log(
-    "DASHBOARD categoriesError:",
-    categoriesError
-  );
-
   const hasReachedAccountLimit =
     accounts?.length >= 1;
+
+
+
+  console.log("DASHBOARD selectedAccount:", selectedAccount);
+  console.log("DASHBOARD accounts:", accounts);
+  console.log("DASHBOARD user:", user);
+  console.log("DASHBOARD transactions:", transactions);
+  console.log("DASHBOARD categories:", categories);
 
   // ====================
   // FLOATING NAVIGATION

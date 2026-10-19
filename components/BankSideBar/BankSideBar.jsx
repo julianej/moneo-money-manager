@@ -4,6 +4,10 @@ import { useState } from "react";
 
 import BankAccountCard from "./BankAccountCard";
 
+import {
+  SyncBankButton,
+} from "@/styles/ButtonStyles";
+
 const SidebarTitle = styled.h2`
   margin: 1rem 0 1.5rem;
   font-size: 1.2rem;
@@ -194,37 +198,6 @@ const SyncSection = styled.div`
   gap: 0.35rem;
 `;
 
-const SyncButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-
-  width: 100%;
-  padding: 0.75rem 1rem;
-
-  border: none;
-  background-color: transparent;
-  color: #ddd;
-
-  font: inherit;
-  font-weight: 500;
-
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.85;
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-
-  @media (min-width: 740px) {
-      color: #0b0b0b;
-  }
-`;
-
 const SyncStatus = styled.span`
   font-size: 0.75rem;
   color: #666;
@@ -241,8 +214,62 @@ export default function BankSideBar({
   setShowAccountOnboarding,
   isSidebarCollapsed,
   setIsSidebarCollapsed,
+  onSyncComplete,
 }) {
-  const [lastSyncedAt, setLastSyncedAt] = useState(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState("");
+
+
+async function handleSync() {
+  if (!selectedAccount || isSyncing) return;
+
+  setIsSyncing(true);
+  setSyncMessage("");
+
+  try {
+    const response = await fetch("/api/bankaccounts/sync", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accountId: selectedAccount,
+      }),
+    });
+
+    const responseText = await response.text();
+    let result;
+
+    try {
+      result = JSON.parse(responseText);
+    } catch {
+      console.error("Invalid API response:", responseText);
+
+      throw new Error(
+        `Sync API failed with HTTP ${response.status}.`
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        result.error || "Bank synchronization failed."
+      );
+    }
+
+    if (onSyncComplete) {
+      await onSyncComplete();
+    }
+
+    setSyncMessage(
+      `Sync complete: ${result.imported ?? 0} new transactions.`
+    );
+  } catch (error) {
+    console.error("Bank sync error:", error);
+    setSyncMessage(error.message || "Synchronization failed.");
+  } finally {
+    setIsSyncing(false);
+  }
+}
 
  return (
   <SidebarSection>
@@ -278,7 +305,7 @@ export default function BankSideBar({
         ))}
       </AccountList>
 
-{/*/ ADD BANK ACCOUNT BUTTON */}
+  {/*/ ADD BANK ACCOUNT BUTTON */}
      <AddBankAccountButton
         type="button"
         $selected={isBankFormOpen}
@@ -288,28 +315,48 @@ export default function BankSideBar({
           onAddAccount();
         }}
       >
-          <span>Add Bank Account</span>
-          <Plus size={18} />
+      <span>Add Bank Account</span>
+      <Plus size={18} />
 
       {showAccountOnboarding}
         </AddBankAccountButton>
 
+      
       <SyncSection>
-        <SyncButton
+      <SyncBankButton
           type="button"
-          onClick={() => setLastSyncedAt(new Date())}
+          onClick={handleSync}
+          disabled={!selectedAccount || isSyncing || isBankFormOpen}
         >
-          Synchronisieren
+          {isSyncing ? "Synchronizing..." : "Synchronisieren"}
           <RefreshCw size={16} />
-        </SyncButton>
+        </SyncBankButton>
 
-        <SyncStatus>
-          Zuletzt synchronisiert:{" "}
-          {lastSyncedAt
-            ? lastSyncedAt.toLocaleString("de-DE")
-            : "Noch nie"}
-        </SyncStatus>
-      </SyncSection>
+            <SyncStatus>
+              Zuletzt synchronisiert:{" "} 
+              {(() => {
+                const account = accounts.find(
+                  (item) =>
+                    String(item._id) === String(selectedAccount)
+                );
+
+                const date = account?.lastSyncedAt
+                  ? new Date(account.lastSyncedAt)
+                  : null;
+
+                return date && !Number.isNaN(date.getTime())
+                  ? date.toLocaleString("de-DE")
+                  : "Noch nie";
+              })()}
+            </SyncStatus>
+
+            {syncMessage && (
+              <p role="status" aria-live="polite">
+                {syncMessage}
+              </p>
+            )}
+          </SyncSection>
+
     </SidebarContent>
   </SidebarSection>
 );

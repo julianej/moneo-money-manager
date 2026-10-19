@@ -120,7 +120,7 @@ const benefits = [
   },
   {
     number: "03",
-    title: "Save Time",
+    title: "Invoice Matching",
     description:
       "Organize transactions and generate reports with less manual work.",
   },
