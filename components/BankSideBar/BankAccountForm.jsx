@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useEffect } from "react";
 import {styled} from "styled-components";
 import { X } from "lucide-react";
 
@@ -22,8 +23,6 @@ import { HiddenLabel } from "@/styles/GlobalStyles";
 // ====================
 // STYLES
 // ====================
-
-
 
 const FormScrollWrapper = styled.div`
   max-height: 80vh;
@@ -185,6 +184,7 @@ const Field = styled.div`
 
 const ErrorMessage = styled.span`
   font-size: 0.85rem;
+  margin-bottom: 2rem;
   color: #d00;
 `;
 
@@ -202,10 +202,17 @@ export default function BankAccountForm({
 
   // Acount Mode
   const [accountMode, setAccountMode] = useState("manual");
+  const [accountType, setAccountType] = useState("bank");
+
+  const [purpose, setPurpose] = useState("private");
+
+  const [institutions, setInstitutions] = useState([]);
+  const [institutionId, setInstitutionId] = useState("");
+  const [isLoadingInstitutions, setIsLoadingInstitutions] = useState(false);
 
   // Bank account state
+  const [bank, setBank] = useState("Manual");
   const [name, setName] = useState("");
-  const [bank, setBank] = useState("");
   const [iban, setIban] = useState("");
   const [bic, setBic] = useState("");
 
@@ -224,25 +231,19 @@ export default function BankAccountForm({
   // VALIDATE FORM
   // ====================
 
-  function validateForm() {
-    const newErrors = {};
+  
+function validateForm() {
+  const newErrors = {};
 
-    if (!name.trim()) {
-      newErrors.name = "Account name is required.";
-    } else if (name.trim().length < 2) {
-      newErrors.name =
-        "Account name must contain at least 2 characters.";
-    }
-
-    if (!bank.trim()) {
-      newErrors.bank = "Bank is required.";
+  if (accountMode === "manual") {
+    if (bank.trim() && bank.trim().length < 2) {
+      newErrors.bank = "Please enter a valid bank name.";
     }
 
     const cleanIBAN = iban.replace(/\s/g, "").toUpperCase();
 
-    if (!cleanIBAN) {
-      newErrors.iban = "IBAN is required.";
-    } else if (
+    if (
+      cleanIBAN &&
       !/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(cleanIBAN)
     ) {
       newErrors.iban = "Please enter a valid IBAN.";
@@ -250,20 +251,21 @@ export default function BankAccountForm({
 
     const cleanBIC = bic.replace(/\s/g, "").toUpperCase();
 
-    if (!cleanBIC) {
-      newErrors.bic = "BIC is required.";
-    } else if (
-      !/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(
-        cleanBIC
-      )
+    if (
+      cleanBIC &&
+      !/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(cleanBIC)
     ) {
-      newErrors.bic = "BIC must contain 8 or 11 characters.";
+      newErrors.bic = "BIC must contain 8 or 11 valid characters.";
     }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
   }
+
+  if (accountMode === "bank" && !institutionId) {
+    newErrors.institutionId = "Please select your bank.";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+}
 
   // ====================
   // ADD CATEGORY
@@ -347,42 +349,51 @@ export default function BankAccountForm({
   // SUBMIT FORM
   // ====================
 
-  async function handleSubmit(event) {
-    event.preventDefault();
 
-    setSubmitError("");
-    setCategoryError("");
+async function handleSubmit(event) {
+  event.preventDefault();
 
-    if (accountLimitMessage) {
-      setSubmitError(accountLimitMessage);
-      return;
-    }
+  setSubmitError("");
+  setCategoryError("");
 
-    if (categories.length < minimumCategories) {
-      setCategoryError(
-        `Please add at least ${minimumCategories} categories.`
-      );
-      return;
-    }
+  if (accountLimitMessage) {
+    setSubmitError(accountLimitMessage);
+    return;
+  }
 
-    if (!validateForm()) {
-      return;
-    }
+  if (!validateForm()) return;
 
-    setIsAddingAccount(true);
+  // Keep categories attached to manually created accounts.
+  if (
+    accountMode === "manual" &&
+    categories.length < minimumCategories
+  ) {
+    setCategoryError(
+      `Please add at least ${minimumCategories} categories.`
+    );
+    return;
+  }
 
-    try {
-      // 1. Create the bank account
+  setIsAddingAccount(true);
+
+  try {
+    // FLOW 1: Create a manual wallet.
+    if (accountMode === "manual") {
       const response = await fetch("/api/bankaccounts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: name.trim(),
-          bank: bank.trim(),
-          iban: iban.replace(/\s/g, "").toUpperCase(),
-          bic: bic.replace(/\s/g, "").toUpperCase(),
+          body: JSON.stringify({
+          name: bank.trim() || "Manual Bank Account",
+          bank: bank.trim() || "Manual",
+          accountType: "bank",
+          purpose,
+          iban: iban.replace(/\s/g, "").toUpperCase() || undefined,
+          bic: bic.replace(/\s/g, "").toUpperCase() || undefined,
+          balance: 0,
+          provider: "manual",
+          connectionStatus: "not_connected",
         }),
       });
 
@@ -390,24 +401,21 @@ export default function BankAccountForm({
 
       if (!response.ok) {
         throw new Error(
-          data.error || "Failed to create bank account."
+          data.error || "Failed to create cash wallet."
         );
       }
 
-      // Support either an account object or a direct ID,
-      // depending on the API response shape.
       const accountId = data._id || data.account?._id;
 
       if (!accountId) {
         throw new Error(
-          "The account was created, but its ID was not returned by the API."
+          "The created wallet ID was not returned."
         );
       }
 
-      // 2. Create the categories for this account
-      await Promise.all(
-        categories.map(async (category) => {
-          const categoryResponse = await fetch("/api/categories", {
+      const categoryResults = await Promise.all(
+        categories.map((category) =>
+          fetch("/api/categories", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -416,35 +424,108 @@ export default function BankAccountForm({
               category,
               account: accountId,
             }),
-          });
-
-          const categoryData = await categoryResponse.json();
-
-          if (!categoryResponse.ok) {
-            throw new Error(
-              categoryData.error ||
-                `Failed to create category "${category}".`
-            );
-          }
-        })
+          })
+        )
       );
 
-      // 3. Refresh the account data
+      for (const response of categoryResults) {
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(
+            data.error || "Failed to create categories."
+          );
+        }
+      }
+
       await mutate();
-
-      // 4. Close the form after successful creation
       onCancel();
-    } catch (error) {
-      console.error("CREATE ACCOUNT ERROR:", error);
+      return;
+    }
 
-      setSubmitError(
-        error.message ||
-          "Something went wrong. Please try again."
+    // FLOW 2: Start real bank authorization.
+    const response = await fetch("/api/banking/connect", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        institutionId,
+        name: name.trim(),
+        purpose,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Could not start bank connection."
       );
+    }
+
+    if (!data.link) {
+      throw new Error(
+        "The bank authorization link was not returned."
+      );
+    }
+
+    // Redirect the user to the bank authorization page.
+    window.location.assign(data.link);
+  } catch (error) {
+    console.error("ACCOUNT FLOW ERROR:", error);
+
+    setSubmitError(
+      error.message || "Something went wrong."
+    );
+  } finally {
+    setIsAddingAccount(false);
+  }
+}
+
+
+// Load supported German banks
+useEffect(() => {
+  if (accountMode !== "bank") return;
+
+  let cancelled = false;
+
+  async function loadInstitutions() {
+    setIsLoadingInstitutions(true);
+    setSubmitError("");
+
+    try {
+      const response = await fetch(
+        "/api/banking/institutions?country=DE"
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Could not load supported banks."
+        );
+      }
+
+      if (!cancelled) {
+        setInstitutions(data);
+      }
+    } catch (error) {
+      if (!cancelled) {
+        setSubmitError(error.message);
+      }
     } finally {
-      setIsAddingAccount(false);
+      if (!cancelled) {
+        setIsLoadingInstitutions(false);
+      }
     }
   }
+
+  loadInstitutions();
+
+  return () => {
+    cancelled = true;
+  };
+}, [accountMode]);
 
   // ====================
   // RENDER
@@ -470,91 +551,154 @@ export default function BankAccountForm({
         <ErrorMessage>{accountLimitMessage}</ErrorMessage>
       )}
 
+ 
+<AccountModeSelector>
+  <AccountModeButton
+    type="button"
+    $active={accountMode === "manual"}
+    aria-pressed={accountMode === "manual"}
+    onClick={() => setAccountMode("manual")}
+  >
+    Manual Account
+    <ModeDescription>
+      Cash wallet and manual transactions
+    </ModeDescription>
+  </AccountModeButton>
 
-      <AccountModeSelector>
-        <AccountModeButton
-          type="button"
-          $active={accountMode === "manual"}
-          aria-pressed={accountMode === "manual"}
-          onClick={() => setAccountMode("manual")}
-        >
-          Manual Account
-          <ModeDescription>
-            Cash wallet and manual transactions
-          </ModeDescription>
-        </AccountModeButton>
+  <AccountModeButton
+    type="button"
+    $active={accountMode === "bank"}
+    aria-pressed={accountMode === "bank"}
+    onClick={() => setAccountMode("bank")}
+  >
+    Connect Bank
+    <ModeDescription>
+      Import transactions from your bank
+    </ModeDescription>
+  </AccountModeButton>
+</AccountModeSelector>
 
-        <AccountModeButton
-          type="button"
-          $active={accountMode === "bank"}
-          aria-pressed={accountMode === "bank"}
-          onClick={() => setAccountMode("bank")}
-        >
-          Connect Bank
-          <ModeDescription>
-            Connect a real bank account, incl. Cash Wallet
-          </ModeDescription>
-        </AccountModeButton>
-      </AccountModeSelector>
+<FormSubTitle>Account Purpose</FormSubTitle>
 
+<Field>
+  <HiddenLabel htmlFor="account-purpose">
+    Account Purpose
+  </HiddenLabel>
+  <select
+    id="account-purpose"
+    value={purpose}
+    onChange={(event) => setPurpose(event.target.value)}
+  >
+    <option value="private">Private</option>
+    <option value="business">Business</option>
+    <option value="rent">Rent</option>
+  </select>
+</Field>
 
-      <FormSubTitle>Bank Account Info</FormSubTitle>
+{accountMode === "manual" ? (
+  <>
+    <FormSubTitle>Manual Wallet</FormSubTitle>
 
       <Field>
-       <HiddenLabel htmlFor="account-name">Account Wallet Name</HiddenLabel>
-        <input
-          id="account-name"
-          type="text"
-          placeholder="Wallet Name: Private / Business"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-        />
-        {errors.name && (
-          <ErrorMessage>{errors.name}</ErrorMessage>
-        )}
-      </Field>
-
-      <Field>
-          <HiddenLabel htmlFor="bank-name">Bank Name</HiddenLabel>
+        <HiddenLabel htmlFor="bank-name">Bank Name</HiddenLabel>
         <input
           id="bank-name"
           type="text"
-          placeholder="Bank"
+          placeholder="Bank Name (eg. Manual Wallet)"
           value={bank}
+          required
           onChange={(event) => setBank(event.target.value)}
         />
-        {errors.bank && (
-          <ErrorMessage>{errors.bank}</ErrorMessage>
-        )}
+        {errors.bank && <ErrorMessage>{errors.bank}</ErrorMessage>}
       </Field>
 
       <Field>
-          <HiddenLabel htmlFor="account-iban">IBAN-</HiddenLabel>
+        <HiddenLabel htmlFor="account-iban">IBAN</HiddenLabel>
         <input
           id="account-iban"
           type="text"
-          placeholder="IBAN"
+          placeholder="IBAN (optional)"
           value={iban}
           onChange={(event) => setIban(event.target.value)}
         />
-        {errors.iban && (
-          <ErrorMessage>{errors.iban}</ErrorMessage>
-        )}
+        {errors.iban && <ErrorMessage>{errors.iban}</ErrorMessage>}
       </Field>
 
       <Field>
-          <HiddenLabel htmlFor="account-name">BIC</HiddenLabel>
+        <HiddenLabel htmlFor="account-bic">BIC</HiddenLabel>
         <input
           id="account-bic"
           type="text"
-          placeholder="BIC"
+          placeholder="BIC (optional)"
           value={bic}
           onChange={(event) => setBic(event.target.value)}
         />
-        {errors.bic && (
-          <ErrorMessage>{errors.bic}</ErrorMessage>
-        )}
+        {errors.bic && <ErrorMessage>{errors.bic}</ErrorMessage>}
       </Field>
+  </>
+) : (
+  <>
+    <FormSubTitle>Connect Your Bank</FormSubTitle>
+
+    <Field>
+      <HiddenLabel htmlFor="account-name">
+        Account Name
+      </HiddenLabel>
+      <input
+        id="account-name"
+        type="text"
+        placeholder="Account name, e.g. Business Girokonto"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+      />
+      {errors.name && (
+        <ErrorMessage>{errors.name}</ErrorMessage>
+      )}
+    </Field>
+
+    <Field>
+      <HiddenLabel htmlFor="institution">
+        Select Bank
+      </HiddenLabel>
+      <select
+        id="institution"
+        value={institutionId}
+        onChange={(event) =>
+          setInstitutionId(event.target.value)
+        }
+        disabled={isLoadingInstitutions}
+      >
+        <option value="">
+          {isLoadingInstitutions
+            ? "Loading banks..."
+            : "Select your bank"}
+        </option>
+
+        {institutions.map((institution) => (
+          <option
+            key={institution.id}
+            value={institution.id}
+          >
+            {institution.name}
+          </option>
+        ))}
+      </select>
+
+      {errors.institutionId && (
+        <ErrorMessage>
+          {errors.institutionId}
+        </ErrorMessage>
+      )}
+    </Field>
+
+    <p>
+      You will be redirected to authorize secure access.
+      MONEO cannot connect to a bank using only an IBAN.
+    </p>
+  </>
+)}
+
+
       <CategorySection>
         <CategoryTitle>
           Categories ({categories.length}/{minimumCategories} minimum)

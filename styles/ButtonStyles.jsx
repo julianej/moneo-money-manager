@@ -92,16 +92,24 @@ const fullWidthButton = css`
   border-radius: 8px;
 `;
 
-export const MenuButton = styled.button`
-  ${BaseButton}
 
+export const MenuButton = styled(BaseButton)`
   position: absolute;
   top: 3rem;
   right: 2rem;
+  z-index: 10;
+
+  box-sizing: border-box;
+  display: inline-flex;
 
   width: 48px;
+  min-width: 48px;
   height: 48px;
+  min-height: 48px;
+
   padding: 0;
+  flex: 0 0 48px;
+  aspect-ratio: 1 / 1;
 
   border: 2px solid #000;
   border-radius: 50%;
@@ -111,12 +119,16 @@ export const MenuButton = styled.button`
   &:hover:not(:disabled) {
     background: #000;
     color: #fff;
+    opacity: 1;
   }
 
   @media (min-width: 740px) {
     right: 5rem;
   }
 `;
+
+
+
 
 export const SubmitButton = styled.button`
   ${fullWidthButton}
@@ -202,11 +214,24 @@ export const DeleteAccountButton = styled.button`
   }
 `;
 
+
 export const IconButton = styled.button`
   ${BaseButton}
 
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+
   height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+
+  flex: 0 0 48px;
   padding: 0;
 
   border: 2px solid #000;
@@ -214,16 +239,27 @@ export const IconButton = styled.button`
 
   background: ${({ $variant }) =>
     $variant === "dark" ? "#000" : "#fff"};
+
   color: ${({ $variant }) =>
     $variant === "dark" ? "#fff" : "#000"};
 
   &:hover:not(:disabled) {
     background: ${({ $variant }) =>
       $variant === "dark" ? "#fff" : "#000"};
+
     color: ${({ $variant }) =>
       $variant === "dark" ? "#000" : "#fff"};
+
+    opacity: 1;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
 `;
+
 
 export const UploadButton = styled.button`
   ${BaseButton}

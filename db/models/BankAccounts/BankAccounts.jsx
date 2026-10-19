@@ -23,6 +23,12 @@ const bankAccountSchema = new Schema(
       trim: true,
     },
 
+    parentAccount: {
+      type: Schema.Types.ObjectId,
+      ref: "BankAccounts",
+      default: null,
+    },
+
     // ACCOUNt TYPE
     accountType: {
       type: String,
