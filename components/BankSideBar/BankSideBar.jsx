@@ -219,23 +219,26 @@ export default function BankSideBar({
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState("");
 
+  const selectedAccountData = accounts?.find(
+    (account) => String(account._id) === String(selectedAccount)
+  );
 
-async function handleSync() {
-  if (!selectedAccount || isSyncing) return;
+  async function handleSync() {
+    if (!selectedAccount || isSyncing) return;
 
-  setIsSyncing(true);
-  setSyncMessage("");
+    setIsSyncing(true);
+    setSyncMessage("");
 
-  try {
-    const response = await fetch("/api/bankaccounts/sync", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        accountId: selectedAccount,
-      }),
-    });
+    try {
+      const response = await fetch("/api/bankaccounts/sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accountId: selectedAccount,
+        }),
+      });
 
     const responseText = await response.text();
     let result;
@@ -323,14 +326,15 @@ async function handleSync() {
 
       
       <SyncSection>
-      <SyncBankButton
-          type="button"
-          onClick={handleSync}
-          disabled={!selectedAccount || isSyncing || isBankFormOpen}
-        >
-          {isSyncing ? "Synchronizing..." : "Synchronisieren"}
-          <RefreshCw size={16} />
-        </SyncBankButton>
+        {selectedAccountData?.accountType === "bank" &&
+          selectedAccountData?.connectionStatus === "connected" && (
+            <SyncBankButton
+              onClick={handleSync}
+              disabled={isSyncing}
+            >
+              {isSyncing ? "Synchronisiere..." : "Synchronisieren"}
+            </SyncBankButton>
+            )}
 
             <SyncStatus>
               Zuletzt synchronisiert:{" "} 

@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const { Schema } = mongoose;
@@ -5,14 +6,9 @@ const { Schema } = mongoose;
 const bankAccountSchema = new Schema(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    },
-    bank: {
-      type: String,
-      required: true,
-      trim: true,
     },
 
     name: {
@@ -21,9 +17,23 @@ const bankAccountSchema = new Schema(
       trim: true,
     },
 
+    bank: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    // ACCOUNt TYPE
+    accountType: {
+      type: String,
+      enum: ["cash", "bank"],
+      default: "cash",
+    },
+
     iban: {
       type: String,
       trim: true,
+      default: undefined,
     },
 
     bic: {
@@ -31,7 +41,7 @@ const bankAccountSchema = new Schema(
       trim: true,
       uppercase: true,
       match: /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/,
-
+      default: undefined,
     },
 
     balance: {
@@ -43,8 +53,6 @@ const bankAccountSchema = new Schema(
       type: Date,
       default: null,
     },
-    // Add these fields inside bankAccountSchema in
-    // db/models/BankAccounts/BankAccounts.js
 
     provider: {
       type: String,
@@ -85,11 +93,3 @@ const bankAccountSchema = new Schema(
 
 export default mongoose.models.BankAccounts ||
   mongoose.model("BankAccounts", bankAccountSchema);
-
-// existing model || create new model
-
-// const BankAccounts =
-//   mongoose.models.BankAccounts ||
-//   mongoose.model("BankAccounts", accountSchema);
-
-// export default BankAccounts;

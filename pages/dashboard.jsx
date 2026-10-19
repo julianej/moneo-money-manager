@@ -311,7 +311,6 @@ export default function Dashboard() {
     accounts?.length >= 1;
 
 
-
   console.log("DASHBOARD selectedAccount:", selectedAccount);
   console.log("DASHBOARD accounts:", accounts);
   console.log("DASHBOARD user:", user);
