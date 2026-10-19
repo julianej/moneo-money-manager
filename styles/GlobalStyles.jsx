@@ -52,7 +52,7 @@ export const GlobalStyle = createGlobalStyle`
   select,
   textarea {
     width: 100%;
-    padding: 1rem;
+    padding: 0.8rem;
 
     border: 1px solid #000;
     border-radius: var(--input-radius);

@@ -82,6 +82,38 @@ const FormSubTitle = styled.h2`
   text-transform: uppercase;
 `;
 
+
+const AccountModeSelector = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+`;
+
+const AccountModeButton = styled.button`
+  padding: 1rem 0.75rem;
+  border: 1px solid #000;
+  border-radius: 8px;
+  background: ${({ $active }) => ($active ? "#000" : "#fff")};
+  color: ${({ $active }) => ($active ? "#fff" : "#000")};
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+
+  &:focus-visible {
+    outline: 2px solid #555;
+    outline-offset: 3px;
+  }
+`;
+
+const ModeDescription = styled.span`
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+`;
+
+
 const CategorySection = styled.div`
   display: flex;
   flex-direction: column;
@@ -149,13 +181,6 @@ const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #000;
-    border-radius: 8px;
-  }
 `;
 
 const ErrorMessage = styled.span`
@@ -174,6 +199,10 @@ export default function BankAccountForm({
   setIsAddingAccount,
   accountLimitMessage,
 }) {
+
+  // Acount Mode
+  const [accountMode, setAccountMode] = useState("manual");
+
   // Bank account state
   const [name, setName] = useState("");
   const [bank, setBank] = useState("");
@@ -440,6 +469,34 @@ export default function BankAccountForm({
       {accountLimitMessage && (
         <ErrorMessage>{accountLimitMessage}</ErrorMessage>
       )}
+
+
+      <AccountModeSelector>
+        <AccountModeButton
+          type="button"
+          $active={accountMode === "manual"}
+          aria-pressed={accountMode === "manual"}
+          onClick={() => setAccountMode("manual")}
+        >
+          Manual Account
+          <ModeDescription>
+            Cash wallet and manual transactions
+          </ModeDescription>
+        </AccountModeButton>
+
+        <AccountModeButton
+          type="button"
+          $active={accountMode === "bank"}
+          aria-pressed={accountMode === "bank"}
+          onClick={() => setAccountMode("bank")}
+        >
+          Connect Bank
+          <ModeDescription>
+            Connect a real bank account, incl. Cash Wallet
+          </ModeDescription>
+        </AccountModeButton>
+      </AccountModeSelector>
+
 
       <FormSubTitle>Bank Account Info</FormSubTitle>
 
