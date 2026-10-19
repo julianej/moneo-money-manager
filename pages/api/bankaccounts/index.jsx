@@ -12,16 +12,11 @@ export default async function handler(request, response) {
 
     if (!userId) {
       return response.status(401).json({
-        error: "Unauthorized",
-      });
-    }
+            error: "Unauthorized",
+          });
+        }
 
-    // GET: Read existing accounts or initialize a free user's Cash account.
-    if (request.method === "GET") {
-      let accounts = await BankAccounts.find({
-        user: userId,
-      }).sort({ createdAt: -1 });
-
+      if (request.method === "GET") {
       const user = await User.findById(userId);
 
       if (!user) {
@@ -30,24 +25,13 @@ export default async function handler(request, response) {
         });
       }
 
-      if (user.plan === "free" && accounts.length === 0) {
-        await BankAccounts.create({
-          user: userId,
-          name: "Cash",
-          bank: "Cash",
-          accountType: "cash",
-          balance: 0,
-          provider: "manual",
-          connectionStatus: "not_connected",
-        });
-
-        accounts = await BankAccounts.find({
-          user: userId,
-        }).sort({ createdAt: -1 });
-      }
+      const accounts = await BankAccounts.find({
+        user: userId,
+      }).sort({ createdAt: -1 });
 
       return response.status(200).json(accounts);
     }
+     
 
     // POST: Create an account explicitly requested by the user.
     if (request.method === "POST") {
@@ -59,7 +43,24 @@ export default async function handler(request, response) {
         });
       }
 
-      // FREE PLAN: maximum 1 account.
+      const {
+        name,
+        bank,
+        accountType = "manual",
+        balance = 0,
+        iban,
+        bic,
+        parentAccount,
+      } = request.body || {};
+
+      // Validate account type.
+      if (!["manual", "bank"].includes(accountType)) {
+        return response.status(400).json({
+          error: "Invalid account type.",
+        });
+      }
+
+      // Free plan: maximum one account.
       if (user.plan === "free") {
         const accountCount = await BankAccounts.countDocuments({
           user: userId,
@@ -72,15 +73,47 @@ export default async function handler(request, response) {
         }
       }
 
+      const normalizedBank =
+      typeof bank === "string" ? bank.trim() : "";
+
+      const normalizedName =
+      typeof name === "string" ? name.trim() : "";
+
+      const finalName =
+        normalizedName ||
+        (accountType === "manual" ? "Pocket Wallet" : "");
+
+      const finalBank =
+        normalizedBank ||
+        (accountType === "manual" ? "Manual" : "");
+
+      if (!finalName || !finalBank) {
+        return response.status(400).json({
+          error: "Name and bank are required for bank accounts.",
+        });
+      }
+
+      const parsedBalance = Number(balance);
+
+      if (!Number.isFinite(parsedBalance)) {
+        return response.status(400).json({
+          error: "Balance must be a valid number.",
+        });
+      }
+
       const accountData = {
-        ...request.body,
         user: userId,
+        name: finalName,
+        bank: finalBank,
+        accountType,
+        balance: parsedBalance,
+        provider: "manual",
+        connectionStatus: "not_connected",
       };
 
-      // Default new accounts to cash unless explicitly created as bank accounts.
-      if (!accountData.accountType) {
-        accountData.accountType = "cash";
-      }
+      if (iban) accountData.iban = iban;
+      if (bic) accountData.bic = bic;
+      if (parentAccount) accountData.parentAccount = parentAccount;
 
       const account = await BankAccounts.create(accountData);
 
@@ -89,12 +122,16 @@ export default async function handler(request, response) {
 
     return response.status(405).json({
       error: "Method not allowed",
+      allowedMethods: ["GET", "POST"],
     });
   } catch (error) {
-    console.error("Bank accounts API error:", error);
+    console.error("BANK ACCOUNTS API ERROR:", error);
+    console.error("ERROR NAME:", error.name);
+    console.error("ERROR MESSAGE:", error.message);
+    console.error("ERROR STACK:", error.stack);
 
     return response.status(500).json({
-      error: "Internal server error",
+      error: error.message || "Internal server error",
     });
   }
 }

@@ -157,17 +157,16 @@ export const CancelButton = styled.button`
 export const CloseButton = styled.button`
   ${BaseButton}
 
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-
-  width: 40px;
-  height: 40px;
-  padding: 0;
-
-  border: 0;
-  background: transparent;
-  color: #000;
+    top: 5rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #000;
+    right: 4rem;
+    position: absolute;
 
   &:hover:not(:disabled) {
     background: #f5f5f5;

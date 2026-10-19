@@ -57,11 +57,12 @@ const Form = styled.form`
   @media (min-width: 740px) {
     width: 50%;
     left: 25%;
-    height: 100vh;
+    height: 83vh;
     padding: 5rem;
     overflow-y: auto;
     position: fixed;
     z-index: 77777;
+    top: 1.5rem;
   }
 `;
 
@@ -86,12 +87,13 @@ const AccountModeSelector = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  margin: 1.5rem 0;
+  font-size: 2.5rem;
 `;
 
 const AccountModeButton = styled.button`
-  padding: 1rem 0.75rem;
   border: 1px solid #000;
+  padding: 4rem 0.75rem;
   border-radius: 8px;
   background: ${({ $active }) => ($active ? "#000" : "#fff")};
   color: ${({ $active }) => ($active ? "#fff" : "#000")};
@@ -110,6 +112,7 @@ const ModeDescription = styled.span`
   margin-top: 0.4rem;
   font-size: 0.8rem;
   line-height: 1.4;
+  font-family: 'IBM Plex Mono';
 `;
 
 
@@ -202,7 +205,6 @@ export default function BankAccountForm({
 
   // Acount Mode
   const [accountMode, setAccountMode] = useState("manual");
-  const [accountType, setAccountType] = useState("bank");
 
   const [purpose, setPurpose] = useState("private");
 
@@ -211,8 +213,8 @@ export default function BankAccountForm({
   const [isLoadingInstitutions, setIsLoadingInstitutions] = useState(false);
 
   // Bank account state
-  const [bank, setBank] = useState("Manual");
-  const [name, setName] = useState("");
+  const [bank, setBank] = useState("Pocket Wallet");
+  const [name, setName] = useState("Manual");
   const [iban, setIban] = useState("");
   const [bic, setBic] = useState("");
 
@@ -375,7 +377,7 @@ async function handleSubmit(event) {
   }
 
   setIsAddingAccount(true);
-
+  
   try {
     // FLOW 1: Create a manual wallet.
     if (accountMode === "manual") {
@@ -384,13 +386,11 @@ async function handleSubmit(event) {
         headers: {
           "Content-Type": "application/json",
         },
-          body: JSON.stringify({
-          name: bank.trim() || "Manual Bank Account",
-          bank: bank.trim() || "Manual",
-          accountType: "bank",
+        body: JSON.stringify({
+          name: "Pocket Wallet",
+          bank: "Manual",
+          accountType: "manual",
           purpose,
-          iban: iban.replace(/\s/g, "").toUpperCase() || undefined,
-          bic: bic.replace(/\s/g, "").toUpperCase() || undefined,
           balance: 0,
           provider: "manual",
           connectionStatus: "not_connected",
@@ -401,7 +401,7 @@ async function handleSubmit(event) {
 
       if (!response.ok) {
         throw new Error(
-          data.error || "Failed to create cash wallet."
+          data.error || "Failed to create manual wallet."
         );
       }
 
@@ -561,7 +561,7 @@ useEffect(() => {
   >
     Manual Account
     <ModeDescription>
-      Cash wallet and manual transactions
+      Cash wallet and manual transactions, and CSV upload.
     </ModeDescription>
   </AccountModeButton>
 
@@ -573,7 +573,7 @@ useEffect(() => {
   >
     Connect Bank
     <ModeDescription>
-      Import transactions from your bank
+      Import transactions from your bank, always at sync.
     </ModeDescription>
   </AccountModeButton>
 </AccountModeSelector>
@@ -604,7 +604,7 @@ useEffect(() => {
         <input
           id="bank-name"
           type="text"
-          placeholder="Bank Name (eg. Manual Wallet)"
+          placeholder="Bank Name (eg. Pocket Wallet)"
           value={bank}
           required
           onChange={(event) => setBank(event.target.value)}

@@ -11,29 +11,37 @@ const bankAccountSchema = new Schema(
       required: true,
     },
 
+    purpose: {
+      type: String,
+      enum: ["private", "business", "rent"],
+      default: "private",
+      required: true,
+    },
+
     name: {
       type: String,
       required: true,
       trim: true,
+      default: "Pocket Wallet",
     },
 
     bank: {
       type: String,
       required: true,
       trim: true,
+      default: "Manual",
     },
 
-    parentAccount: {
-      type: Schema.Types.ObjectId,
-      ref: "BankAccounts",
-      default: null,
-    },
-
-    // ACCOUNt TYPE
     accountType: {
       type: String,
-      enum: ["cash", "bank"],
-      default: "cash",
+      enum: ["manual", "bank"],
+      default: "manual",
+    },
+
+    provider: {
+      type: String,
+      enum: ["manual", "gocardless"],
+      default: "manual",
     },
 
     iban: {
@@ -58,12 +66,6 @@ const bankAccountSchema = new Schema(
     lastSyncedAt: {
       type: Date,
       default: null,
-    },
-
-    provider: {
-      type: String,
-      enum: ["manual", "gocardless"],
-      default: "manual",
     },
 
     providerAccountId: {
@@ -97,5 +99,7 @@ const bankAccountSchema = new Schema(
   }
 );
 
-export default mongoose.models.BankAccounts ||
-  mongoose.model("BankAccounts", bankAccountSchema);
+// Clear the cached model during development
+export default mongoose.models.BankAccounts
+  ? mongoose.models.BankAccounts
+  : mongoose.model("BankAccounts", bankAccountSchema);
