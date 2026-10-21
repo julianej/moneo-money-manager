@@ -45,8 +45,3 @@ Money Manager empowers users to track, manage, and analyse their expenses and sa
 https://github.com/users/julianej/projects/4
 - You can find some example data in the [assets folder](./assets/) to get you started.
 
-## Download this Project Info
-
-```bash
-npx ghcd@latest wd-bootcamp/web-exercises/tree/main/sessions/recap-project-6/money-manager project-info
-```
