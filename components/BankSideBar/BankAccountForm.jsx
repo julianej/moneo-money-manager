@@ -68,7 +68,7 @@ const Form = styled.form`
 
 const FormTitle = styled.h1`
   margin: 0 0 1rem;
-  font-size: 2.5rem;
+  font-size: 1rem;
   line-height: 1.1;
   font-weight: 600;
   text-transform: uppercase;

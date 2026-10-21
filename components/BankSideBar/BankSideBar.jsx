@@ -277,7 +277,7 @@ export default function BankSideBar({
  return (
   <SidebarSection>
     <SidebarHeader>
-      <Title>Money Manager</Title>
+      <Title>[MONEO]</Title>
     </SidebarHeader>
     <SidebarTitle>Bank Accounts</SidebarTitle>
     <CollapseButton
