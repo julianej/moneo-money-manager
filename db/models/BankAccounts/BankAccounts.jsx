@@ -40,7 +40,7 @@ const bankAccountSchema = new Schema(
 
     provider: {
       type: String,
-      enum: ["manual", "gocardless"],
+      enum: ["manual", "gocardless", "mock"],
       default: "manual",
     },
 

@@ -53,6 +53,7 @@ export default async function handler(request, response) {
         parentAccount,
       } = request.body || {};
 
+      
       // Validate account type.
       if (!["manual", "bank"].includes(accountType)) {
         return response.status(400).json({
@@ -60,36 +61,57 @@ export default async function handler(request, response) {
         });
       }
 
-      // Free plan: maximum one account.
+      // Free plan: manual accounts only.
       if (user.plan === "free") {
+        if (accountType !== "manual") {
+          return response.status(403).json({
+            error: "The free plan only allows manual accounts.",
+          });
+        }
+
         const accountCount = await BankAccounts.countDocuments({
           user: userId,
+          accountType: "manual",
         });
 
-        if (accountCount >= 1) {
+        const accountLimit =
+          process.env.NODE_ENV === "development" ? 3 : 1;
+
+        if (accountCount >= accountLimit) {
           return response.status(403).json({
-            error: "Free plan allows only 1 account.",
+            error: `The free plan allows only ${accountLimit} manual account${
+              accountLimit === 1 ? "" : "s"
+            }.`,
           });
         }
       }
 
-      const normalizedBank =
-      typeof bank === "string" ? bank.trim() : "";
+      const purposeNames = {
+        private: "Private",
+        business: "Business",
+        rent: "Rent",
+      };
 
       const normalizedName =
-      typeof name === "string" ? name.trim() : "";
+        typeof name === "string" ? name.trim() : "";
 
-      const finalName =
-        normalizedName ||
-        (accountType === "manual" ? "Pocket Wallet" : "");
+      const normalizedBank =
+        typeof bank === "string" ? bank.trim() : "";
+
+      const finalName = normalizedName;
 
       const finalBank =
-        normalizedBank ||
-        (accountType === "manual" ? "Manual" : "");
+        normalizedBank || (accountType === "manual" ? "Manual" : "");
 
-      if (!finalName || !finalBank) {
+      if (!finalName) {
         return response.status(400).json({
-          error: "Name and bank are required for bank accounts.",
+          error: "Account name is required.",
+        });
+      }
+
+      if (!finalBank) {
+        return response.status(400).json({
+          error: "Bank name is required for bank accounts.",
         });
       }
 

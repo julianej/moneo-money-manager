@@ -208,20 +208,29 @@ export default function BankSideBar({
   accounts = [],
   selectedAccount,
   setSelectedAccount,
+  selectedAccountToEdit,
+  setSelectedAccountToEdit,
   onAddAccount,
   isBankFormOpen,
+  setIsBankFormOpen,
   showAccountOnboarding,
   setShowAccountOnboarding,
   isSidebarCollapsed,
   setIsSidebarCollapsed,
   onSyncComplete,
 }) {
+
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState("");
 
   const selectedAccountData = accounts?.find(
     (account) => String(account._id) === String(selectedAccount)
   );
+
+  const handleEditAccount = (account) => {
+    setSelectedAccountToEdit(account);
+    setIsBankFormOpen(true);
+  };
 
   async function handleSync() {
     if (!selectedAccount || isSyncing) return;
@@ -303,7 +312,8 @@ export default function BankSideBar({
             account={account}
             selected={selectedAccount === account._id}
             disabled={isBankFormOpen}
-             onClick={() => setSelectedAccount(account._id)}
+            onClick={() => setSelectedAccount(account._id)}
+            onEdit={() => handleEditAccount(account)}
           />
         ))}
       </AccountList>

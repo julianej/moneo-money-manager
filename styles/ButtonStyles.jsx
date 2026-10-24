@@ -1,6 +1,7 @@
 
 import styled, { css } from "styled-components";
 
+
 // Base button
 export const BaseButton = styled.button`
   display: inline-flex;
@@ -126,9 +127,6 @@ export const MenuButton = styled(BaseButton)`
     right: 5rem;
   }
 `;
-
-
-
 
 export const SubmitButton = styled.button`
   ${fullWidthButton}
@@ -275,5 +273,51 @@ export const UploadButton = styled.button`
     background: #0d0d0d;
     color: #fff;
   }
-  `;
+`;
 
+export const EditButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  padding: 0.5rem 0.75rem;
+  margin-top: 1rem;
+
+  border-top: 1px solid #807f7f;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  width: 100%;
+  background: transparent;
+  color: ${({ $disabled, $selected }) => {
+    if ($disabled) return "#202020";
+    if ($selected) return "#7c7c7c";
+    return "#000";
+  }};
+  /* border: 1px solid #000; */
+  border-radius: 4px;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    color: #6c6c6c;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;

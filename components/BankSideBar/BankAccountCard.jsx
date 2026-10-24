@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { Pencil } from "lucide-react";
+import { EditButton } from "@/styles/ButtonStyles";
 
 const AccountCard = styled.button`
   width: 100%;
@@ -27,33 +29,6 @@ const AccountCard = styled.button`
     cursor: not-allowed;
       background: grey;
       color: black
-  }
-`;
-
-const EditButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 32px;
-  height: 32px;
-  padding: 0;
-
-  border: 1px solid currentColor;
-  border-radius: 6px;
-
-  background: transparent;
-  color: inherit;
-
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.7;
-  }
-
-  &:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
   }
 `;
 
@@ -95,6 +70,7 @@ export default function BankAccountCard({
   selected,
   disabled,
   onClick,
+  onEdit
 }) {
   return (
     <AccountCard
@@ -122,6 +98,21 @@ export default function BankAccountCard({
             <strong>{account.bic}</strong>
           </Detail>
         </AccountDetails>
+      )}
+     {selected && (
+        <EditButton
+          type="button"
+          $selected={selected}
+          $disabled={disabled}
+          aria-label={`Edit ${account.name}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            onEdit();
+          }}
+        >
+          <Pencil size={18} />
+          Edit
+        </EditButton>
       )}
     </AccountCard>
   );

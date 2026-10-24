@@ -57,12 +57,12 @@ const Form = styled.form`
   @media (min-width: 740px) {
     width: 50%;
     left: 25%;
-    height: 83vh;
+    height: 99vh;
     padding: 5rem;
     overflow-y: auto;
     position: fixed;
     z-index: 77777;
-    top: 1.5rem;
+    top: 0rem;
   }
 `;
 
@@ -81,7 +81,6 @@ const FormSubTitle = styled.h2`
   font-weight: 600;
   text-transform: uppercase;
 `;
-
 
 const AccountModeSelector = styled.div`
   display: grid;
@@ -189,6 +188,7 @@ const ErrorMessage = styled.span`
   font-size: 0.85rem;
   margin-bottom: 2rem;
   color: #d00;
+  display: block;
 `;
 
 // ====================
@@ -197,6 +197,7 @@ const ErrorMessage = styled.span`
 
 export default function BankAccountForm({
   onCancel,
+  account,
   mutate,
   isAddingAccount,
   setIsAddingAccount,
@@ -205,7 +206,6 @@ export default function BankAccountForm({
 
   // Acount Mode
   const [accountMode, setAccountMode] = useState("manual");
-
   const [purpose, setPurpose] = useState("private");
 
   const [institutions, setInstitutions] = useState([]);
@@ -213,8 +213,8 @@ export default function BankAccountForm({
   const [isLoadingInstitutions, setIsLoadingInstitutions] = useState(false);
 
   // Bank account state
-  const [bank, setBank] = useState("Pocket Wallet");
-  const [name, setName] = useState("Manual");
+  const [bank, setBank] = useState("");
+  const [name, setName] = useState("");
   const [iban, setIban] = useState("");
   const [bic, setBic] = useState("");
 
@@ -228,6 +228,78 @@ export default function BankAccountForm({
   const [categoryError, setCategoryError] = useState("");
 
   const minimumCategories = 5;
+
+  const isEditing = Boolean(account);
+
+// ====================
+// POPULATE FORM useEFFECT
+// ====================
+
+useEffect(() => {
+  if (!account) {
+    setPurpose("private");
+    setBank("");
+    setName("");
+    setIban("");
+    setBic("");
+    setCategories([]);
+    return;
+  }
+
+  setPurpose(account.purpose || "private");
+  setBank(account.bank || "");
+  setName(account.name || "");
+  setIban(account.iban || "");
+  setBic(account.bic || "");
+}, [account]);
+
+useEffect(() => {
+  let cancelled = false;
+
+  async function loadCategories() {
+    if (!account?._id) {
+      setCategories([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/categories?account=${account._id}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load account categories.");
+      }
+
+      const data = await response.json();
+
+      // Support either an array of category strings or category objects.
+      const existingCategories = (
+        Array.isArray(data) ? data : data.categories || []
+      )
+        .map((item) =>
+          typeof item === "string" ? item : item.category
+        )
+        .filter(Boolean);
+
+      if (!cancelled) {
+        setCategories(existingCategories);
+      }
+    } catch (error) {
+      console.error("Error loading categories:", error);
+
+      if (!cancelled) {
+        setCategoryError("Could not load existing categories.");
+      }
+    }
+  }
+
+  loadCategories();
+
+  return () => {
+    cancelled = true;
+  };
+}, [account?._id]);
 
   // ====================
   // VALIDATE FORM
@@ -387,10 +459,12 @@ async function handleSubmit(event) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: "Pocket Wallet",
-          bank: "Manual",
-          accountType: "manual",
+          name: purpose,
           purpose,
+          bank: bank.trim() || "Manual",
+          accountType: "manual",
+          iban: iban.trim(),
+          bic: bic.trim(),
           balance: 0,
           provider: "manual",
           connectionStatus: "not_connected",
@@ -541,11 +615,9 @@ useEffect(() => {
         <X size={20} />
       </CloseButton>
       <FormScrollWrapper>
-      <FormTitle>
-        Add New Bank
-        <br />
-        Account Details
-      </FormTitle>
+        <FormSubTitle>
+          {isEditing ? "Edit Account" : "Add Account"}
+        </FormSubTitle>
 
       {accountLimitMessage && (
         <ErrorMessage>{accountLimitMessage}</ErrorMessage>
@@ -561,7 +633,7 @@ useEffect(() => {
   >
     Manual Account
     <ModeDescription>
-      Cash wallet and manual transactions, and CSV upload.
+      Cash wallet and manual transactions, and CSV upload. Free Plan
     </ModeDescription>
   </AccountModeButton>
 
@@ -573,7 +645,7 @@ useEffect(() => {
   >
     Connect Bank
     <ModeDescription>
-      Import transactions from your bank, always at sync.
+      Import transactions from your bank, always at sync. Cash subaccount included. Payed Plan
     </ModeDescription>
   </AccountModeButton>
 </AccountModeSelector>
@@ -604,7 +676,7 @@ useEffect(() => {
         <input
           id="bank-name"
           type="text"
-          placeholder="Bank Name (eg. Pocket Wallet)"
+          placeholder="Bank Name (eg. Pocket Wallet, N26)"
           value={bank}
           required
           onChange={(event) => setBank(event.target.value)}
@@ -644,13 +716,6 @@ useEffect(() => {
       <HiddenLabel htmlFor="account-name">
         Account Name
       </HiddenLabel>
-      <input
-        id="account-name"
-        type="text"
-        placeholder="Account name, e.g. Business Girokonto"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-      />
       {errors.name && (
         <ErrorMessage>{errors.name}</ErrorMessage>
       )}
@@ -660,29 +725,36 @@ useEffect(() => {
       <HiddenLabel htmlFor="institution">
         Select Bank
       </HiddenLabel>
+     
       <select
-        id="institution"
         value={institutionId}
-        onChange={(event) =>
-          setInstitutionId(event.target.value)
-        }
-        disabled={isLoadingInstitutions}
-      >
-        <option value="">
-          {isLoadingInstitutions
-            ? "Loading banks..."
-            : "Select your bank"}
-        </option>
+        onChange={(event) => {
+          const selectedId = event.target.value;
+          setInstitutionId(selectedId);
 
+          const selectedBank = institutions.find(
+            (institution) => institution.id === selectedId
+          );
+
+          if (selectedBank) {
+            const accountNames = {
+              "mock-dkb": "Mietkonto",
+              "mock-n26": "Geschäftskonto",
+              "mock-ing": "Privatkonto",
+            };
+
+            setName(accountNames[selectedBank.id] || selectedBank.name);
+          }
+        }}
+      >
+        <option value="">Select a bank</option>
         {institutions.map((institution) => (
-          <option
-            key={institution.id}
-            value={institution.id}
-          >
+          <option key={institution.id} value={institution.id}>
             {institution.name}
           </option>
         ))}
       </select>
+
 
       {errors.institutionId && (
         <ErrorMessage>
@@ -693,7 +765,6 @@ useEffect(() => {
 
     <p>
       You will be redirected to authorize secure access.
-      MONEO cannot connect to a bank using only an IBAN.
     </p>
   </>
 )}

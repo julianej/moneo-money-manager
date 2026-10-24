@@ -246,19 +246,15 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
+  // FORM
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
-
+  const [selectedAccountToEdit, setSelectedAccountToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // FILTER
   const today = new Date();
-
-  const [selectedYear, setSelectedYear] = useState(
-    new Date().getFullYear().toString()
-  );
-
-  const [selectedMonth, setSelectedMonth] = useState(
-    today.getMonth()
-  );
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
 
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -304,11 +300,11 @@ export default function Dashboard() {
   ];
 
   // ====================
-  // DATA
+  // DATA useSWR data fetching Hook
   // ====================
 
   const {
-    data: accounts = [],
+    data: accounts = [], // object destructuring
     mutate: mutateAccounts,
   } = useSWR("/api/bankaccounts");
 
@@ -461,10 +457,10 @@ export default function Dashboard() {
   const handleAddAccount = () => {
     if (
       user?.plan === "free" &&
-      accounts.length >= 1
+      accounts.length >= 3
     ) {
       setAccountLimitMessage(
-        "Your free plan allows only one bank account."
+        "Your free plan allows only manual account."
       );
     } else {
       setAccountLimitMessage("");
@@ -686,11 +682,12 @@ const filteredTransactions = transactions.filter(matchesFilter);
         <BankSideBar
           accounts={accounts}
           selectedAccount={selectedAccount}
-          setSelectedAccount={
-            handleAccountSelect
-          }
+          setSelectedAccount={handleAccountSelect}
+          selectedAccountToEdit={selectedAccountToEdit}
+          setSelectedAccountToEdit={setSelectedAccountToEdit}
           onAddAccount={handleAddAccount}
           isBankFormOpen={isBankFormOpen}
+          setIsBankFormOpen={setIsBankFormOpen}
           isMenuOpen={isMenuOpen}
           showAccountOnboarding={
             showAccountOnboarding
@@ -1014,19 +1011,15 @@ const filteredTransactions = transactions.filter(matchesFilter);
       {/* BANK ACCOUNT FORM */}
       {isBankFormOpen && (
         <BankAccountForm
-          onCancel={() =>
-            setIsBankFormOpen(false)
-          }
-          mutate={mutateAccounts}
-          isAddingAccount={
-            isAddingAccount
-          }
-          setIsAddingAccount={
-            setIsAddingAccount
-          }
-          accountLimitMessage={
-            accountLimitMessage
-          }
+          account={selectedAccountToEdit}
+          onCancel={() => {
+            setIsBankFormOpen(false);
+            setSelectedAccountToEdit(null);
+          }}
+          mutate={mutate}
+          isAddingAccount={isAddingAccount}
+          setIsAddingAccount={setIsAddingAccount}
+          accountLimitMessage={accountLimitMessage}
         />
       )}
 
