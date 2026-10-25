@@ -18,18 +18,11 @@ const bankAccountSchema = new Schema(
       required: true,
     },
 
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-      default: "Pocket Wallet",
-    },
-
     bank: {
       type: String,
       required: true,
       trim: true,
-      default: "Manual",
+      default: "Pocket Wallet",
     },
 
     accountType: {

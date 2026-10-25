@@ -44,7 +44,7 @@ export default async function handler(request, response) {
       }
 
       const {
-        name,
+        purpose,
         bank,
         accountType = "manual",
         balance = 0,
@@ -86,28 +86,19 @@ export default async function handler(request, response) {
         }
       }
 
-      const purposeNames = {
-        private: "Private",
-        business: "Business",
-        rent: "Rent",
-      };
-
-      const normalizedName =
-        typeof name === "string" ? name.trim() : "";
-
       const normalizedBank =
-        typeof bank === "string" ? bank.trim() : "";
+      typeof bank === "string" ? bank.trim() : "";
 
-      const finalName = normalizedName;
+      const validPurposes = ["private", "business", "rent"];
+
+      if (!validPurposes.includes(purpose)) {
+        return response.status(400).json({
+          error: "Invalid account purpose.",
+        });
+      }
 
       const finalBank =
         normalizedBank || (accountType === "manual" ? "Manual" : "");
-
-      if (!finalName) {
-        return response.status(400).json({
-          error: "Account name is required.",
-        });
-      }
 
       if (!finalBank) {
         return response.status(400).json({
@@ -124,14 +115,15 @@ export default async function handler(request, response) {
       }
 
       const accountData = {
-        user: userId,
-        name: finalName,
-        bank: finalBank,
-        accountType,
-        balance: parsedBalance,
-        provider: "manual",
-        connectionStatus: "not_connected",
-      };
+      user: userId,
+      purpose,
+      bank: finalBank,
+      accountType,
+      balance: parsedBalance,
+      provider: accountType === "manual" ? "manual" : undefined,
+      connectionStatus:
+        accountType === "manual" ? "not_connected" : undefined,
+    };
 
       if (iban) accountData.iban = iban;
       if (bic) accountData.bic = bic;

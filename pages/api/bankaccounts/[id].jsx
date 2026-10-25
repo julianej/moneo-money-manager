@@ -6,11 +6,21 @@ import { getAuthenticatedUserId } from "@/utils/cleanUserAuth";
 export default async function handler(request, response) {
   await dbConnect();
 
-  if (request.method !== "DELETE") {
+  const allowedMethods = ["PATCH", "DELETE"];
+   if (!allowedMethods.includes(request.method)) {
+    response.setHeader("Allow", allowedMethods);
+
     return response.status(405).json({
       error: "Method not allowed.",
     });
   }
+
+  // if (request.method !== "DELETE") {
+  //   return response.status(405).json({
+  //     error: "Method not allowed.",
+  //   });
+  // }
+
 
   try {
     const userId = getAuthenticatedUserId(request);
@@ -37,6 +47,73 @@ export default async function handler(request, response) {
         error: "Bank account not found.",
       });
     }
+
+
+// UPDATE EXISTING ACCOUNT
+    if (request.method === "PATCH") {
+      const { name, purpose, bank, iban, bic } = request.body;
+
+      // Only update explicitly provided, editable fields.
+      if (name !== undefined) {
+        if (typeof name !== "string" || !name.trim()) {
+          return response.status(400).json({
+            error: "Account name is required.",
+          });
+        }
+
+        account.name = name.trim();
+      }
+
+      if (purpose !== undefined) {
+        const allowedPurposes = ["private", "business", "rent"];
+
+        if (!allowedPurposes.includes(purpose)) {
+          return response.status(400).json({
+            error: "Invalid account purpose.",
+          });
+        }
+
+        account.purpose = purpose;
+      }
+
+      if (bank !== undefined) {
+        if (typeof bank !== "string") {
+          return response.status(400).json({
+            error: "Invalid bank name.",
+          });
+        }
+
+        account.bank = bank.trim();
+      }
+
+      if (iban !== undefined) {
+        if (typeof iban !== "string") {
+          return response.status(400).json({
+            error: "Invalid IBAN.",
+          });
+        }
+
+        account.iban = iban.trim();
+      }
+
+      if (bic !== undefined) {
+        if (typeof bic !== "string") {
+          return response.status(400).json({
+            error: "Invalid BIC.",
+          });
+        }
+
+        account.bic = bic.trim();
+      }
+
+      await account.save();
+
+      return response.status(200).json({
+        message: "Bank account updated successfully.",
+        account,
+      });
+    }
+
 
     const deletedTransactions =
       await Transactions.deleteMany({

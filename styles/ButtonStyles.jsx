@@ -284,7 +284,11 @@ export const EditButton = styled.button`
   padding: 0.5rem 0.75rem;
   margin-top: 1rem;
 
-  border-top: 1px solid #807f7f;
+  border-top: ${({ $disabled, $selected }) => {
+    if ($disabled) return "1px solid #0f0f0f";
+    if ($selected) return "1px solid #6c6b6b";
+    return "#000";
+  }};
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
