@@ -35,7 +35,7 @@ const FilterWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  padding: 2rem 0;
+  padding: 0 0;
   width: 90vw;
 
 

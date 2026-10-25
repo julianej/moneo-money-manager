@@ -35,17 +35,47 @@ import DialogPopup from "@/components/DialogPopup/DialogPopup";
 const Main = styled.main`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
 
   @media (min-width: 740px) {
     flex-direction: row;
+    align-items: stretch;
   }
 `;
 
-const MainContent = styled.div`
-  flex: 1;
+const DashboardMainContent = styled.main`
+  /* Mobile first */
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
-    padding: 0.75rem 1rem;
-`;
+  margin: 0;
+  box-sizing: border-box;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: ${({ $isFormOpen }) => ($isFormOpen ? 1 : 0)};
+    pointer-events: ${({ $isFormOpen }) =>
+      $isFormOpen ? "auto" : "none"};
+    transition: opacity 0.3s ease;
+    z-index: 10;
+  }
+
+  /* Desktop */
+  @media (min-width: 741px) {
+    display: block;
+    flex: 1 1 0%;
+    width: 0;
+    min-width: 0;
+  }
+`; 
 
 const MenuProfileWrapper = styled.div`
   display: flex;
@@ -67,12 +97,15 @@ const MenuProfileWrapper = styled.div`
 `;
 
 const SidebarWrapper = styled.aside`
-  padding: 1.5rem 1rem 0;
+  box-sizing: border-box;
   width: 100%;
+  min-width: 0;
+  padding: 1.5rem 1rem 0;
   border-right: 2px solid black;
 
   @media (min-width: 740px) {
-    width: 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
     padding: 1.5rem 1rem;
   }
 `;
@@ -188,12 +221,13 @@ const CardWrapper = styled.div`
   }
 `;
 
-
 // ====================
 // COMPONENT
 // ====================
 
 export default function Dashboard() {
+  console.log("DASHBOARD COMPONENT RENDERED");
+
   const router = useRouter();
 
   // ====================
@@ -212,19 +246,15 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
+  // FORM
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
-
+  const [selectedAccountToEdit, setSelectedAccountToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // FILTER
   const today = new Date();
-
-  const [selectedYear, setSelectedYear] = useState(
-    new Date().getFullYear().toString()
-  );
-
-  const [selectedMonth, setSelectedMonth] = useState(
-    today.getMonth()
-  );
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
 
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -270,11 +300,11 @@ export default function Dashboard() {
   ];
 
   // ====================
-  // DATA
+  // DATA useSWR data fetching Hook
   // ====================
 
   const {
-    data: accounts = [],
+    data: accounts = [], // object destructuring
     mutate: mutateAccounts,
   } = useSWR("/api/bankaccounts");
 
@@ -305,23 +335,15 @@ export default function Dashboard() {
       : null
   );
 
-  console.log(
-    "DASHBOARD selectedAccount:",
-    selectedAccount
-  );
-
-  console.log(
-    "DASHBOARD categories:",
-    categories
-  );
-
-  console.log(
-    "DASHBOARD categoriesError:",
-    categoriesError
-  );
-
   const hasReachedAccountLimit =
     accounts?.length >= 1;
+
+
+  console.log("DASHBOARD selectedAccount:", selectedAccount);
+  console.log("DASHBOARD accounts:", accounts);
+  console.log("DASHBOARD user:", user);
+  console.log("DASHBOARD transactions:", transactions);
+  console.log("DASHBOARD categories:", categories);
 
   // ====================
   // FLOATING NAVIGATION
@@ -435,10 +457,10 @@ export default function Dashboard() {
   const handleAddAccount = () => {
     if (
       user?.plan === "free" &&
-      accounts.length >= 1
+      accounts.length >= 3
     ) {
       setAccountLimitMessage(
-        "Your free plan allows only one bank account."
+        "Your free plan allows only manual account."
       );
     } else {
       setAccountLimitMessage("");
@@ -485,6 +507,7 @@ export default function Dashboard() {
         return;
       }
 
+      // revalidates your SWR account data,
       await mutateAccounts();
 
       showToast(
@@ -492,6 +515,7 @@ export default function Dashboard() {
         "success"
       );
 
+      // clear the selected account in the UI
       setSelectedAccount(null);
       setIsFormOpen(false);
     } catch (error) {
@@ -658,11 +682,12 @@ const filteredTransactions = transactions.filter(matchesFilter);
         <BankSideBar
           accounts={accounts}
           selectedAccount={selectedAccount}
-          setSelectedAccount={
-            handleAccountSelect
-          }
+          setSelectedAccount={handleAccountSelect}
+          selectedAccountToEdit={selectedAccountToEdit}
+          setSelectedAccountToEdit={setSelectedAccountToEdit}
           onAddAccount={handleAddAccount}
           isBankFormOpen={isBankFormOpen}
+          setIsBankFormOpen={setIsBankFormOpen}
           isMenuOpen={isMenuOpen}
           showAccountOnboarding={
             showAccountOnboarding
@@ -679,7 +704,7 @@ const filteredTransactions = transactions.filter(matchesFilter);
         />
       </SidebarWrapper>
 
-      <MainContent>
+      <DashboardMainContent $isFormOpen={isBankFormOpen}>
         <MenuProfileWrapper>
          <MenuProfile
             isMenuOpen={isMenuOpen}
@@ -982,25 +1007,19 @@ const filteredTransactions = transactions.filter(matchesFilter);
             )}
           </>
         )}
-      </MainContent>
-
+     </DashboardMainContent>
       {/* BANK ACCOUNT FORM */}
-
       {isBankFormOpen && (
         <BankAccountForm
-          onCancel={() =>
-            setIsBankFormOpen(false)
-          }
-          mutate={mutateAccounts}
-          isAddingAccount={
-            isAddingAccount
-          }
-          setIsAddingAccount={
-            setIsAddingAccount
-          }
-          accountLimitMessage={
-            accountLimitMessage
-          }
+          account={selectedAccountToEdit}
+          onCancel={() => {
+            setIsBankFormOpen(false);
+            setSelectedAccountToEdit(null);
+          }}
+          mutate={mutate}
+          isAddingAccount={isAddingAccount}
+          setIsAddingAccount={setIsAddingAccount}
+          accountLimitMessage={accountLimitMessage}
         />
       )}
 

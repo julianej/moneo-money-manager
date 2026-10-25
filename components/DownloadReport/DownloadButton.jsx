@@ -176,8 +176,7 @@ export default function DownloadButton({
   setPdfLoading,
   selectedType = "all",
 }) {
-  const [isDownloadConfirmOpen, setIsDownloadConfirmOpen] =
-    useState(false);
+  const [isDownloadConfirmOpen, setIsDownloadConfirmOpen] = useState(false);
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");

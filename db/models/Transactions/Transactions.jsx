@@ -53,6 +53,27 @@ const transactionSchema = new mongoose.Schema({
     uploadedAt: {
       type: Date,
     },
+    provider: {
+      type: String,
+      enum: ["manual", "gocardless"],
+      default: "manual",
+    },
+
+    providerTransactionId: {
+      type: String,
+      default: null,
+    },
+
+    providerAccountId: {
+      type: String,
+      default: null,
+    },
+
+    transactionStatus: {
+      type: String,
+      enum: ["booked", "pending"],
+      default: "booked",
+    },
   },
 });
 

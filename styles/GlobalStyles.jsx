@@ -52,9 +52,9 @@ export const GlobalStyle = createGlobalStyle`
   select,
   textarea {
     width: 100%;
-    padding: 1rem;
+    padding: 0.8rem;
 
-    border: 1px solid #000;
+    border: 1px solid #ccc;
     border-radius: var(--input-radius);
 
 
@@ -70,7 +70,7 @@ export const GlobalStyle = createGlobalStyle`
   input:focus,
   select:focus,
   textarea:focus {
-    border-color: #666;
+    border-color: #ccc;
   }
 
   input::placeholder,

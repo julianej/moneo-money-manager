@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const { Schema } = mongoose;
@@ -5,25 +6,41 @@ const { Schema } = mongoose;
 const bankAccountSchema = new Schema(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+
+    purpose: {
+      type: String,
+      enum: ["private", "business", "rent"],
+      default: "private",
+      required: true,
+    },
+
     bank: {
       type: String,
       required: true,
       trim: true,
+      default: "Pocket Wallet",
     },
 
-    name: {
+    accountType: {
       type: String,
-      required: true,
-      trim: true,
+      enum: ["manual", "bank"],
+      default: "manual",
+    },
+
+    provider: {
+      type: String,
+      enum: ["manual", "gocardless", "mock"],
+      default: "manual",
     },
 
     iban: {
       type: String,
       trim: true,
+      default: undefined,
     },
 
     bic: {
@@ -31,7 +48,7 @@ const bankAccountSchema = new Schema(
       trim: true,
       uppercase: true,
       match: /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/,
-
+      default: undefined,
     },
 
     balance: {
@@ -43,20 +60,39 @@ const bankAccountSchema = new Schema(
       type: Date,
       default: null,
     },
+
+    providerAccountId: {
+      type: String,
+      default: null,
+    },
+
+    providerRequisitionId: {
+      type: String,
+      default: null,
+    },
+
+    connectionStatus: {
+      type: String,
+      enum: ["not_connected", "pending", "connected", "expired", "error"],
+      default: "not_connected",
+    },
+
+    consentExpiresAt: {
+      type: Date,
+      default: null,
+    },
+
+    syncError: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.models.BankAccounts ||
-  mongoose.model("BankAccounts", bankAccountSchema);
-
-// existing model || create new model
-
-
-// const BankAccounts =
-//   mongoose.models.BankAccounts ||
-//   mongoose.model("BankAccounts", accountSchema);
-
-// export default BankAccounts;
+// Clear the cached model during development
+export default mongoose.models.BankAccounts
+  ? mongoose.models.BankAccounts
+  : mongoose.model("BankAccounts", bankAccountSchema);

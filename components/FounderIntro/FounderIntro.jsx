@@ -10,7 +10,14 @@ export default function FounderSection() {
           {/* Add your own portrait here */}
           <Image
             src="/images/head-shot-julianejeske.jpg"
-            alt="Juliane Jeske, founder of MONEO"
+            alt="Juliane Jeske"
+            width={400}
+            height={400}
+            sizes="(max-width: 600px) 100vw, 400px"
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
           />
         </FounderImage>
 
