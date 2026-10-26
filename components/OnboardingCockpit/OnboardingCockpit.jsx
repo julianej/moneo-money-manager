@@ -45,9 +45,14 @@ const Heading = styled.h2`
 
 const Description = styled.p`
   margin: 0;
-  color: #666;
-  font-size: 0.85rem;
+  width: 100%;
+  color: #0a0a0a;
+  font-weight: bold;
+  font-size: 1.7rem;
   line-height: 1.6;
+   @media (min-width: 740px) {
+      width: 70%;
+    }
 `;
 
 

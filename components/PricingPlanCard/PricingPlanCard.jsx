@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 
 const Card = styled.div`
-  flex: 1;
+  /* flex: 1; */
   min-width: 0;
-
+  font-family: "IBM Plex Mono", monospace;
   padding: 2rem;
   border-radius: 1rem;
   border: 0.125rem solid #000;
@@ -37,9 +37,9 @@ const PlanName = styled.p`
   margin: 0.5rem 0 0;
 `;
 
-const Text = styled.p`
-  margin: 0 0 1.5rem;
-  line-height: 1.4;
+const Heading = styled.h2`
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.2rem, 3vw, 1.7rem);
 `;
 
 const UpgradeButton = styled.button`
@@ -92,7 +92,7 @@ export default function PricingPlanCard({
         <Card variant="current">
           <Label>Bank Accounts</Label>
           <AccountCount>
-            1 / 1
+            3 / 3
           </AccountCount>
           <PlanName>
             Free Plan
@@ -107,9 +107,9 @@ export default function PricingPlanCard({
         <UpgradeCard variant="upgrade">
           <Label>Upgrade Your Plan</Label>
 
-          <Text>
-            Need more bank accounts? Upgrade your plan.
-          </Text>
+           <Heading>
+            Need more bank accounts? <br></br>Upgrade your plan.
+          </Heading>
 
           <UpgradeButton
             type="button"
@@ -124,9 +124,9 @@ export default function PricingPlanCard({
         <Card variant="referral">
           <Label>Tell a friend</Label>
 
-          <Text>
-            Get 20% Discount.
-          </Text>
+          <Heading>
+            Share an Account.<br></br> Get 20% Discount.
+          </Heading>
 
           <UpgradeButton
             type="button"

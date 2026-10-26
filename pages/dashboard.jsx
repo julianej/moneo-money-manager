@@ -74,6 +74,7 @@ const DashboardMainContent = styled.main`
     flex: 1 1 0%;
     width: 0;
     min-width: 0;
+    padding: 2rem;
   }
 `; 
 
