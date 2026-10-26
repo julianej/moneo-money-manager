@@ -44,9 +44,11 @@ const Title = styled.h1`
 `;
 
 const SidebarHeader = styled.div`
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: space-between;
+  text-align: center;
+  padding-top: 5rem;
 
   @media (min-width: 740px) {
     display: block;
@@ -196,6 +198,7 @@ const SyncSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+
 `;
 
 const SyncStatus = styled.span`
