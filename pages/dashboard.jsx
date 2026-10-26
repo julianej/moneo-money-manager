@@ -100,7 +100,6 @@ const SidebarWrapper = styled.aside`
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  padding: 1.5rem 1rem 0;
   border-right: 2px solid black;
 
   @media (min-width: 740px) {
@@ -979,6 +978,14 @@ const filteredTransactions = transactions.filter(matchesFilter);
               </>
             ) : (
               <>
+               {/* ONBOARDING */}
+                 <OnboardingCockpit
+                    hasAccount={Boolean(accounts?.length)}
+                    hasTransaction={Boolean(transactions?.length)}
+                    hasOrganizedFinances={hasOrganizedFinances}
+                    onAddAccount={handleAddAccount}
+                    // onOrganizeFinances={handleOrganizeFinances}
+                  />
               {/* CARD PLANS */}
                 <CardWrapper>
                   <PricingPlanCard 
@@ -995,14 +1002,6 @@ const filteredTransactions = transactions.filter(matchesFilter);
                   />
                 </CardWrapper>
 
-               {/* ONBOARDING */}
-                 <OnboardingCockpit
-                    hasAccount={Boolean(accounts?.length)}
-                    hasTransaction={Boolean(transactions?.length)}
-                    hasOrganizedFinances={hasOrganizedFinances}
-                    onAddAccount={handleAddAccount}
-                    // onOrganizeFinances={handleOrganizeFinances}
-                  />
               </>
             )}
           </>
