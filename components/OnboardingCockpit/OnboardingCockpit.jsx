@@ -16,7 +16,7 @@ const CockpitWrapper = styled.section`
   box-sizing: border-box;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 1px solid #dedede;
+  border: 2px solid #070707;
   border-radius: 12px;
   background: #fff;
   color: #000;
@@ -50,22 +50,6 @@ const Description = styled.p`
   line-height: 1.6;
 `;
 
-const IconButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: 0.4rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-  color: #000;
-  cursor: pointer;
-
-  &:hover {
-    background: #f2f2f2;
-  }
-`;
 
 const ProgressHeader = styled.div`
   display: flex;
