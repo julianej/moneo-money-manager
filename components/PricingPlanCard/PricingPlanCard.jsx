@@ -56,18 +56,20 @@ const UpgradeButton = styled.button`
 `;
 
 const GetStartedButton = styled.button`
-  display: none;
+  /* display: none; */
+  width: 98%;
+  padding: 0.875rem 1rem;
+  margin: 0 auto;
+  border: 1px solid grey;
+  border-radius: 2rem;
+  background: black;
+  color: grey;
 
-  @media (max-width: 600px) {
+  @media (min-width: 740px) {
     display: block;
     width: 40%;
     padding: 0.875rem 1rem;
     margin: 1.5rem auto;
-
-    background: black;
-    color: grey;
-    border: 1px solid grey;
-    border-radius: 2rem;
 
     font: inherit;
     font-weight: 100;
@@ -90,13 +92,13 @@ export default function PricingPlanCard({
 <>
       {variant === "current" && (
         <Card variant="current">
-          <Label>Bank Accounts</Label>
-          <AccountCount>
-            3 / 3
-          </AccountCount>
-          <PlanName>
-            Free Plan
+          <Label>Accounts Free Plan</Label>
+           <PlanName>
+            3x Manual Bank
           </PlanName>
+          <AccountCount>
+            ---
+          </AccountCount>
             <GetStartedButton onClick={onGetStarted}>
               Get Started
             </GetStartedButton>

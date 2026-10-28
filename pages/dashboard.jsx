@@ -50,11 +50,15 @@ const DashboardMainContent = styled.main`
   position: relative;
   display: block;
   flex: 1 1 auto;
-  width: 100%;
   max-width: 100%;
   min-width: 0;
   margin: 0;
   box-sizing: border-box;
+
+  width: 88%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  margin: 0 auto;
 
   &::after {
     content: "";
@@ -99,9 +103,10 @@ const MenuProfileWrapper = styled.div`
 
 const SidebarWrapper = styled.aside`
   box-sizing: border-box;
-  width: 100%;
+  width: 88%;
   min-width: 0;
   border-right: 2px solid black;
+  margin: 0 auto;
 
   @media (min-width: 740px) {
     flex: 0 0 25%;
